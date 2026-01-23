@@ -1,11 +1,176 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import MainLayout from '../layouts/MainLayout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// 1. 自動抓取 posts 資料夾下所有的 .md 檔案
+const allPosts = await Astro.glob('./posts/*.md');
+
+// 2. 為了演示，我們把文章順序反轉（讓最新的在上面），並只取前 10 篇
+const recentPosts = allPosts.reverse().slice(0, 10);
+
+// 3. 統計文章總數
+const totalPosts = allPosts.length;
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<MainLayout title="解題紀錄">
+  <div class="home-container">
+
+    <div class="main-column">
+
+      <!-- <section class="info-card">
+        <h2 class="section-title"></h2>
+        <ul class="menu-list">
+          <li><strong>【】</strong></li>
+          <li><strong>【】</strong></li>
+          <li><strong>【】</strong></li>
+          <li><strong>【】</strong></li>
+          <li><strong>【】</strong></li>
+        </ul>
+      </section> -->
+
+      <section class="info-card">
+        <h2 class="section-title">最新文章 Recent Posts</h2>
+        <ul class="post-list">
+          {recentPosts.map((post) => (
+          <li>
+            <span class="post-tag"></span>
+            <a href={post.url}>{post.frontmatter.title}</a>
+          </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+
+    <aside class="sidebar-column">
+
+      <div class="sidebar-card">
+        <!-- <h3 class="sidebar-title">STATISTICS</h3>
+        <div class="stat-item">
+          <span class="stat-label">Total Views:</span>
+          <span class="stat-value">33050336</span>
+        </div> -->
+        <div class="stat-item">
+          <span class="stat-label">總文章數量:</span>
+          <span class="stat-value">{totalPosts}</span>
+        </div>
+      </div>
+
+      <!-- <div class="sidebar-card">
+        <h3 class="sidebar-title">BY CATEGORY</h3>
+        <select class="category-select">
+          <option>選取分類</option>
+          <option>Dynamic Programming</option>
+          <option>Graph Theory</option>
+          <option>Greedy</option>
+        </select>
+      </div> -->
+
+    </aside>
+  </div>
+</MainLayout>
+
+<style>
+  /* --- 佈局設定 --- */
+  .home-container {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    /* 左側自適應，右側固定 280px */
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* RWD: 手機版變成單欄 */
+  @media (max-width: 768px) {
+    .home-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* --- 卡片通用樣式 (模擬 GitHub Box 風格) --- */
+  .info-card,
+  .sidebar-card {
+    background-color: var(--color-canvas-default);
+    border: 1px solid var(--color-border-muted);
+    border-radius: 6px;
+    padding: 16px;
+    /* 這裡可以調整內距 */
+    margin-bottom: 24px;
+  }
+
+  /* 如果想要更像你的截圖（有明顯的區塊背景），可以用這個顏色：
+     background-color: var(--color-canvas-subtle); 
+  */
+
+  /* --- 標題樣式 --- */
+  .section-title {
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--color-border-muted);
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--color-accent-fg);
+    /* 使用藍色標題 */
+  }
+
+  .sidebar-title {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+  }
+
+  /* --- 列表樣式 --- */
+  .menu-list,
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .menu-list li,
+  .post-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-border-muted);
+    /* 分隔線 */
+  }
+
+  .menu-list li:last-child,
+  .post-list li:last-child {
+    border-bottom: none;
+  }
+
+  .post-tag {
+    color: var(--color-accent-fg);
+    font-weight: bold;
+    margin-right: 4px;
+  }
+
+  /* --- 右側欄細節 --- */
+  .stat-item {
+    margin-bottom: 12px;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--color-fg-muted);
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: monospace;
+    /* 像截圖那樣的數字字體 */
+  }
+
+  .category-select {
+    width: 100%;
+    padding: 8px;
+    background-color: var(--color-canvas-subtle);
+    border: 1px solid var(--color-border-default);
+    color: var(--color-fg-default);
+    border-radius: 6px;
+  }
+</style>

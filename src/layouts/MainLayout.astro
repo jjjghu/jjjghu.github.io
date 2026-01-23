@@ -1,0 +1,257 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ThemeIcon from "../components/ThemeIcon.astro";
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  title: string;
+  headings?: MarkdownHeading[];
+}
+
+// 1. 接收 headings 參數 (Astro 會自動傳入 Markdown 的標題資訊)
+const { title, headings } = Astro.props;
+
+// 簡單判斷：如果有 headings 且數量大於 0, 代表這是一篇需要目錄的文章
+const showTOC = headings && headings.length > 0;
+---
+
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <script is:inline>
+      const theme = (() => {
+        if (
+          typeof localStorage !== "undefined" &&
+          localStorage.getItem("theme")
+        ) {
+          return localStorage.getItem("theme");
+        }
+        if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+          return "light";
+        }
+        return "dark";
+      })();
+      if (theme === "light") {
+        document.documentElement.classList.add("light");
+      } else {
+        document.documentElement.classList.remove("light");
+      }
+    </script>
+  </head>
+
+  <body>
+    <Header />
+
+    <main class:list={["content", { "has-toc": showTOC }]}>
+      <article class="article-body">
+        <slot />
+      </article>
+
+      {
+        showTOC && (
+          <aside class="toc-sidebar">
+            <div class="toc-container">
+              <h3 class="toc-title">ON THIS PAGE</h3>
+              <ul class="toc-list">
+                {headings.map((heading) => (
+                  // 根據 heading.depth (h2, h3) 設定縮排 class
+                  <li class={`toc-item depth-${heading.depth}`}>
+                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
+        )
+      }
+    </main>
+
+    <Footer />
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll("pre");
+        codeBlocks.forEach((block) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "code-wrapper";
+          const button = document.createElement("button");
+          button.className = "copy-code-btn";
+          button.innerHTML = "<i class='bx bx-copy'></i>";
+          if (block.parentNode) {
+            block.parentNode.insertBefore(wrapper, block);
+            wrapper.appendChild(block);
+            wrapper.appendChild(button);
+          }
+          button.addEventListener("click", async () => {
+            await navigator.clipboard.writeText(block.innerText);
+            button.innerHTML = "<i class='bx bx-check'></i>";
+            button.classList.add("copied");
+            setTimeout(() => {
+              button.innerHTML = "<i class='bx bx-copy'></i>";
+              button.classList.remove("copied");
+            }, 2000);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  /* 基本佈局設定 */
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  /* 預設的 content 樣式 (首頁用) */
+  .content {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    /* 首頁寬度 */
+    margin: 0 auto;
+    padding: 0 1rem 4rem 1rem;
+  }
+
+  /* --- 當有目錄時的特殊佈局 (CSS Grid) --- */
+  .content.has-toc {
+    display: grid;
+    /* 左邊文章(自適應) | 右邊目錄(固定 240px) */
+    grid-template-columns: 1fr 240px;
+    gap: 3rem;
+    /* 中間間距 */
+    align-items: start;
+    /* 讓目錄對齊頂部 */
+  }
+
+  /* --- 目錄側邊欄樣式 --- */
+  .toc-sidebar {
+    position: relative;
+    /* 給內部 sticky 定位用 */
+    height: 100%;
+  }
+
+  .toc-container {
+    position: sticky;
+    /* 讓目錄黏在視窗上方，不會捲走 */
+    top: 2rem;
+    /* 距離頂部的距離 */
+    max-height: 80vh;
+    /* 避免目錄太長超出畫面 */
+    overflow-y: auto;
+    /* 目錄太長時可以捲動 */
+    padding-left: 1rem;
+    border-left: 1px solid var(--color-border-muted);
+    /* 左側分隔線 */
+  }
+
+  .toc-title {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--color-fg-muted);
+    letter-spacing: 1px;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .toc-item a {
+    color: var(--color-fg-muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: block;
+  }
+
+  .toc-item a:hover {
+    color: var(--color-accent-fg);
+    /* 滑鼠移上去變藍色 */
+  }
+
+  /* --- 縮排設定 (處理 h2, h3, h4...) --- */
+  .depth-1 {
+    font-weight: bold;
+    margin-top: 1rem;
+  }
+
+  /* h1 通常不顯示，若有則加粗 */
+  .depth-2 {
+    padding-left: 0;
+  }
+
+  /* h2 不縮排 */
+  .depth-3 {
+    padding-left: 1rem;
+    font-size: 0.85rem;
+  }
+
+  /* h3 縮排 */
+  .depth-4 {
+    padding-left: 2rem;
+    font-size: 0.85rem;
+  }
+
+  /* h4 縮排更多 */
+
+  /* --- RWD 手機版隱藏目錄 --- */
+  @media (max-width: 900px) {
+    .content.has-toc {
+      display: block;
+      /* 取消 Grid，變回單欄 */
+    }
+
+    .toc-sidebar {
+      display: none;
+      /* 手機版隱藏目錄 */
+    }
+  }
+
+  /* 1. 強制把文章內容的第一個標題往上拉，消除預設間距 */
+  .article-body > h1:first-child,
+  .article-body > h2:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    line-height: 1.2;
+    /* 確保行高不會造成誤差 */
+  }
+
+  /* 2. 微調目錄的位置，讓 "ON THIS PAGE" 跟左邊的標題對齊 */
+  .toc-container {
+    position: sticky;
+    top: 2rem;
+    /* 如果覺得還是有點誤差，可以微調這個 margin-top */
+    margin-top: 0.2rem;
+
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-left: 1rem;
+    border-left: 1px solid var(--color-border-muted);
+  }
+</style>

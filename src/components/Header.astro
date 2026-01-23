@@ -1,0 +1,146 @@
+---
+import ThemeIcon from './ThemeIcon.astro';
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-title-row">
+      <a href="/" class="site-title">解題筆記</a>
+      <ThemeIcon />
+    </div>
+
+    <nav class="header-nav-row">
+      <ul class="nav-links">
+        <li><a href="/posts">所有文章</a></li>
+      </ul>
+
+      <form action="/search" method="get" class="search-form">
+        <div class="search-group">
+          <input type="text" name="q" placeholder="搜尋文章..." class="search-input" required />
+          <button type="submit" class="search-btn">
+            <i class='bx bx-search'></i>
+          </button>
+        </div>
+      </form>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background-color: var(--color-canvas-default);
+    border-bottom: 1px solid var(--color-border-muted);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* 第一行樣式 */
+  .header-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .site-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--color-fg-default);
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+
+  /* 第二行導航列樣式 */
+  .header-nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    /* 手機版自動換行 */
+    gap: 1rem;
+  }
+
+  .nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .nav-links a {
+    color: var(--color-fg-default);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    /* 強制大寫 */
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--color-accent-fg);
+    /* 藍色 */
+  }
+
+  /* 搜尋框樣式 */
+  .search-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--color-canvas-subtle);
+  }
+
+  .search-input {
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    color: var(--color-fg-default);
+    outline: none;
+    font-size: 0.9rem;
+    width: 150px;
+    transition: width 0.3s;
+  }
+
+  .search-input:focus {
+    width: 200px;
+    /* 點擊時變寬 */
+  }
+
+  .search-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-fg-muted);
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+
+  .search-btn:hover {
+    color: var(--color-accent-fg);
+  }
+
+  /* RWD 手機版調整 */
+  @media (max-width: 768px) {
+    .header-nav-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .nav-links {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .site-title {
+      font-size: 1.4rem;
+    }
+  }
+</style>

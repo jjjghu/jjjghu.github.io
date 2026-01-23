@@ -1,0 +1,120 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-container">
+
+    <div class="footer-section copyright">
+      <span>Copyright © {currentYear} 解題筆記 All rights reserved.</span>
+    </div>
+
+    <!-- <div class="footer-section subscribe">
+      <form class="subscribe-form">
+        <input type="email" placeholder="訂閱電子報..." class="sub-input">
+        <button type="submit" class="sub-btn">訂閱</button>
+      </form>
+    </div> -->
+
+    <!-- <div class="footer-section social">
+      <ul class="social-links">
+        <li><a href="#"><i class='bx bxl-facebook-circle'></i></a></li>
+        <li><a href="#"><i class='bx bxl-instagram'></i></a></li>
+        <li><a href="#"><i class='bx bxl-github'></i></a></li>
+      </ul>
+    </div> -->
+
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border-muted);
+    padding: 2rem 0;
+    margin-top: 4rem;
+    background-color: var(--color-canvas-subtle);
+    /* 稍微深一點的背景 */
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    /* 左右分散對齊 */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .footer-section {
+    display: flex;
+    align-items: center;
+  }
+
+  /* 版權文字 */
+  .copyright {
+    color: var(--color-fg-muted);
+    font-size: 0.9rem;
+  }
+
+  /* 訂閱表單樣式 */
+  .subscribe-form {
+    display: flex;
+  }
+
+  .sub-input {
+    background-color: var(--color-canvas-default);
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px 0 0 6px;
+    padding: 6px 12px;
+    color: var(--color-fg-default);
+    outline: none;
+  }
+
+  .sub-btn {
+    background-color: var(--color-accent-fg);
+    color: white;
+    border: 1px solid var(--color-accent-fg);
+    border-radius: 0 6px 6px 0;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .sub-btn:hover {
+    opacity: 0.9;
+  }
+
+  /* 社群圖示樣式 */
+  .social-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .social-links a {
+    color: var(--color-fg-muted);
+    font-size: 1.5rem;
+    transition: color 0.2s;
+  }
+
+  .social-links a:hover {
+    color: var(--color-accent-fg);
+  }
+
+  /* 手機版直排 */
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .footer-section {
+      justify-content: center;
+    }
+  }
+</style>
