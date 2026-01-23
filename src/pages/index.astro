@@ -31,6 +31,28 @@ const uniqueTags = Array.from(allTagsCN).sort();
       <!-- 篩選標籤 -->
       <TagFilter tags={uniqueTags} />
 
+      <!-- Sort Dropdown -->
+      <div class="sort-dropdown-container">
+        <button id="sort-btn" class="lang-btn" aria-label="排序">
+          <i class="bx bx-sort-alt-2"></i>
+          <span class="sort-label">日期 (新→舊)</span>
+        </button>
+        <div id="sort-menu" class="sort-menu">
+          <div class="sort-option active" data-field="date" data-order="desc">
+            日期 (新→舊)
+          </div>
+          <div class="sort-option" data-field="date" data-order="asc">
+            日期 (舊→新)
+          </div>
+          <!-- <div class="sort-option" data-field="id" data-order="asc">
+            題號 (小→大)
+          </div>
+          <div class="sort-option" data-field="id" data-order="desc">
+            題號 (大→小)
+          </div> -->
+        </div>
+      </div>
+
       <!-- 語言切換按鈕 -->
       <button id="lang-toggle" class="lang-btn" aria-label="切換語言">
         <span class="lang-text">EN</span>
@@ -72,6 +94,8 @@ const uniqueTags = Array.from(allTagsCN).sort();
   // --- 互動邏輯 Script ---
   let isEnglish = false;
   let selectedTags = new Set();
+  let currentSortField = "date"; // 'date' | 'id'
+  let currentSortOrder = "desc"; // 'asc' | 'desc'
 
   const textSearch = document.getElementById("text-search");
   const langToggle = document.getElementById("lang-toggle");
@@ -81,10 +105,16 @@ const uniqueTags = Array.from(allTagsCN).sort();
   const noResults = document.getElementById("no-results");
   const resultCount = document.getElementById("result-count");
 
+  // Sort Elements
+  const sortBtn = document.getElementById("sort-btn");
+  const sortMenu = document.getElementById("sort-menu");
+  const sortOptions = document.querySelectorAll(".sort-option");
+  const sortLabel = sortBtn?.querySelector(".sort-label");
+
   // 1. 語言切換
   function setLanguage(english: boolean) {
     isEnglish = english;
-    localStorage.setItem("isEnglish", isEnglish);
+    localStorage.setItem("isEnglish", String(isEnglish));
 
     if (langToggle) {
       // @ts-ignore
@@ -101,6 +131,7 @@ const uniqueTags = Array.from(allTagsCN).sort();
 
     // @ts-ignore
     if (textSearch) {
+      // @ts-ignore
       textSearch.placeholder = isEnglish
         ? "Search keywords..."
         : "搜尋題目關鍵字...";
@@ -178,6 +209,9 @@ const uniqueTags = Array.from(allTagsCN).sort();
       noResults.style.display = visibleCount === 0 ? "block" : "none";
       resultCount.textContent = `共 ${visibleCount} 篇`;
     }
+
+    // 篩選後重新排序 (確保順序正確)
+    updateSort();
   }
 
   // 4. Check URL Params (for Header Search)
@@ -187,6 +221,70 @@ const uniqueTags = Array.from(allTagsCN).sort();
     // @ts-ignore
     textSearch.value = q;
     updateFilter();
+  }
+
+  // 5. 排序功能
+  sortBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    sortMenu?.classList.toggle("show");
+  });
+
+  document.addEventListener("click", () => {
+    sortMenu?.classList.remove("show");
+  });
+
+  sortOptions.forEach((option) => {
+    option.addEventListener("click", (e) => {
+      // @ts-ignore
+      const field = e.target.dataset.field;
+      // @ts-ignore
+      const order = e.target.dataset.order;
+
+      currentSortField = field;
+      currentSortOrder = order;
+
+      // Update UI
+      sortOptions.forEach((o) => o.classList.remove("active"));
+      // @ts-ignore
+      e.target.classList.add("active");
+      if (sortLabel) {
+        // @ts-ignore
+        sortLabel.textContent = e.target.textContent;
+      }
+
+      updateSort();
+    });
+  });
+
+  function updateSort() {
+    if (!postList) return;
+
+    const visibleRows = Array.from(rows).filter(
+      (row) =>
+        // @ts-ignore
+        row.style.display !== "none",
+    );
+
+    visibleRows.sort((a, b) => {
+      // @ts-ignore
+      let aVal = a.dataset[currentSortField];
+      // @ts-ignore
+      let bVal = b.dataset[currentSortField];
+
+      // 轉為數字比較
+      aVal = Number(aVal);
+      bVal = Number(bVal);
+
+      if (currentSortOrder === "asc") {
+        return aVal - bVal;
+      } else {
+        return bVal - aVal;
+      }
+    });
+
+    // DOM Reorder
+    // 注意: appendChild 會移動已存在的元素，而不是複製
+    visibleRows.forEach((row) => postList.appendChild(row));
   }
 </script>
 
@@ -251,6 +349,47 @@ const uniqueTags = Array.from(allTagsCN).sort();
 
   .lang-btn:hover {
     background-color: var(--color-border-default);
+  }
+
+  /* Sort Dropdown Styles */
+  .sort-dropdown-container {
+    position: relative;
+  }
+
+  .sort-menu {
+    position: absolute;
+    top: 110%;
+    right: 0; /* Align right to avoid overflow */
+    min-width: 160px;
+    background-color: var(--color-canvas-overlay);
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sort-menu.show {
+    display: flex;
+  }
+
+  .sort-option {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: var(--color-fg-default);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .sort-option:hover {
+    background-color: var(--color-canvas-subtle);
+  }
+
+  .sort-option.active {
+    background-color: rgba(56, 139, 253, 0.15);
+    color: #58a6ff;
   }
 
   /* 列表樣式 */

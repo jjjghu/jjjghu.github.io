@@ -47,6 +47,8 @@ const dateCN = formatDateCN(post.data.date);
     class="file-row"
     data-search={searchContent}
     data-tags-cn={cnTags.join(",")}
+    data-date={new Date(post.data.date).valueOf()}
+    data-id={Number(post.data.problem_id) || 0}
 >
     <div class="col-icon">
         <i class="bx bx-file-blank"></i>
