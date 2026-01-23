@@ -1,0 +1,174 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { LEETCODE_COLLECTION } from "../constants";
+import type { PostEntry } from "../types";
+
+import TagBadge from "../components/TagBadge.astro";
+
+// 1. 生成靜態路徑
+export async function getStaticPaths() {
+    const posts = await getCollection(LEETCODE_COLLECTION);
+    return posts.map((post: PostEntry) => {
+        return {
+            params: { slug: post.slug },
+            props: { post },
+        };
+    });
+}
+interface Props {
+    post: PostEntry;
+}
+
+// 2. 取得資料
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const tags = post.data.tags || [];
+---
+
+<Layout title={post.data.title} headings={headings}>
+    <div class="post-card">
+        <div class="post-header-row">
+            <h1 id="post-title">
+                <a
+                    href={post.data.link}
+                    id="post-link"
+                    data-cn-title={post.data.title}
+                    data-cn-link={post.data.link}
+                    data-en-title={post.data.en_title || post.data.title}
+                    data-en-link={post.data.en_link || post.data.link}
+                >
+                    {post.data.title}
+                </a>
+            </h1>
+
+            {
+                post.data.category === LEETCODE_COLLECTION && (
+                    <button
+                        id="post-lang-toggle"
+                        class="lang-btn"
+                        aria-label="切換語言"
+                    >
+                        <span class="lang-text">EN</span>
+                    </button>
+                )
+            }
+        </div>
+
+        <div class="tags-container">
+            {tags.map((tag) => <TagBadge tag={tag} />)}
+        </div>
+
+        <article>
+            <Content />
+        </article>
+    </div>
+
+    <script>
+        const langToggle = document.getElementById("post-lang-toggle");
+        const postLink = document.getElementById("post-link");
+        const titleLink = document.querySelector("#post-title a");
+        let isEnglish = false;
+
+        // @ts-ignore
+        function setLanguage(english) {
+            isEnglish = english;
+            localStorage.setItem("isEnglish", String(isEnglish)); // Sync state
+
+            if (langToggle) {
+                // @ts-ignore
+                langToggle.querySelector(".lang-text").textContent = isEnglish
+                    ? "EN"
+                    : "中";
+            }
+
+            if (postLink) {
+                // @ts-ignore
+                postLink.textContent = isEnglish
+                    ? postLink.dataset.enTitle
+                    : postLink.dataset.cnTitle;
+                // @ts-ignore
+                postLink.href = isEnglish
+                    ? postLink.dataset.enLink
+                    : postLink.dataset.cnLink;
+            }
+        }
+
+        // Initialize state from localStorage
+        if (localStorage.getItem("isEnglish") === "true") {
+            setLanguage(true);
+        }
+
+        langToggle?.addEventListener("click", () => {
+            setLanguage(!isEnglish);
+        });
+    </script>
+
+    <style>
+        .post-card {
+            background-color: var(--color-card-bg);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            padding: 2rem;
+            padding-top: 2rem; /* Restore padding */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .post-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align top in case title wraps */
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-header-row h1 {
+            margin: 0;
+            line-height: 1.3;
+            flex: 1; /* Title takes available space */
+        }
+
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background-color: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            color: var(--color-fg-default);
+            cursor: pointer;
+            font-size: 0.85rem;
+            height: 32px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0; /* Prevent button from shrinking */
+        }
+
+        .lang-btn:hover {
+            background-color: var(--color-border-default);
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 2rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .post-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .post-header-row {
+                flex-direction: column-reverse; /* Put button on top or maintain row? */
+                /* Let's keep it row but ensure wrapping if needed, though title is usually short enough. 
+                   Actually, column-reverse might be weird. Let's stick to row. */
+                align-items: center;
+            }
+        }
+    </style>
+</Layout>

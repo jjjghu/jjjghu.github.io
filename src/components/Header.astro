@@ -1,24 +1,31 @@
 ---
-import ThemeIcon from './ThemeIcon.astro';
+
 ---
 
 <header class="site-header">
   <div class="header-inner">
     <div class="header-title-row">
       <a href="/" class="site-title">解題筆記</a>
-      <ThemeIcon />
     </div>
 
     <nav class="header-nav-row">
       <ul class="nav-links">
-        <li><a href="/posts">所有文章</a></li>
+        <li><a href="/" class="active">所有文章</a></li>
+        <!-- <li><a href="/LeetCode">LeetCode</a></li> -->
+        <!-- <li><a href="/CodeForce">CodeForce</a></li> -->
       </ul>
 
-      <form action="/search" method="get" class="search-form">
+      <form action="/" method="get" class="search-form">
         <div class="search-group">
-          <input type="text" name="q" placeholder="搜尋文章..." class="search-input" required />
+          <input
+            type="text"
+            name="q"
+            placeholder="搜尋文章..."
+            class="search-input"
+            required
+          />
           <button type="submit" class="search-btn">
-            <i class='bx bx-search'></i>
+            <i class="bx bx-search"></i>
           </button>
         </div>
       </form>

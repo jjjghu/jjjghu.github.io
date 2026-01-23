@@ -1,0 +1,37 @@
+---
+import tagMapping from "../data/tag_mapping.json";
+import { getTagCN, getTagEN } from "../utils/postHelper";
+
+interface Props {
+    tag: string;
+}
+
+const { tag } = Astro.props;
+const tagCN = getTagCN(tag);
+const tagEN = getTagEN(tag);
+---
+
+<span class="tag-badge">
+    <span class="tag-content" data-cn={tagCN} data-en={tagEN}>{tagCN}</span>
+</span>
+
+<style>
+    /* 標籤樣式 (深灰色膠囊) */
+    .tag-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 10px;
+        font-size: 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(240, 246, 252, 0.1);
+        background-color: #2d333b;
+        color: #c9d1d9;
+        white-space: nowrap;
+    }
+
+    :global(.light) .tag-badge {
+        background-color: #f6f8fa;
+        color: #24292f;
+        border-color: #d0d7de;
+    }
+</style>
