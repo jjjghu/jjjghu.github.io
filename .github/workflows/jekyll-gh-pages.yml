@@ -1,0 +1,42 @@
+name: Deploy to GitHub Pages
+
+on:
+  # 當 push 到 main 分支時觸發部署
+  push:
+    branches: [ main ]
+  # 允許手動觸發
+  workflow_dispatch:
+
+# 設定權限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 設定並發策略 (避免多個部署同時跑)
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v4
+      
+      - name: Install, build, and upload your site
+        uses: withastro/action@v2
+        # 如果你用 pnpm 或 yarn，這裡會自動偵測
+        # 這裡會自動執行 npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
