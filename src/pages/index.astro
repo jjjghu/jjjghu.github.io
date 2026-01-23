@@ -1,176 +1,329 @@
 ---
-import MainLayout from '../layouts/MainLayout.astro';
+import Layout from "../layouts/Layout.astro";
+import PostRow from "../components/PostRow.astro";
+import TagFilter from "../components/TagFilter.astro";
+import { sortPostsByDate, getAllUniqueTags } from "../utils/postHelper.ts";
+import { getCollection } from "astro:content";
+import { LEETCODE_COLLECTION } from "../constants";
 
-// 1. 自動抓取 posts 資料夾下所有的 .md 檔案
-const allPosts = await Astro.glob('./posts/*.md');
+// 抓取文章並排序
+const sortedPosts = sortPostsByDate(await getCollection(LEETCODE_COLLECTION));
 
-// 2. 為了演示，我們把文章順序反轉（讓最新的在上面），並只取前 10 篇
-const recentPosts = allPosts.reverse().slice(0, 10);
+// 獲取所有標籤
+const allTagsCN = getAllUniqueTags(sortedPosts);
 
-// 3. 統計文章總數
-const totalPosts = allPosts.length;
+const uniqueTags = Array.from(allTagsCN).sort();
 ---
 
-<MainLayout title="解題紀錄">
-  <div class="home-container">
-
-    <div class="main-column">
-
-      <!-- <section class="info-card">
-        <h2 class="section-title"></h2>
-        <ul class="menu-list">
-          <li><strong>【】</strong></li>
-          <li><strong>【】</strong></li>
-          <li><strong>【】</strong></li>
-          <li><strong>【】</strong></li>
-          <li><strong>【】</strong></li>
-        </ul>
-      </section> -->
-
-      <section class="info-card">
-        <h2 class="section-title">最新文章 Recent Posts</h2>
-        <ul class="post-list">
-          {recentPosts.map((post) => (
-          <li>
-            <span class="post-tag"></span>
-            <a href={post.url}>{post.frontmatter.title}</a>
-          </li>
-          ))}
-        </ul>
-      </section>
-    </div>
-
-    <aside class="sidebar-column">
-
-      <div class="sidebar-card">
-        <!-- <h3 class="sidebar-title">STATISTICS</h3>
-        <div class="stat-item">
-          <span class="stat-label">Total Views:</span>
-          <span class="stat-value">33050336</span>
-        </div> -->
-        <div class="stat-item">
-          <span class="stat-label">總文章數量:</span>
-          <span class="stat-value">{totalPosts}</span>
-        </div>
+<Layout title="所有文章">
+  <div class="page-container">
+    <div class="filter-bar">
+      <div class="search-wrapper">
+        <i class="bx bx-search search-icon"></i>
+        <input
+          type="text"
+          id="text-search"
+          placeholder="搜尋題目關鍵字..."
+          autocomplete="off"
+        />
       </div>
 
-      <!-- <div class="sidebar-card">
-        <h3 class="sidebar-title">BY CATEGORY</h3>
-        <select class="category-select">
-          <option>選取分類</option>
-          <option>Dynamic Programming</option>
-          <option>Graph Theory</option>
-          <option>Greedy</option>
-        </select>
-      </div> -->
+      <!-- 篩選標籤 -->
+      <TagFilter tags={uniqueTags} />
 
-    </aside>
+      <!-- 語言切換按鈕 -->
+      <button id="lang-toggle" class="lang-btn" aria-label="切換語言">
+        <span class="lang-text">EN</span>
+      </button>
+
+      <!-- 篩選結果數量 -->
+      <div class="result-count" id="result-count">
+        共 {sortedPosts.length} 篇
+      </div>
+    </div>
+
+    <div class="file-list-container">
+      <div class="file-list-header">
+        <div class="col-icon"></div>
+        <div class="col-title">題目 Title</div>
+        <div class="col-tags">標籤 Tags</div>
+        <div class="col-date">日期 Date</div>
+      </div>
+
+      <div id="post-list">
+        {
+          sortedPosts.map((post) => {
+            return <PostRow post={post} />;
+          })
+        }
+      </div>
+
+      <div
+        id="no-results"
+        style="display: none; padding: 2rem; text-align: center; color: var(--color-fg-muted);"
+      >
+        沒有找到符合的題目。
+      </div>
+    </div>
   </div>
-</MainLayout>
+</Layout>
 
-<style>
-  /* --- 佈局設定 --- */
-  .home-container {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    /* 左側自適應，右側固定 280px */
-    gap: 24px;
-    align-items: start;
-  }
+<script>
+  // --- 互動邏輯 Script ---
+  let isEnglish = false;
+  let selectedTags = new Set();
 
-  /* RWD: 手機版變成單欄 */
-  @media (max-width: 768px) {
-    .home-container {
-      grid-template-columns: 1fr;
+  const textSearch = document.getElementById("text-search");
+  const langToggle = document.getElementById("lang-toggle");
+  const postList = document.getElementById("post-list");
+  // @ts-ignore
+  const rows = postList.querySelectorAll(".file-row");
+  const noResults = document.getElementById("no-results");
+  const resultCount = document.getElementById("result-count");
+
+  // 1. 語言切換
+  function setLanguage(english: boolean) {
+    isEnglish = english;
+    localStorage.setItem("isEnglish", isEnglish);
+
+    if (langToggle) {
+      // @ts-ignore
+      langToggle.querySelector(".lang-text").textContent = isEnglish
+        ? "EN"
+        : "中";
+    }
+
+    // 切換所有的 data-cn / data-en 顯示
+    document.querySelectorAll("[data-cn]").forEach((el) => {
+      // @ts-ignore
+      el.textContent = isEnglish ? el.dataset.en : el.dataset.cn;
+    });
+
+    // @ts-ignore
+    if (textSearch) {
+      textSearch.placeholder = isEnglish
+        ? "Search keywords..."
+        : "搜尋題目關鍵字...";
     }
   }
 
-  /* --- 卡片通用樣式 (模擬 GitHub Box 風格) --- */
-  .info-card,
-  .sidebar-card {
-    background-color: var(--color-canvas-default);
-    border: 1px solid var(--color-border-muted);
-    border-radius: 6px;
-    padding: 16px;
-    /* 這裡可以調整內距 */
-    margin-bottom: 24px;
+  // 初始化狀態
+  if (localStorage.getItem("isEnglish") === "true") {
+    setLanguage(true);
   }
 
-  /* 如果想要更像你的截圖（有明顯的區塊背景），可以用這個顏色：
-     background-color: var(--color-canvas-subtle); 
-  */
+  langToggle?.addEventListener("click", () => {
+    setLanguage(!isEnglish);
+  });
 
-  /* --- 標題樣式 --- */
-  .section-title {
-    font-size: 1.5rem;
-    border-bottom: 1px solid var(--color-border-muted);
-    padding-bottom: 0.5rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    color: var(--color-accent-fg);
-    /* 使用藍色標題 */
+  // 2. 監聽標籤篩選事件 (來自 TagFilter 元件)
+  let filterLogic = "AND"; // 預設為與邏輯
+
+  document.addEventListener("tag-filter-change", (e) => {
+    // @ts-ignore
+    const newTags = e.detail.selectedTags;
+    // @ts-ignore
+    const logic = e.detail.logic; // 取得邏輯: 'AND' | 'OR'
+
+    selectedTags = new Set(newTags);
+    if (logic) filterLogic = logic;
+
+    updateFilter();
+  });
+
+  // 3. 核心篩選函式
+  textSearch?.addEventListener("input", updateFilter);
+
+  function updateFilter() {
+    // @ts-ignore
+    const term = textSearch.value.toLowerCase();
+    let visibleCount = 0;
+
+    rows.forEach((row) => {
+      // @ts-ignore
+      const rowTags = row.dataset.tagsCn.split(",");
+      // @ts-ignore
+      const searchContent = row.dataset.search;
+
+      // 邏輯: (標籤符合) AND (搜尋文字符合)
+      let matchTags;
+
+      if (selectedTags.size === 0) {
+        matchTags = true;
+      } else {
+        if (filterLogic === "OR") {
+          // OR: 只要任一選中標籤存在於文章中即可
+          matchTags = Array.from(selectedTags).some((t) => rowTags.includes(t));
+        } else {
+          // AND: 所有選中標籤都必須存在於文章中 (預設)
+          matchTags = Array.from(selectedTags).every((t) =>
+            rowTags.includes(t),
+          );
+        }
+      }
+
+      const matchText = searchContent.includes(term);
+
+      if (matchTags && matchText) {
+        // @ts-ignore
+        row.style.display = "flex";
+        visibleCount++;
+      } else {
+        // @ts-ignore
+        row.style.display = "none";
+      }
+    });
+
+    if (noResults && resultCount) {
+      noResults.style.display = visibleCount === 0 ? "block" : "none";
+      resultCount.textContent = `共 ${visibleCount} 篇`;
+    }
   }
 
-  .sidebar-title {
-    font-size: 0.85rem;
-    font-weight: bold;
+  // 4. Check URL Params (for Header Search)
+  const urlParams = new URLSearchParams(window.location.search);
+  const q = urlParams.get("q");
+  if (q && textSearch) {
+    // @ts-ignore
+    textSearch.value = q;
+    updateFilter();
+  }
+</script>
+
+<style>
+  /* --- 樣式區 (保持你原本喜歡的深色風格) --- */
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--color-fg-muted);
-    text-transform: uppercase;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    letter-spacing: 1px;
   }
 
-  /* --- 列表樣式 --- */
-  .menu-list,
-  .post-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .menu-list li,
-  .post-list li {
-    padding: 8px 0;
-    border-bottom: 1px solid var(--color-border-muted);
-    /* 分隔線 */
-  }
-
-  .menu-list li:last-child,
-  .post-list li:last-child {
-    border-bottom: none;
-  }
-
-  .post-tag {
-    color: var(--color-accent-fg);
-    font-weight: bold;
-    margin-right: 4px;
-  }
-
-  /* --- 右側欄細節 --- */
-  .stat-item {
-    margin-bottom: 12px;
-  }
-
-  .stat-label {
-    display: block;
-    font-size: 0.9rem;
-    color: var(--color-fg-muted);
-  }
-
-  .stat-value {
-    font-size: 1.2rem;
-    font-weight: 600;
-    font-family: monospace;
-    /* 像截圖那樣的數字字體 */
-  }
-
-  .category-select {
+  #text-search {
     width: 100%;
-    padding: 8px;
+    padding: 8px 12px 8px 36px;
     background-color: var(--color-canvas-subtle);
     border: 1px solid var(--color-border-default);
-    color: var(--color-fg-default);
     border-radius: 6px;
+    color: var(--color-fg-default);
+    outline: none;
+  }
+
+  #text-search:focus {
+    border-color: var(--color-accent-fg);
+    background-color: var(--color-canvas-default);
+  }
+
+  .lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background-color: var(--color-canvas-subtle);
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    color: var(--color-fg-default);
+    cursor: pointer;
+    font-size: 0.9rem;
+    height: 38px;
+    transition: all 0.2s;
+  }
+
+  .lang-btn:hover {
+    background-color: var(--color-border-default);
+  }
+
+  /* 列表樣式 */
+  .file-list-container {
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    background-color: var(--color-card-bg); /* Use card bg for consistency */
+    overflow: hidden;
+  }
+
+  .file-list-header {
+    display: flex;
+    padding: 16px;
+    background-color: var(--color-canvas-subtle);
+    border-bottom: 1px solid var(--color-border-default);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-fg-default);
+  }
+
+  .col-icon {
+    width: 32px;
+    color: var(--color-fg-muted);
+  }
+
+  .col-title {
+    flex: 2;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1rem;
+  }
+  .col-tags {
+    flex: 1.5;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .col-date {
+    width: 120px;
+    text-align: right;
+    color: var(--color-fg-muted);
+    font-size: 0.85rem;
+  }
+  .result-count {
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+    margin-left: auto;
+  }
+
+  @media (max-width: 768px) {
+    .file-list-header,
+    .col-icon {
+      display: none;
+    }
+    .search-wrapper {
+      min-width: 100%;
+      order: 1;
+    }
+    /* TagFilter 元件會自己處理樣式，這裡只需要調整順序 */
+    :global(.tag-filter-container) {
+      order: 2;
+    }
+    .lang-btn {
+      order: 3;
+    }
+    .result-count {
+      order: 4;
+      width: 100%;
+      text-align: right;
+      margin-top: 8px;
+    }
   }
 </style>

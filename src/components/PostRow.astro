@@ -1,0 +1,146 @@
+---
+import TagBadge from "./TagBadge.astro";
+import { getTagCN, getTagEN } from "../utils/postHelper";
+import type { PostEntry } from "../types";
+
+interface Props {
+    post: PostEntry;
+}
+
+const { post } = Astro.props;
+
+const cnTitle = post.data.title;
+const enTitle = post.data.en_title || cnTitle;
+const rawTags = post.data.tags || [];
+
+const cnTags = rawTags.map(getTagCN);
+const enTags = rawTags.map(getTagEN);
+
+// 組合搜尋字串 (包含中英文標題與標籤)
+const searchContent =
+    `${cnTitle} ${enTitle} ${cnTags.join(" ")} ${enTags.join(" ")}`.toLowerCase();
+
+function formatDateEN(dateStr: string) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    });
+}
+
+function formatDateCN(dateStr: string) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("zh-TW", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
+}
+const dateEN = formatDateEN(post.data.date);
+const dateCN = formatDateCN(post.data.date);
+---
+
+<div
+    class="file-row"
+    data-search={searchContent}
+    data-tags-cn={cnTags.join(",")}
+>
+    <div class="col-icon">
+        <i class="bx bx-file-blank"></i>
+    </div>
+
+    <div class="col-title">
+        <a href={`/${post.slug}`} class="post-link">
+            <span class="title-text" data-cn={cnTitle} data-en={enTitle}>
+                {cnTitle}
+            </span>
+        </a>
+    </div>
+
+    <div class="col-tags">
+        <div class="tags-wrapper">
+            {
+                enTags.map((tag: string) => {
+                    return <TagBadge tag={tag} />;
+                })
+            }
+        </div>
+    </div>
+
+    <div class="col-date" data-cn={dateCN} data-en={dateEN}>{dateCN}</div>
+</div>
+
+<style>
+    .file-row {
+        display: flex;
+        padding: 10px 16px;
+        border-top: 1px solid var(--color-border-muted);
+        align-items: center;
+    }
+    .file-row:first-child {
+        border-top: none;
+    }
+    .file-row:hover {
+        background-color: var(--color-canvas-subtle);
+    }
+
+    .col-icon {
+        width: 32px;
+        color: var(--color-fg-muted);
+    }
+
+    .col-title {
+        flex: 2;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 1rem;
+    }
+    .post-link {
+        color: var(--color-fg-default);
+        text-decoration: none;
+    }
+    .post-link:hover {
+        color: var(--color-accent-fg);
+        text-decoration: underline;
+    }
+
+    .col-tags {
+        flex: 1.5;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+    .tags-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .col-date {
+        width: 120px;
+        text-align: right;
+        color: var(--color-fg-muted);
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+        .col-icon {
+            display: none;
+        }
+        .file-row {
+            flex-wrap: wrap;
+            padding: 12px;
+        }
+        .col-title,
+        .col-tags,
+        .col-date {
+            flex: 100%;
+            margin-bottom: 6px;
+        }
+    }
+</style>

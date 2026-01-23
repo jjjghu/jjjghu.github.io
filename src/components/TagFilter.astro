@@ -1,0 +1,454 @@
+---
+import { getTagCN, getTagEN } from "../utils/postHelper.ts";
+
+interface Props {
+    tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+
+<div class="tag-filter-container">
+    <button id="tag-filter-btn" class="filter-btn">
+        <i class="bx bx-filter-alt"></i> 篩選標籤
+        <span id="selected-count" class="badge" style="display:none">0</span>
+    </button>
+
+    <div id="tag-dropdown" class="tag-dropdown">
+        <!-- 1. 搜尋區 -->
+        <div class="dropdown-search-container">
+            <i class="bx bx-search search-icon"></i>
+            <input
+                type="text"
+                id="tag-search-input"
+                class="dropdown-search-input"
+                placeholder="搜尋標籤..."
+                autocomplete="off"
+            />
+        </div>
+
+        <!-- 2. 標籤列表 -->
+        <div class="tag-chips-container" id="tag-list">
+            {
+                tags.map((tag) => {
+                    const tagCN = getTagCN(tag);
+                    const tagEN = getTagEN(tag);
+                    return (
+                        <label class="tag-chip">
+                            <input type="checkbox" value={tagCN} />
+                            <span
+                                class="chip-content"
+                                data-cn={tagCN}
+                                data-en={tagEN}
+                            >
+                                {tagCN}
+                            </span>
+                        </label>
+                    );
+                })
+            }
+        </div>
+
+        <!-- 3. 底部操作區 -->
+        <div class="dropdown-footer">
+            <div class="footer-left">
+                <button
+                    id="logic-toggle"
+                    class="logic-btn"
+                    title="點擊切換篩選邏輯"
+                >
+                    <span class="logic-label">配對:</span>
+                    <span id="logic-text" class="logic-value"
+                        >包含所有 (AND)</span
+                    >
+                </button>
+                <button id="clear-tags" class="footer-btn text-btn">
+                    <i class="bx bx-refresh"></i> 重置
+                </button>
+            </div>
+            <div class="footer-right">
+                <button id="apply-tags" class="footer-btn primary-btn">
+                    套用
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // @ts-ignore
+    let selectedTags = new Set();
+    let filterLogic = "AND"; // 'AND' | 'OR'
+
+    const tagFilterBtn = document.getElementById("tag-filter-btn");
+    const tagDropdown = document.getElementById("tag-dropdown");
+
+    // Footer controls
+    const clearTagsBtn = document.getElementById("clear-tags");
+    const applyTagsBtn = document.getElementById("apply-tags");
+    const logicToggleBtn = document.getElementById("logic-toggle");
+    const logicText = document.getElementById("logic-text");
+
+    const selectedCountBadge = document.getElementById("selected-count");
+    const tagSearchInput = document.getElementById("tag-search-input");
+    const tagList = document.getElementById("tag-list");
+
+    const checkboxes = document.querySelectorAll(
+        '.tag-chip input[type="checkbox"]',
+    );
+
+    // --- 1. Dropdown Toggle ---
+    tagFilterBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        tagDropdown?.classList.toggle("show");
+
+        //若是打開狀態，聚焦搜尋框
+        if (tagDropdown?.classList.contains("show")) {
+            setTimeout(() => {
+                tagSearchInput?.focus();
+            }, 100);
+        }
+    });
+
+    document.addEventListener("click", (e) => {
+        const target = e.target as Node;
+        if (
+            tagDropdown &&
+            tagFilterBtn &&
+            !tagDropdown.contains(target) &&
+            !tagFilterBtn.contains(target)
+        ) {
+            tagDropdown.classList.remove("show");
+        }
+    });
+
+    // --- 2. Search Logic ---
+    tagSearchInput?.addEventListener("input", (e) => {
+        // @ts-ignore
+        const term = e.target.value.toLowerCase();
+        const chips = tagList?.querySelectorAll(".tag-chip");
+
+        chips?.forEach((chip) => {
+            const span = chip.querySelector(".chip-content");
+            if (span) {
+                // @ts-ignore
+                const cn = (span.dataset.cn || "").toLowerCase();
+                // @ts-ignore
+                const en = (span.dataset.en || "").toLowerCase();
+
+                if (cn.includes(term) || en.includes(term)) {
+                    // @ts-ignore
+                    chip.style.display = "inline-flex";
+                } else {
+                    // @ts-ignore
+                    chip.style.display = "none";
+                }
+            }
+        });
+    });
+
+    // --- 3. Checkbox Selection (UI only, defer dispatch) ---
+    checkboxes.forEach((box) => {
+        box.addEventListener("change", (e) => {
+            // @ts-ignore
+            const val = e.target.value;
+            // @ts-ignore
+            if (e.target.checked) {
+                selectedTags.add(val);
+            } else {
+                selectedTags.delete(val);
+            }
+            // UPDATE UI Badge immediately for feedback
+            updateBadge();
+        });
+    });
+
+    // --- 4. Logic Toggle ---
+    logicToggleBtn?.addEventListener("click", () => {
+        filterLogic = filterLogic === "AND" ? "OR" : "AND";
+        // Update Text
+        if (logicText) {
+            logicText.textContent =
+                filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
+        }
+        // Update active style
+        logicToggleBtn?.classList.toggle("is-or", filterLogic === "OR");
+    });
+
+    // --- 5. Actions: Clear & Apply ---
+
+    // Clear: Clears immediately and Updates
+    clearTagsBtn?.addEventListener("click", () => {
+        selectedTags.clear();
+        // @ts-ignore
+        checkboxes.forEach((box) => (box.checked = false));
+        updateBadge();
+
+        // Clear search
+        if (tagSearchInput) {
+            // @ts-ignore
+            tagSearchInput.value = "";
+            tagSearchInput.dispatchEvent(new Event("input"));
+        }
+
+        dispatchChange(); // Reset implies applying the clear
+        tagDropdown?.classList.remove("show"); // Optional, maybe user wants to close
+    });
+
+    // Apply: Dispatches the current state
+    applyTagsBtn?.addEventListener("click", () => {
+        dispatchChange();
+        tagDropdown?.classList.remove("show");
+    });
+
+    function updateBadge() {
+        if (selectedCountBadge && tagFilterBtn) {
+            if (selectedTags.size > 0) {
+                selectedCountBadge.textContent = selectedTags.size.toString();
+                selectedCountBadge.style.display = "inline-block";
+                tagFilterBtn.classList.add("active");
+            } else {
+                selectedCountBadge.style.display = "none";
+                tagFilterBtn.classList.remove("active");
+            }
+        }
+    }
+
+    function dispatchChange() {
+        const event = new CustomEvent("tag-filter-change", {
+            detail: {
+                selectedTags: Array.from(selectedTags),
+                logic: filterLogic,
+            },
+        });
+        document.dispatchEvent(event);
+    }
+</script>
+
+<style>
+    /* --- Main Button --- */
+    .filter-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        background-color: var(--color-canvas-subtle);
+        border: 1px solid var(--color-border-default);
+        border-radius: 6px;
+        color: var(--color-fg-default);
+        cursor: pointer;
+        font-size: 0.9rem;
+        height: 38px;
+        transition: all 0.2s;
+    }
+    .filter-btn:hover {
+        background-color: var(--color-border-default);
+    }
+    .filter-btn.active {
+        background-color: rgba(56, 139, 253, 0.15);
+        color: #58a6ff;
+        border-color: rgba(56, 139, 253, 0.4);
+    }
+
+    .badge {
+        background-color: var(--color-accent-fg);
+        color: white;
+        font-size: 0.75rem;
+        padding: 0 6px;
+        border-radius: 10px;
+        line-height: 1.4;
+    }
+
+    .tag-filter-container {
+        position: relative;
+    }
+
+    /* --- Dropdown --- */
+    .tag-dropdown {
+        position: absolute;
+        top: 110%;
+        left: 0;
+        width: 320px;
+        background-color: var(--color-canvas-overlay);
+        border: 1px solid var(--color-border-default);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        z-index: 100;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .tag-dropdown.show {
+        display: flex;
+    }
+
+    /* --- Search Area --- */
+    .dropdown-search-container {
+        padding: 10px;
+        border-bottom: 1px solid var(--color-border-muted);
+        background-color: var(--color-canvas-default);
+        position: relative;
+    }
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-fg-muted);
+        pointer-events: none;
+    }
+    .dropdown-search-input {
+        width: 100%;
+        padding: 6px 10px 6px 32px;
+        background-color: var(--color-canvas-subtle);
+        border: 1px solid var(--color-border-default);
+        border-radius: 6px;
+        color: var(--color-fg-default);
+        font-size: 0.9rem;
+        outline: none;
+    }
+    .dropdown-search-input:focus {
+        border-color: var(--color-accent-fg);
+        background-color: var(--color-canvas-default);
+    }
+
+    /* --- Chips Area --- */
+    .tag-chips-container {
+        padding: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-content: flex-start;
+        background-color: var(--color-canvas-default);
+    }
+    .tag-chips-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    .tag-chips-container::-webkit-scrollbar-thumb {
+        background-color: var(--color-border-muted);
+        border-radius: 3px;
+    }
+
+    .tag-chip {
+        cursor: pointer;
+        user-select: none;
+    }
+    .tag-chip input {
+        display: none;
+    }
+    .chip-content {
+        display: inline-flex;
+        padding: 4px 10px;
+        font-size: 0.85rem;
+        background-color: var(--color-canvas-subtle);
+        border: 1px solid var(--color-border-muted);
+        border-radius: 20px;
+        color: var(--color-fg-default);
+        transition: all 0.2s ease;
+    }
+    .tag-chip:hover .chip-content {
+        background-color: var(--color-border-default);
+        border-color: var(--color-border-default);
+    }
+    /* Selected State */
+    .tag-chip input:checked + .chip-content {
+        background-color: rgba(56, 139, 253, 0.15);
+        color: #58a6ff;
+        border-color: rgba(56, 139, 253, 0.4);
+    }
+
+    /* --- Footer Area --- */
+    .dropdown-footer {
+        padding: 10px 12px;
+        border-top: 1px solid var(--color-border-muted);
+        background-color: var(--color-canvas-subtle);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .footer-left {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    .footer-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .footer-btn {
+        border: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+        border-radius: 4px;
+        padding: 5px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s;
+    }
+
+    /* Text Button (Reset) */
+    .text-btn {
+        background: none;
+        color: var(--color-fg-muted);
+    }
+    .text-btn:hover {
+        color: var(--color-fg-default);
+        background-color: var(--color-border-muted);
+    }
+
+    /* Primary Button (Apply) */
+    .primary-btn {
+        background-color: var(
+            --color-accent-fg
+        ); /* Ensure this var exists, else #2ea043 */
+        color: white;
+        font-weight: 600;
+    }
+    .primary-btn:hover {
+        opacity: 0.9;
+    }
+
+    /* Logic Toggle Button */
+    .logic-btn {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-size: 0.8rem;
+        color: var(--color-fg-muted);
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+    .logic-btn:hover {
+        background-color: var(--color-border-muted);
+        color: var(--color-fg-default);
+    }
+    .logic-label {
+        font-weight: 400;
+        opacity: 0.8;
+    }
+    .logic-value {
+        font-weight: 600;
+        color: var(--color-accent-fg);
+    }
+
+    .logic-btn.is-or .logic-value {
+        color: #d29922; /* Warning color/Yellow-ish for OR distiction */
+    }
+
+    @media (max-width: 768px) {
+        .tag-filter-container {
+            order: 2;
+        }
+        .tag-dropdown {
+            width: 300px;
+        }
+    }
+</style>
