@@ -98,12 +98,17 @@ const tags = post.data.tags || [];
                     ? postLink.dataset.enLink
                     : postLink.dataset.cnLink;
             }
+
+            // 標籤與其他元素的通用文字替換
+            document.querySelectorAll("[data-cn]").forEach((el) => {
+                // @ts-ignore
+                el.textContent = isEnglish ? el.dataset.en : el.dataset.cn;
+            });
         }
 
         // Initialize state from localStorage
-        if (localStorage.getItem("isEnglish") === "true") {
-            setLanguage(true);
-        }
+        const savedIsEnglish = localStorage.getItem("isEnglish") === "true";
+        setLanguage(savedIsEnglish);
 
         langToggle?.addEventListener("click", () => {
             setLanguage(!isEnglish);
