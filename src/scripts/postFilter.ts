@@ -8,7 +8,6 @@ export class PostFilterManager {
     private categoryParam: string | null = null;
 
     private textSearch: HTMLInputElement | null;
-    private langToggle: HTMLElement | null;
     private postList: HTMLElement | null;
     private rows: NodeListOf<HTMLElement>;
     private noResults: HTMLElement | null;
@@ -16,7 +15,6 @@ export class PostFilterManager {
 
     constructor() {
         this.textSearch = document.getElementById("text-search") as HTMLInputElement;
-        this.langToggle = document.getElementById("lang-toggle");
         this.postList = document.getElementById("post-list");
         this.rows = this.postList?.querySelectorAll(".file-row") as NodeListOf<HTMLElement>;
         this.noResults = document.getElementById("no-results");
@@ -36,12 +34,13 @@ export class PostFilterManager {
 
     private init() {
         // Init Lang
-        if (localStorage.getItem("isEnglish") === "true") {
-            this.setLanguage(true);
-        }
+        this.isEnglish = localStorage.getItem("isEnglish") === "true";
 
         // Listeners
-        this.langToggle?.addEventListener("click", () => this.setLanguage(!this.isEnglish));
+        document.addEventListener("language-change", (e: any) => {
+            this.isEnglish = e.detail.isEnglish;
+            this.updateFilter();
+        });
         this.textSearch?.addEventListener("input", () => this.updateFilter());
 
         // Custom Events
@@ -96,27 +95,7 @@ export class PostFilterManager {
         this.updateFilter();
     }
 
-    private setLanguage(english: boolean) {
-        this.isEnglish = english;
-        localStorage.setItem("isEnglish", String(this.isEnglish));
 
-        if (this.langToggle) {
-            const langText = this.langToggle.querySelector(".lang-text");
-            if (langText) langText.textContent = this.isEnglish ? "EN" : "中";
-        }
-
-        // Generic Text Replacer
-        document.querySelectorAll("[data-cn]").forEach((el) => {
-            const element = el as HTMLElement;
-            element.textContent = this.isEnglish ? (element.dataset.en || "") : (element.dataset.cn || "");
-        });
-
-        // Placeholder Replacer
-        document.querySelectorAll("[data-cn-placeholder]").forEach((el) => {
-            const element = el as HTMLInputElement;
-            element.placeholder = this.isEnglish ? (element.dataset.enPlaceholder || "") : (element.dataset.cnPlaceholder || "");
-        });
-    }
 
     private updateFilter() {
         if (!this.rows) return;
