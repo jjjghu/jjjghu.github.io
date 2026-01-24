@@ -1,0 +1,154 @@
+---
+
+---
+
+<div class="sort-dropdown-container">
+    <button id="sort-btn" class="sort-btn" aria-label="排序">
+        <i class="bx bx-sort-alt-2"></i>
+        <span class="sort-label">題號 (小→大)</span>
+    </button>
+    <div id="sort-menu" class="sort-menu">
+        <div class="sort-option active" data-field="id" data-order="asc">
+            題號 (小→大)
+        </div>
+        <div class="sort-option" data-field="id" data-order="desc">
+            題號 (大→小)
+        </div>
+        <div class="sort-option" data-field="date" data-order="desc">
+            日期 (新→舊)
+        </div>
+        <div class="sort-option" data-field="date" data-order="asc">
+            日期 (舊→新)
+        </div>
+    </div>
+</div>
+
+<script>
+    const sortBtn = document.getElementById("sort-btn");
+    const sortMenu = document.getElementById("sort-menu");
+    const sortOptions = document.querySelectorAll(".sort-option");
+    const sortLabel = sortBtn?.querySelector(".sort-label");
+
+    // Toggle Menu
+    sortBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sortMenu?.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+        const target = e.target as Node;
+        if (
+            sortMenu &&
+            sortBtn &&
+            !sortMenu.contains(target) &&
+            !sortBtn.contains(target)
+        ) {
+            sortMenu.classList.remove("show");
+        }
+    });
+
+    // Handle Option Click
+    sortOptions.forEach((option) => {
+        option.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent closing menu immediately if we want? Actually commonly we do close it.
+            // TagFilter doesn't seem to close on selection, but sort usually does for single select.
+            // The original code in index.astro didn't explicitly close it inside the option click,
+            // but usually the document click handles outside clicks.
+            // However, for single select, usually you select and it closes.
+            // Let's stick to original behavior or improve it.
+            // The original code:
+            // option.addEventListener("click", ...) -> updates UI -> call updateSort().
+            // It did NOT close the menu explicitly.
+            // I will make it close the menu for better UX, as sorting is a one-time action typically.
+
+            // @ts-ignore
+            const field = e.target.dataset.field;
+            // @ts-ignore
+            const order = e.target.dataset.order;
+
+            // Update UI (active class)
+            sortOptions.forEach((o) => o.classList.remove("active"));
+            // @ts-ignore
+            e.target.classList.add("active");
+
+            // Update Label
+            if (sortLabel) {
+                // @ts-ignore
+                sortLabel.textContent = e.target.textContent.trim();
+            }
+
+            // Close menu
+            sortMenu?.classList.remove("show");
+
+            // Dispatch Event
+            const event = new CustomEvent("sort-change", {
+                detail: {
+                    field,
+                    order,
+                },
+            });
+            document.dispatchEvent(event);
+        });
+    });
+</script>
+
+<style>
+    .sort-dropdown-container {
+        position: relative;
+    }
+
+    .sort-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        background-color: var(--color-canvas-subtle);
+        border: 1px solid var(--color-border-default);
+        border-radius: 6px;
+        color: var(--color-fg-default);
+        cursor: pointer;
+        font-size: 0.9rem;
+        height: 38px;
+        transition: all 0.2s;
+    }
+
+    .sort-btn:hover {
+        background-color: var(--color-border-default);
+    }
+
+    .sort-menu {
+        position: absolute;
+        top: 110%;
+        right: 0; /* Align right to avoid overflow */
+        min-width: 160px;
+        background-color: var(--color-canvas-default);
+        border: 1px solid var(--color-border-default);
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .sort-menu.show {
+        display: flex;
+    }
+
+    .sort-option {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        color: var(--color-fg-default);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .sort-option:hover {
+        background-color: var(--color-canvas-subtle);
+    }
+
+    .sort-option.active {
+        background-color: rgba(56, 139, 253, 0.15);
+        color: #58a6ff;
+    }
+</style>

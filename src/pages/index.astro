@@ -2,12 +2,13 @@
 import Layout from "../layouts/Layout.astro";
 import PostRow from "../components/PostRow.astro";
 import TagFilter from "../components/TagFilter.astro";
-import { sortPostsByDate, getAllUniqueTags } from "../utils/postHelper.ts";
+import SortDropDown from "../components/SortDropDown.astro";
+import { sortPostsById, getAllUniqueTags } from "../utils/postHelper.ts";
 import { getCollection } from "astro:content";
 import { LEETCODE_COLLECTION } from "../constants";
 
-// 抓取文章並排序
-const sortedPosts = sortPostsByDate(await getCollection(LEETCODE_COLLECTION));
+// 抓取文章並排序 (預設: 題號 小 -> 大)
+const sortedPosts = sortPostsById(await getCollection(LEETCODE_COLLECTION));
 
 // 獲取所有標籤
 const allTagsCN = getAllUniqueTags(sortedPosts);
@@ -32,26 +33,7 @@ const uniqueTags = Array.from(allTagsCN).sort();
       <TagFilter tags={uniqueTags} />
 
       <!-- Sort Dropdown -->
-      <div class="sort-dropdown-container">
-        <button id="sort-btn" class="lang-btn" aria-label="排序">
-          <i class="bx bx-sort-alt-2"></i>
-          <span class="sort-label">日期 (新→舊)</span>
-        </button>
-        <div id="sort-menu" class="sort-menu">
-          <div class="sort-option active" data-field="date" data-order="desc">
-            日期 (新→舊)
-          </div>
-          <div class="sort-option" data-field="date" data-order="asc">
-            日期 (舊→新)
-          </div>
-          <!-- <div class="sort-option" data-field="id" data-order="asc">
-            題號 (小→大)
-          </div>
-          <div class="sort-option" data-field="id" data-order="desc">
-            題號 (大→小)
-          </div> -->
-        </div>
-      </div>
+      <SortDropDown />
 
       <!-- 語言切換按鈕 -->
       <button id="lang-toggle" class="lang-btn" aria-label="切換語言">
@@ -94,8 +76,8 @@ const uniqueTags = Array.from(allTagsCN).sort();
   // --- 互動邏輯 Script ---
   let isEnglish = false;
   let selectedTags = new Set();
-  let currentSortField = "date"; // 'date' | 'id'
-  let currentSortOrder = "desc"; // 'asc' | 'desc'
+  let currentSortField = "id"; // 'date' | 'id'
+  let currentSortOrder = "asc"; // 'asc' | 'desc'
 
   const textSearch = document.getElementById("text-search");
   const langToggle = document.getElementById("lang-toggle");
@@ -105,11 +87,7 @@ const uniqueTags = Array.from(allTagsCN).sort();
   const noResults = document.getElementById("no-results");
   const resultCount = document.getElementById("result-count");
 
-  // Sort Elements
-  const sortBtn = document.getElementById("sort-btn");
-  const sortMenu = document.getElementById("sort-menu");
-  const sortOptions = document.querySelectorAll(".sort-option");
-  const sortLabel = sortBtn?.querySelector(".sort-label");
+  // Sort Elements - Moved to SortDropDown.astro
 
   // 1. 語言切換
   function setLanguage(english: boolean) {
@@ -224,36 +202,12 @@ const uniqueTags = Array.from(allTagsCN).sort();
   }
 
   // 5. 排序功能
-  sortBtn?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    sortMenu?.classList.toggle("show");
-  });
-
-  document.addEventListener("click", () => {
-    sortMenu?.classList.remove("show");
-  });
-
-  sortOptions.forEach((option) => {
-    option.addEventListener("click", (e) => {
-      // @ts-ignore
-      const field = e.target.dataset.field;
-      // @ts-ignore
-      const order = e.target.dataset.order;
-
-      currentSortField = field;
-      currentSortOrder = order;
-
-      // Update UI
-      sortOptions.forEach((o) => o.classList.remove("active"));
-      // @ts-ignore
-      e.target.classList.add("active");
-      if (sortLabel) {
-        // @ts-ignore
-        sortLabel.textContent = e.target.textContent;
-      }
-
-      updateSort();
-    });
+  document.addEventListener("sort-change", (e) => {
+    // @ts-ignore
+    currentSortField = e.detail.field;
+    // @ts-ignore
+    currentSortOrder = e.detail.order;
+    updateSort();
   });
 
   function updateSort() {
@@ -349,47 +303,6 @@ const uniqueTags = Array.from(allTagsCN).sort();
 
   .lang-btn:hover {
     background-color: var(--color-border-default);
-  }
-
-  /* Sort Dropdown Styles */
-  .sort-dropdown-container {
-    position: relative;
-  }
-
-  .sort-menu {
-    position: absolute;
-    top: 110%;
-    right: 0; /* Align right to avoid overflow */
-    min-width: 160px;
-    background-color: var(--color-canvas-overlay);
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .sort-menu.show {
-    display: flex;
-  }
-
-  .sort-option {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    color: var(--color-fg-default);
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .sort-option:hover {
-    background-color: var(--color-canvas-subtle);
-  }
-
-  .sort-option.active {
-    background-color: rgba(56, 139, 253, 0.15);
-    color: #58a6ff;
   }
 
   /* 列表樣式 */

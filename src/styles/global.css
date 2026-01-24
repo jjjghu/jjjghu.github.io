@@ -21,8 +21,10 @@
   /* 次要文字顏色 */
   --color-accent-fg: #4E8ED3;
   /* 連結顏色 */
-  --color-neutral-muted: rgba(110, 118, 129, 0.4);
+  --color-neutral-muted: rgba(35, 43, 53, 0.2);
   /* 行內程式碼背景 */
+  --color-border-neutral: rgba(65, 73, 82, 1);
+  /* 行內程式碼邊框 */
 
   /* 新增：頁面背景與卡片背景 (Dark Mode) */
   --color-page-bg: #0d1117;
@@ -48,6 +50,8 @@ html.light {
   /* 連結變深藍 */
   --color-neutral-muted: rgba(175, 184, 193, 0.2);
   /* 行內程式碼背景 */
+  --color-border-neutral: rgba(208, 215, 222, 1);
+  /* 行內程式碼邊框*/
 
   /* 新增：頁面背景與卡片背景 (Light Mode) */
   --color-page-bg: #f6f8fa;
@@ -101,7 +105,7 @@ h6 {
 h1,
 h2 {
   padding-bottom: 0.3em;
-  border-bottom: 1px solid var(--color-border-muted);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 h1 {
@@ -129,21 +133,49 @@ ol {
   padding-left: 2em;
 }
 
+/* 水平分隔線 (Horizontal Rule) */
+hr {
+  height: 1px;
+  /* height: 0.25em; */
+  padding: 0;
+  margin: 24px 0;
+  background-color: var(--color-border-default);
+  border: 0;
+}
+
+/* 引用區塊 (Blockquote) - 類似 GitHub 風格 */
+blockquote {
+  margin: 0 0 16px 0;
+  padding: 0 1em;
+  color: var(--color-fg-muted);
+  border-left: 0.25em solid var(--color-border-default);
+}
+
+blockquote> :first-child {
+  margin-top: 0;
+}
+
+blockquote> :last-child {
+  margin-bottom: 0;
+}
+
 /* --- 關鍵：程式碼樣式 --- */
 
 /* 行內程式碼 (Inline Code) - 就像你圖中的 `i`, `j`, `n-1` */
 code:not(pre code) {
   padding: 0.2em 0.4em;
-  margin: 0;
+  margin: 0 0.2em;
   font-size: 85%;
   background-color: var(--color-neutral-muted);
+  border: 1px solid var(--color-border-neutral);
   border-radius: 6px;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 /* 程式碼區塊 (Code Block) - 使用三個反引號包起來的區域 */
 pre {
-  background-color: var(--color-canvas-subtle);
+  background-color: #24292E !important;
+  /* background-color: var(--color-canvas-subtle; */
   border-radius: 6px;
   padding: 16px;
   overflow: auto;
@@ -196,9 +228,9 @@ pre code {
 
   /* --- 修改這裡：透明背景 + 邊框 --- */
   background-color: transparent;
-  border: 1px solid #c9d1d9;
+  border: 1px solid #30363d;
   /* 使用你設定的邊框色變數 */
-  color: #c9d1d9;
+  color: #8696a9;
 
   /* --- 大小與圓角 --- */
   border-radius: 4px;
