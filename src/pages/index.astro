@@ -48,10 +48,7 @@ const uniqueTags = Array.from(allTagsCN).sort();
         <DifficultyDropDown />
       </div>
 
-      <!-- 語言切換按鈕 -->
-      <button id="lang-toggle" class="lang-btn" aria-label="切換語言">
-        <span class="lang-text">EN</span>
-      </button>
+
 
       <!-- 篩選結果數量 -->
       <div class="result-count" id="result-count">
@@ -92,7 +89,6 @@ const uniqueTags = Array.from(allTagsCN).sort();
 </script>
 
 <style>
-  /* --- 樣式區 (保持你原本喜歡的深色風格) --- */
   .page-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -135,26 +131,8 @@ const uniqueTags = Array.from(allTagsCN).sort();
     background-color: var(--color-canvas-default);
   }
 
-  .lang-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 12px;
-    background-color: var(--color-canvas-subtle);
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
-    color: var(--color-fg-default);
-    cursor: pointer;
-    font-size: 0.9rem;
-    height: 38px;
-    transition: all 0.2s;
-  }
 
-  .lang-btn:hover {
-    background-color: var(--color-border-default);
-  }
 
-  /* 列表樣式 */
   /* 列表樣式 */
   .file-list-container {
     border: 1px solid var(--color-border-default);
@@ -203,9 +181,7 @@ const uniqueTags = Array.from(allTagsCN).sort();
     :global(.tag-filter-container) {
       order: 2;
     }
-    .lang-btn {
-      order: 3;
-    }
+
     .result-count {
       order: 4;
       width: 100%;

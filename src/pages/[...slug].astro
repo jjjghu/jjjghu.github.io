@@ -48,17 +48,7 @@ const tags = post.data.tags || [];
                 </a>
             </h1>
 
-            {
-                (post.data.en_title) && (
-                    <button
-                        id="post-lang-toggle"
-                        class="lang-btn"
-                        aria-label="切換語言"
-                    >
-                        <span class="lang-text">EN</span>
-                    </button>
-                )
-            }
+
         </div>
         <div class="tags-container">
             <DifficultyBadge difficulty={post.data.difficulty} />
@@ -71,22 +61,12 @@ const tags = post.data.tags || [];
     </div>
 
     <script>
-        const langToggle = document.getElementById("post-lang-toggle");
         const postLink = document.getElementById("post-link");
-        const titleLink = document.querySelector("#post-title a");
         let isEnglish = false;
 
         // @ts-ignore
-        function setLanguage(english) {
+        function updatePostLink(english) {
             isEnglish = english;
-            localStorage.setItem("isEnglish", String(isEnglish)); // Sync state
-
-            if (langToggle) {
-                // @ts-ignore
-                langToggle.querySelector(".lang-text").textContent = isEnglish
-                    ? "EN"
-                    : "中";
-            }
 
             if (postLink) {
                 // @ts-ignore
@@ -98,20 +78,15 @@ const tags = post.data.tags || [];
                     ? postLink.dataset.enLink
                     : postLink.dataset.cnLink;
             }
-
-            // 標籤與其他元素的通用文字替換
-            document.querySelectorAll("[data-cn]").forEach((el) => {
-                // @ts-ignore
-                el.textContent = isEnglish ? el.dataset.en : el.dataset.cn;
-            });
         }
 
-        // Initialize state from localStorage
-        const savedIsEnglish = localStorage.getItem("isEnglish") === "true";
-        setLanguage(savedIsEnglish);
+        // Init
+        updatePostLink(localStorage.getItem("isEnglish") === "true");
 
-        langToggle?.addEventListener("click", () => {
-            setLanguage(!isEnglish);
+        // Listen for global change
+        document.addEventListener("language-change", (e) => {
+             // @ts-ignore
+            updatePostLink(e.detail.isEnglish);
         });
     </script>
 
@@ -139,27 +114,7 @@ const tags = post.data.tags || [];
             flex: 1; /* Title takes available space */
         }
 
-        .lang-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 4px 10px;
-            background-color: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px;
-            color: var(--color-fg-default);
-            cursor: pointer;
-            font-size: 0.85rem;
-            height: 32px;
-            transition: all 0.2s;
-            white-space: nowrap;
-            flex-shrink: 0; /* Prevent button from shrinking */
-        }
 
-        .lang-btn:hover {
-            background-color: var(--color-border-default);
-        }
 
         .tags-container {
             display: flex;

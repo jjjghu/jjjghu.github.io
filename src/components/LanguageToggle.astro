@@ -1,0 +1,97 @@
+---
+---
+<button id="lang-toggle" class="lang-toggle-btn" aria-label="切換語言">
+  <span class="lang-text">EN</span>
+</button>
+
+<style>
+  #lang-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 80px; /* 20px (right) + 40px (width) + 20px (gap) */
+    z-index: 1000;
+    background-color: var(--color-canvas-default);
+    border: 1px solid var(--color-border-default);
+    cursor: pointer;
+    color: var(--color-fg-default);
+    padding: 0;
+    width: 40px; 
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  #lang-toggle:hover {
+    background-color: var(--color-canvas-subtle);
+    transform: scale(1.1);
+  }
+</style>
+
+<script is:inline>
+  // 使用 IIFE 避免全域變數污染
+  (function() {
+    const langBtn = document.getElementById("lang-toggle");
+    const langText = langBtn?.querySelector(".lang-text");
+
+    function getStoredLanguage() {
+      if (typeof localStorage !== "undefined" && localStorage.getItem("isEnglish")) {
+        return localStorage.getItem("isEnglish") === "true";
+      }
+      return false; // Default to Chinese
+    }
+
+    function setLanguage(isEnglish) {
+        // 1. Update localStorage
+        localStorage.setItem("isEnglish", String(isEnglish));
+
+        // 2. Update Button Text
+        if (langText) {
+            langText.textContent = isEnglish ? "EN" : "中";
+        }
+
+        // 3. Update Global Data Attributes (Text)
+        document.querySelectorAll("[data-cn]").forEach((el) => {
+            // @ts-ignore
+            el.textContent = isEnglish ? (el.dataset.en || el.dataset.cn) : el.dataset.cn;
+        });
+
+        // 4. Update Placeholders
+        document.querySelectorAll("[data-cn-placeholder]").forEach((el) => {
+            // @ts-ignore
+            el.placeholder = isEnglish 
+                ? (el.dataset.enPlaceholder || el.dataset.cnPlaceholder) 
+                : el.dataset.cnPlaceholder;
+        });
+
+        // 5. Dispatch Event for custom handling (e.g., links, filters)
+        const event = new CustomEvent("language-change", { 
+            detail: { isEnglish } 
+        });
+        document.dispatchEvent(event);
+    }
+
+    // Toggle Click
+    langBtn?.addEventListener("click", () => {
+        const current = getStoredLanguage();
+        setLanguage(!current);
+    });
+
+    // Init Logic on Load
+    // 監聽 DOMContentLoaded 以確保所有元素都已渲染 (尤其是 Layout 中的內容)
+    // 注意：因為此 script is:inline，可能會在 DOMContentLoaded 之前執行
+    // 為了保險，先執行一次，並在 DOMContentLoaded 再執行一次以覆蓋後續載入的內容
+    const initialLang = getStoredLanguage();
+    setLanguage(initialLang);
+
+    // 如果頁面還有動態生成的內容，可能需要 MutationObserver 或再次觸發
+    document.addEventListener("astro:page-load", () => {
+        setLanguage(getStoredLanguage());
+    });
+  })();
+</script>

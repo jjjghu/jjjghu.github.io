@@ -2,7 +2,9 @@
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import ThemeIcon from "../components/ThemeIcon.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import LanguageToggle from "../components/LanguageToggle.astro";
+import SettingIcon from "../components/SettingIcon.astro";
 import type { MarkdownHeading } from "astro";
 
 interface Props {
@@ -80,7 +82,9 @@ const showTOC = headings && headings.length > 0;
     </main>
 
     <Footer />
-    <ThemeIcon />
+    <LanguageToggle />
+    <SettingIcon />
+    <ThemeToggle />
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
