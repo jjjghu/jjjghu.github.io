@@ -3,13 +3,22 @@ import type { PostEntry } from "../types";
 
 const tagMap: Record<string, string> = tagMapping;
 
-// 根據日期排序文章
+// 根據日期排序文章 (新 -> 舊)
 export function sortPostsByDate(posts: PostEntry[]) {
     return posts.sort(
         (a, b) =>
             new Date(b.data.date).valueOf() -
             new Date(a.data.date).valueOf(),
     );
+}
+
+// 根據題號排序文章 (小 -> 大)
+export function sortPostsById(posts: PostEntry[]) {
+    return posts.sort((a, b) => {
+        const idA = parseInt(a.data.problem_id, 10) || 0;
+        const idB = parseInt(b.data.problem_id, 10) || 0;
+        return idA - idB;
+    });
 }
 
 // 建立反向映射 (中文 -> 英文)
