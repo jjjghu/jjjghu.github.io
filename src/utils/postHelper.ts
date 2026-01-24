@@ -13,11 +13,26 @@ export function sortPostsByDate(posts: PostEntry[]) {
 }
 
 // 根據題號排序文章 (小 -> 大)
+// 根據題號排序文章 (小 -> 大)
 export function sortPostsById(posts: PostEntry[]) {
     return posts.sort((a, b) => {
-        const idA = parseInt(a.data.problem_id, 10) || 0;
-        const idB = parseInt(b.data.problem_id, 10) || 0;
-        return idA - idB;
+        const idA = a.data.problem_id;
+        const idB = b.data.problem_id;
+
+        const numA = Number(idA);
+        const numB = Number(idB);
+
+        const isNumA = !isNaN(numA);
+        const isNumB = !isNaN(numB);
+
+        if (isNumA && isNumB) {
+            return numA - numB;
+        }
+        if (!isNumA && !isNumB) {
+            return idA.localeCompare(idB); // String sort for non-numeric IDs
+        }
+        // Mixed: Numeric first (optional preference)
+        return isNumA ? -1 : 1;
     });
 }
 

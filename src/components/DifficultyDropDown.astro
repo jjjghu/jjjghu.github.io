@@ -1,0 +1,81 @@
+---
+import "../styles/dropdown.css";
+import { UI_TEXT } from "../i18n/ui";
+---
+
+<div class="dropdown-container difficulty-dropdown-container">
+    <button id="diff-btn" class="dropdown-btn diff-btn" data-dropdown="diff">
+        <span class="diff-label" data-cn={UI_TEXT.diff_all.cn} data-en={UI_TEXT.diff_all.en}>{UI_TEXT.diff_all.cn}</span>
+        <i class="bx bx-chevron-down"></i>
+    </button>
+    <div id="diff-menu" class="dropdown-menu diff-menu">
+        <div class="dropdown-option diff-option active" data-value="all" data-cn={UI_TEXT.diff_all.cn} data-en={UI_TEXT.diff_all.en}>
+            {UI_TEXT.diff_all.cn}
+        </div>
+        <div class="dropdown-option diff-option" data-value="easy" data-cn={UI_TEXT.diff_easy.cn} data-en={UI_TEXT.diff_easy.en}>
+            {UI_TEXT.diff_easy.cn}
+        </div>
+        <div class="dropdown-option diff-option" data-value="medium" data-cn={UI_TEXT.diff_medium.cn} data-en={UI_TEXT.diff_medium.en}>
+            {UI_TEXT.diff_medium.cn}
+        </div>
+        <div class="dropdown-option diff-option" data-value="hard" data-cn={UI_TEXT.diff_hard.cn} data-en={UI_TEXT.diff_hard.en}>
+            {UI_TEXT.diff_hard.cn}
+        </div>
+    </div>
+</div>
+
+<script>
+    const diffBtn = document.getElementById("diff-btn");
+    const diffMenu = document.getElementById("diff-menu");
+    const diffOptions = document.querySelectorAll(".diff-option");
+    const diffLabel = diffBtn?.querySelector(".diff-label");
+
+    // Toggle Menu
+    diffBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        diffMenu?.classList.toggle("show");
+    });
+
+    // Handle Option Click
+    diffOptions.forEach((option) => {
+        option.addEventListener("click", (e) => {
+            e.stopPropagation();
+            // @ts-ignore
+            const value = e.target.dataset.value;
+
+            // Update UI (active class)
+            diffOptions.forEach((o) => o.classList.remove("active"));
+            // @ts-ignore
+            e.target.classList.add("active");
+
+            // Update Label
+            if (diffLabel) {
+                // @ts-ignore
+                diffLabel.textContent = e.target.textContent.trim();
+                // @ts-ignore
+                diffLabel.dataset.cn = e.target.dataset.cn;
+                // @ts-ignore
+                diffLabel.dataset.en = e.target.dataset.en;
+            }
+
+            // Close menu
+            diffMenu?.classList.remove("show");
+
+            // Dispatch Event
+            const event = new CustomEvent("difficulty-change", {
+                detail: {
+                    value
+                },
+            });
+            document.dispatchEvent(event);
+        });
+    });
+</script>
+
+<style>
+    /* Custom Override */
+    .diff-btn {
+        min-width: 110px;
+        justify-content: space-between;
+    }
+</style>

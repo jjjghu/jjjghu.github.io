@@ -1,0 +1,112 @@
+/* Shared Dropdown Styles */
+
+.dropdown-container {
+    position: relative;
+}
+
+/* Button Trigger */
+.dropdown-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background-color: var(--color-canvas-subtle);
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    color: var(--color-fg-default);
+    cursor: pointer;
+    font-size: 0.9rem;
+    height: 38px;
+    transition: all 0.2s;
+    outline: none;
+    /* remove focus outline for nicer look, focus visible handled by browser usually or add custom */
+}
+
+.dropdown-btn:hover {
+    background-color: var(--color-border-default);
+}
+
+.dropdown-btn.active {
+    background-color: rgba(56, 139, 253, 0.15);
+    color: #58a6ff;
+    border-color: rgba(56, 139, 253, 0.4);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 110%;
+    /* Alignment can be override by specific component (left:0 or right:0) */
+    background-color: var(--color-canvas-overlay);
+    /* Fallback or specific var */
+    /* Ensure it uses the card/overlay background from theme */
+    border: 1px solid var(--color-border-default);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 160px;
+}
+
+
+
+.dropdown-menu.show {
+    display: flex;
+}
+
+/* Simple Option Item (for Sort & Difficulty) */
+.dropdown-option {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: var(--color-fg-default);
+    background-color: var(--color-canvas-default);
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.dropdown-option:hover {
+    background-color: var(--color-border-default);
+}
+
+.dropdown-option.active {
+    background-color: rgba(56, 139, 253, 0.15);
+    color: #58a6ff;
+}
+
+
+/* Search Input inside Dropdown (for TagFilter) */
+.dropdown-search-container {
+    padding: 10px;
+    border-bottom: 1px solid var(--color-border-muted);
+    position: relative;
+    background-color: inherit;
+    /* matches menu bg */
+}
+
+.dropdown-search-input {
+    width: 100%;
+    padding: 6px 10px 6px 32px;
+    background-color: var(--color-canvas-subtle);
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    color: var(--color-fg-default);
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.dropdown-search-input:focus {
+    border-color: var(--color-accent-fg);
+}
+
+/* Footer (for TagFilter) */
+.dropdown-footer {
+    padding: 10px 12px;
+    border-top: 1px solid var(--color-border-muted);
+    background-color: var(--color-canvas-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

@@ -1,6 +1,8 @@
 ---
+import DifficultyBadge from "./DifficultyBadge.astro";
 import TagBadge from "./TagBadge.astro";
 import { getTagCN, getTagEN } from "../utils/postHelper";
+import { formatDateEN, formatDateCN } from "../utils/dateHelper";
 import type { PostEntry } from "../types";
 
 interface Props {
@@ -15,40 +17,24 @@ const rawTags = post.data.tags || [];
 
 const cnTags = rawTags.map(getTagCN);
 const enTags = rawTags.map(getTagEN);
+const difficulty = post.data.difficulty;
 
 // 組合搜尋字串 (包含中英文標題與標籤)
 const searchContent =
     `${cnTitle} ${enTitle} ${cnTags.join(" ")} ${enTags.join(" ")}`.toLowerCase();
 
-function formatDateEN(dateStr: string) {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    });
-}
-
-function formatDateCN(dateStr: string) {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("zh-TW", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
-}
 const dateEN = formatDateEN(post.data.date);
 const dateCN = formatDateCN(post.data.date);
 ---
 
 <div
-    class="file-row"
+    class="file-row post-list-grid"
     data-search={searchContent}
     data-tags-cn={cnTags.join(",")}
+    data-category={post.collection}
     data-date={new Date(post.data.date).valueOf()}
     data-id={Number(post.data.problem_id) || 0}
+    data-difficulty={difficulty ? difficulty.toLowerCase() : "none"}
 >
     <div class="col-icon">
         <i class="bx bx-file-blank"></i>
@@ -60,6 +46,10 @@ const dateCN = formatDateCN(post.data.date);
                 {cnTitle}
             </span>
         </a>
+    </div>
+
+    <div class="col-difficulty">
+        <DifficultyBadge difficulty={difficulty} />
     </div>
 
     <div class="col-tags">
@@ -77,10 +67,11 @@ const dateCN = formatDateCN(post.data.date);
 
 <style>
     .file-row {
-        display: flex;
+        /* display: flex; -> Handled by .post-list-grid */
         padding: 10px 16px;
         border-top: 1px solid var(--color-border-muted);
-        align-items: center;
+        /* align-items: center; -> Handled by .post-list-grid */
+        transition: background-color 0.2s;
     }
     .file-row:first-child {
         border-top: none;
@@ -90,17 +81,13 @@ const dateCN = formatDateCN(post.data.date);
     }
 
     .col-icon {
-        width: 32px;
         color: var(--color-fg-muted);
+        display: flex;
+        justify-content: center;
     }
 
     .col-title {
-        flex: 2;
         font-weight: 600;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding-right: 1rem;
     }
     .post-link {
         color: var(--color-fg-default);
@@ -111,12 +98,10 @@ const dateCN = formatDateCN(post.data.date);
         text-decoration: underline;
     }
 
-    .col-tags {
-        flex: 1.5;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
+    .col-difficulty {
+        display: flex; /* keep flex for badge alignment */
     }
+
     .tags-wrapper {
         display: flex;
         flex-wrap: wrap;
@@ -124,10 +109,39 @@ const dateCN = formatDateCN(post.data.date);
     }
 
     .col-date {
-        width: 120px;
-        text-align: right;
         color: var(--color-fg-muted);
         font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+        .col-icon {
+            display: none;
+        }
+        .file-row {
+            padding: 12px;
+            /* .post-list-grid sets display: flex, flex-wrap: wrap */
+        }
+        .col-title {
+            flex: 100%;
+            width: 100%; /* Ensure full width on mobile */
+            margin-bottom: 6px;
+        }
+        /* Mobile: 難度、標籤、日期 各自調整 */
+        .col-difficulty {
+            margin-right: 12px;
+            margin-bottom: 6px;
+        }
+        .col-tags {
+            flex: 1; /* 讓標籤佔據剩餘空間 */
+            min-width: 100px;
+            margin-bottom: 6px;
+        }
+        .col-date {
+            flex: 100%; /* 日期換行 */
+            width: 100%;
+            text-align: left;
+            margin-top: 4px;
+        }
     }
 
     @media (max-width: 768px) {
@@ -138,11 +152,25 @@ const dateCN = formatDateCN(post.data.date);
             flex-wrap: wrap;
             padding: 12px;
         }
-        .col-title,
-        .col-tags,
-        .col-date {
+        .col-title {
             flex: 100%;
             margin-bottom: 6px;
+        }
+        /* Mobile: 難度、標籤、日期 各自調整 */
+        .col-difficulty {
+            width: auto;
+            margin-right: 12px;
+            margin-bottom: 6px;
+        }
+        .col-tags {
+            flex: 1; /* 讓標籤佔據剩餘空間 */
+            min-width: 100px;
+            margin-bottom: 6px;
+        }
+        .col-date {
+            flex: 100%; /* 日期換行 */
+            text-align: left;
+            margin-top: 4px;
         }
     }
 </style>

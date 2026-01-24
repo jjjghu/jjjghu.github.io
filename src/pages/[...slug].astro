@@ -1,15 +1,21 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { LEETCODE_COLLECTION } from "../constants";
+import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
 import type { PostEntry } from "../types";
 
 import TagBadge from "../components/TagBadge.astro";
+import DifficultyBadge from "../components/DifficultyBadge.astro";
 
 // 1. 生成靜態路徑
 export async function getStaticPaths() {
-    const posts = await getCollection(LEETCODE_COLLECTION);
-    return posts.map((post: PostEntry) => {
+    const leetcodePosts = await getCollection(LEETCODE_COLLECTION);
+    const zerojudgePosts = await getCollection(ZEROJUDGE_COLLECTION);
+    
+    // Merge all posts
+    const allPosts = [...leetcodePosts, ...zerojudgePosts];
+
+    return allPosts.map((post) => {
         return {
             params: { slug: post.slug },
             props: { post },
@@ -26,7 +32,7 @@ const { Content, headings } = await render(post);
 const tags = post.data.tags || [];
 ---
 
-<Layout title={post.data.title} headings={headings}>
+<Layout title={post.data.title} headings={headings} activeCategory={post.collection}>
     <div class="post-card">
         <div class="post-header-row">
             <h1 id="post-title">
@@ -43,7 +49,7 @@ const tags = post.data.tags || [];
             </h1>
 
             {
-                post.data.category === LEETCODE_COLLECTION && (
+                (post.data.en_title) && (
                     <button
                         id="post-lang-toggle"
                         class="lang-btn"
@@ -54,8 +60,8 @@ const tags = post.data.tags || [];
                 )
             }
         </div>
-
         <div class="tags-container">
+            <DifficultyBadge difficulty={post.data.difficulty} />
             {tags.map((tag) => <TagBadge tag={tag} />)}
         </div>
 

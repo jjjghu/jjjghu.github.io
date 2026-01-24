@@ -1,5 +1,7 @@
 ---
 import { getTagCN, getTagEN } from "../utils/postHelper.ts";
+import "../styles/dropdown.css";
+import { UI_TEXT } from "../i18n/ui";
 
 interface Props {
     tags: string[];
@@ -8,13 +10,14 @@ interface Props {
 const { tags } = Astro.props;
 ---
 
-<div class="tag-filter-container">
-    <button id="tag-filter-btn" class="filter-btn">
-        <i class="bx bx-filter-alt"></i> 篩選標籤
+<div class="dropdown-container tag-filter-container">
+    <button id="tag-filter-btn" class="dropdown-btn" data-dropdown="tag">
+        <i class="bx bx-filter-alt"></i> 
+        <span data-cn={UI_TEXT.filter_tags.cn} data-en={UI_TEXT.filter_tags.en}>{UI_TEXT.filter_tags.cn}</span>
         <span id="selected-count" class="badge" style="display:none">0</span>
     </button>
 
-    <div id="tag-dropdown" class="tag-dropdown">
+    <div id="tag-dropdown" class="dropdown-menu tag-dropdown">
         <!-- 1. 搜尋區 -->
         <div class="dropdown-search-container">
             <i class="bx bx-search search-icon"></i>
@@ -57,18 +60,14 @@ const { tags } = Astro.props;
                     class="logic-btn"
                     title="點擊切換篩選邏輯"
                 >
-                    <span class="logic-label">配對:</span>
+                    <span class="logic-label" data-cn="配對:" data-en="Logic:">配對:</span>
                     <span id="logic-text" class="logic-value"
+                        data-cn="包含所有 (AND)" data-en="Unmatch All (AND)"
                         >包含所有 (AND)</span
                     >
                 </button>
                 <button id="clear-tags" class="footer-btn text-btn">
-                    <i class="bx bx-refresh"></i> 重置
-                </button>
-            </div>
-            <div class="footer-right">
-                <button id="apply-tags" class="footer-btn primary-btn">
-                    套用
+                    <i class="bx bx-refresh"></i> <span data-cn="重置" data-en="Reset">重置</span>
                 </button>
             </div>
         </div>
@@ -85,7 +84,6 @@ const { tags } = Astro.props;
 
     // Footer controls
     const clearTagsBtn = document.getElementById("clear-tags");
-    const applyTagsBtn = document.getElementById("apply-tags");
     const logicToggleBtn = document.getElementById("logic-toggle");
     const logicText = document.getElementById("logic-text");
 
@@ -147,7 +145,7 @@ const { tags } = Astro.props;
         });
     });
 
-    // --- 3. Checkbox Selection (UI only, defer dispatch) ---
+    // --- 3. Checkbox Selection & Instant Apply ---
     checkboxes.forEach((box) => {
         box.addEventListener("change", (e) => {
             // @ts-ignore
@@ -158,24 +156,36 @@ const { tags } = Astro.props;
             } else {
                 selectedTags.delete(val);
             }
-            // UPDATE UI Badge immediately for feedback
+            // UPDATE UI Badge immediately
             updateBadge();
+            // Dispatch immediately
+            dispatchChange();
         });
     });
 
     // --- 4. Logic Toggle ---
     logicToggleBtn?.addEventListener("click", () => {
         filterLogic = filterLogic === "AND" ? "OR" : "AND";
-        // Update Text
+        
+        // Update Text Logic
+        const isEnglish = localStorage.getItem("isEnglish") === "true";
+        const cnText = filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
+        const enText = filterLogic === "AND" ? "Match All (AND)" : "Match Any (OR)";
+
         if (logicText) {
-            logicText.textContent =
-                filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
+            // Update datasets so global language switch works
+            logicText.dataset.cn = cnText;
+            logicText.dataset.en = enText;
+            
+            // Render immediate
+            logicText.textContent = isEnglish ? enText : cnText;
         }
+
         // Update active style
         logicToggleBtn?.classList.toggle("is-or", filterLogic === "OR");
     });
 
-    // --- 5. Actions: Clear & Apply ---
+    // --- 5. Actions: Clear ---
 
     // Clear: Clears immediately and Updates
     clearTagsBtn?.addEventListener("click", () => {
@@ -192,13 +202,7 @@ const { tags } = Astro.props;
         }
 
         dispatchChange(); // Reset implies applying the clear
-        tagDropdown?.classList.remove("show"); // Optional, maybe user wants to close
-    });
-
-    // Apply: Dispatches the current state
-    applyTagsBtn?.addEventListener("click", () => {
-        dispatchChange();
-        tagDropdown?.classList.remove("show");
+        // tagDropdown?.classList.remove("show"); // Optional, maybe user wants to close
     });
 
     function updateBadge() {
@@ -360,23 +364,14 @@ const { tags } = Astro.props;
     }
 
     /* --- Footer Area --- */
-    .dropdown-footer {
-        padding: 10px 12px;
-        border-top: 1px solid var(--color-border-muted);
-        background-color: var(--color-canvas-subtle);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
+    /* Most styles moved to dropdown.css */
+    
     .footer-left {
         display: flex;
         gap: 8px;
         align-items: center;
-    }
-    .footer-right {
-        display: flex;
-        align-items: center;
+        width: 100%; /* Take full width since Apply is gone */
+        justify-content: space-between;
     }
 
     .footer-btn {
@@ -400,19 +395,7 @@ const { tags } = Astro.props;
         color: var(--color-fg-default);
         background-color: var(--color-border-muted);
     }
-
-    /* Primary Button (Apply) */
-    .primary-btn {
-        background-color: var(
-            --color-accent-fg
-        ); /* Ensure this var exists, else #2ea043 */
-        color: white;
-        font-weight: 600;
-    }
-    .primary-btn:hover {
-        opacity: 0.9;
-    }
-
+    
     /* Logic Toggle Button */
     .logic-btn {
         display: flex;
@@ -437,6 +420,7 @@ const { tags } = Astro.props;
     .logic-value {
         font-weight: 600;
         color: var(--color-accent-fg);
+        white-space: nowrap;
     }
 
     .logic-btn.is-or .logic-value {
