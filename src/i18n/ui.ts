@@ -34,4 +34,13 @@ export const UI_TEXT = {
     result_count_prefix: { cn: '共', en: 'Total' },
     result_count_suffix: { cn: '篇', en: 'posts' },
     no_results: { cn: '沒有找到符合的題目。', en: 'No matching posts found.' },
+
+    // Settings Panel
+    settings_title: { cn: '顯示設定', en: 'Display Settings' },
+    settings_tag_colors: { cn: '標籤顏色', en: 'Tag Colors' },
+    settings_tag_colors_desc: { cn: '使用彩色標籤', en: 'Use colored tags for categories' },
+    settings_hover_glow: { cn: '懸停發光', en: 'Hover Glow' },
+    settings_hover_glow_desc: { cn: '滑鼠懸停時顯示霓虹效果', en: 'Show neon indicator on hover' },
+    settings_spotlight: { cn: '聚光燈', en: 'Spotlight' },
+    settings_spotlight_desc: { cn: '跟隨滑鼠的聚光燈效果', en: 'Follow cursor light effect' },
 };

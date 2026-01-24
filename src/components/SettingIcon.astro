@@ -26,7 +26,9 @@ import { UI_TEXT } from "../i18n/ui";
 <div id="settings-panel" class="settings-panel">
   <!-- Header -->
   <div class="panel-header">
-    <h3 class="panel-title">Display Settings</h3>
+    <h3 class="panel-title" data-cn={UI_TEXT.settings_title.cn} data-en={UI_TEXT.settings_title.en}>
+        {UI_TEXT.settings_title.cn}
+    </h3>
     <button id="close-settings-btn" class="close-btn">
       <svg
         width="18"
@@ -47,8 +49,8 @@ import { UI_TEXT } from "../i18n/ui";
   <!-- 選項 1: 標籤顏色 -->
   <div class="toggle-row">
     <div>
-      <div class="toggle-label">Tag Colors</div>
-      <span class="toggle-desc">Use colored tags for categories</span>
+      <div class="toggle-label" data-cn={UI_TEXT.settings_tag_colors.cn} data-en={UI_TEXT.settings_tag_colors.en}>{UI_TEXT.settings_tag_colors.cn}</div>
+      <span class="toggle-desc" data-cn={UI_TEXT.settings_tag_colors_desc.cn} data-en={UI_TEXT.settings_tag_colors_desc.en}>{UI_TEXT.settings_tag_colors_desc.cn}</span>
     </div>
     <label class="switch">
       <input type="checkbox" checked disabled />
@@ -59,8 +61,8 @@ import { UI_TEXT } from "../i18n/ui";
   <!-- 選項 2: Hover 特效 -->
   <div class="toggle-row">
     <div>
-      <div class="toggle-label">Hover Glow</div>
-      <span class="toggle-desc">Show neon indicator on hover</span>
+      <div class="toggle-label" data-cn={UI_TEXT.settings_hover_glow.cn} data-en={UI_TEXT.settings_hover_glow.en}>{UI_TEXT.settings_hover_glow.cn}</div>
+      <span class="toggle-desc" data-cn={UI_TEXT.settings_hover_glow_desc.cn} data-en={UI_TEXT.settings_hover_glow_desc.en}>{UI_TEXT.settings_hover_glow_desc.cn}</span>
     </div>
     <label class="switch">
       <input type="checkbox" checked disabled />
@@ -71,8 +73,8 @@ import { UI_TEXT } from "../i18n/ui";
   <!-- 選項 3: 聚光燈 -->
   <div class="toggle-row">
     <div>
-      <div class="toggle-label">Spotlight</div>
-      <span class="toggle-desc">Follow cursor light effect</span>
+      <div class="toggle-label" data-cn={UI_TEXT.settings_spotlight.cn} data-en={UI_TEXT.settings_spotlight.en}>{UI_TEXT.settings_spotlight.cn}</div>
+      <span class="toggle-desc" data-cn={UI_TEXT.settings_spotlight_desc.cn} data-en={UI_TEXT.settings_spotlight_desc.en}>{UI_TEXT.settings_spotlight_desc.cn}</span>
     </div>
     <label class="switch">
       <input type="checkbox" disabled />
