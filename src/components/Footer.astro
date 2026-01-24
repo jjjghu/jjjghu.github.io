@@ -1,12 +1,13 @@
 ---
 const currentYear = new Date().getFullYear();
+import { UI_TEXT } from "../i18n/ui";
 ---
 
 <footer class="site-footer">
   <div class="footer-container">
 
     <div class="footer-section copyright">
-      <span>Copyright © {currentYear} 解題筆記 All rights reserved.</span>
+      <span>Copyright © {currentYear} <span data-cn={UI_TEXT.header_title.cn} data-en={UI_TEXT.header_title.en}>{UI_TEXT.header_title.cn}</span> All rights reserved.</span>
     </div>
 
     <!-- <div class="footer-section subscribe">
