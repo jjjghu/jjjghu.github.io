@@ -1,0 +1,54 @@
+---
+import { getDifficultyColor, getDifficultyLabel } from "../utils/difficulty";
+
+interface Props {
+    difficulty?: string | null;
+}
+
+const { difficulty } = Astro.props;
+
+// 如果沒有難度 (例如 ZeroJudge)，就不渲染
+if (!difficulty) {
+    return;
+}
+
+const colorObj = getDifficultyColor(difficulty);
+const labelCN = getDifficultyLabel(difficulty, false); // 預設中文
+const labelEN = getDifficultyLabel(difficulty, true); // 英文
+
+const cssVars = {
+    '--badge-color-dark': colorObj.dark,
+    '--badge-color-light': colorObj.light,
+};
+---
+
+<span
+    class="difficulty-badge"
+    style={cssVars}
+    data-cn={labelCN}
+    data-en={labelEN}
+>
+    {labelCN}
+</span>
+
+<style>
+    .difficulty-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 10px;
+        font-size: 12px;
+        font-weight: 400;
+        border-radius: 999px;
+        border: 1px solid rgba(240, 246, 252, 0.1);
+        background-color: #2d333b;
+        /* margin-right: 12px; */
+        white-space: nowrap;
+        /* 這裡可以加邊框或背景，看設計風格，這裡目前採用文字顏色區分 */
+        color: var(--badge-color-dark);
+    }
+    :global(.light) .difficulty-badge {
+        background-color: #f6f8fa;
+        border-color: #d0d7de;
+        color: var(--badge-color-light);
+    }
+</style>

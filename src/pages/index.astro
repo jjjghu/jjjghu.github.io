@@ -3,12 +3,18 @@ import Layout from "../layouts/Layout.astro";
 import PostRow from "../components/PostRow.astro";
 import TagFilter from "../components/TagFilter.astro";
 import SortDropDown from "../components/SortDropDown.astro";
+import DifficultyDropDown from "../components/DifficultyDropDown.astro";
 import { sortPostsById, getAllUniqueTags } from "../utils/postHelper.ts";
 import { getCollection } from "astro:content";
-import { LEETCODE_COLLECTION } from "../constants";
+import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
+import { UI_TEXT } from "../i18n/ui";
+import "../styles/post-list.css";
+
 
 // 抓取文章並排序 (預設: 題號 小 -> 大)
-const sortedPosts = sortPostsById(await getCollection(LEETCODE_COLLECTION));
+const leetcodePosts = await getCollection(LEETCODE_COLLECTION);
+const zerojudgePosts = await getCollection(ZEROJUDGE_COLLECTION);
+const sortedPosts = sortPostsById([...leetcodePosts, ...zerojudgePosts]);
 
 // 獲取所有標籤
 const allTagsCN = getAllUniqueTags(sortedPosts);
@@ -16,7 +22,7 @@ const allTagsCN = getAllUniqueTags(sortedPosts);
 const uniqueTags = Array.from(allTagsCN).sort();
 ---
 
-<Layout title="所有文章">
+<Layout title={UI_TEXT.nav_all.cn}>
   <div class="page-container">
     <div class="filter-bar">
       <div class="search-wrapper">
@@ -24,8 +30,10 @@ const uniqueTags = Array.from(allTagsCN).sort();
         <input
           type="text"
           id="text-search"
-          placeholder="搜尋題目關鍵字..."
+          placeholder={UI_TEXT.search_keywords_placeholder.cn}
           autocomplete="off"
+          data-cn-placeholder={UI_TEXT.search_keywords_placeholder.cn}
+          data-en-placeholder={UI_TEXT.search_keywords_placeholder.en}
         />
       </div>
 
@@ -35,6 +43,11 @@ const uniqueTags = Array.from(allTagsCN).sort();
       <!-- Sort Dropdown -->
       <SortDropDown />
 
+      <!-- Difficulty Filter -->
+      <div class="difficulty-filter-wrapper">
+        <DifficultyDropDown />
+      </div>
+
       <!-- 語言切換按鈕 -->
       <button id="lang-toggle" class="lang-btn" aria-label="切換語言">
         <span class="lang-text">EN</span>
@@ -42,16 +55,17 @@ const uniqueTags = Array.from(allTagsCN).sort();
 
       <!-- 篩選結果數量 -->
       <div class="result-count" id="result-count">
-        共 {sortedPosts.length} 篇
+        {UI_TEXT.result_count_prefix.cn} {sortedPosts.length} {UI_TEXT.result_count_suffix.cn}
       </div>
     </div>
 
     <div class="file-list-container">
-      <div class="file-list-header">
+      <div class="file-list-header post-list-grid">
         <div class="col-icon"></div>
-        <div class="col-title">題目 Title</div>
-        <div class="col-tags">標籤 Tags</div>
-        <div class="col-date">日期 Date</div>
+        <div class="col-title" data-cn={UI_TEXT.col_title.cn} data-en={UI_TEXT.col_title.en}>{UI_TEXT.col_title.cn}</div>
+        <div class="col-difficulty" data-cn={UI_TEXT.col_difficulty.cn} data-en={UI_TEXT.col_difficulty.en}>{UI_TEXT.col_difficulty.cn}</div>
+        <div class="col-tags" data-cn={UI_TEXT.col_tags.cn} data-en={UI_TEXT.col_tags.en}>{UI_TEXT.col_tags.cn}</div>
+        <div class="col-date" data-cn={UI_TEXT.col_date.cn} data-en={UI_TEXT.col_date.en}>{UI_TEXT.col_date.cn}</div>
       </div>
 
       <div id="post-list">
@@ -73,173 +87,8 @@ const uniqueTags = Array.from(allTagsCN).sort();
 </Layout>
 
 <script>
-  // --- 互動邏輯 Script ---
-  let isEnglish = false;
-  let selectedTags = new Set();
-  let currentSortField = "id"; // 'date' | 'id'
-  let currentSortOrder = "asc"; // 'asc' | 'desc'
-
-  const textSearch = document.getElementById("text-search");
-  const langToggle = document.getElementById("lang-toggle");
-  const postList = document.getElementById("post-list");
-  // @ts-ignore
-  const rows = postList.querySelectorAll(".file-row");
-  const noResults = document.getElementById("no-results");
-  const resultCount = document.getElementById("result-count");
-
-  // Sort Elements - Moved to SortDropDown.astro
-
-  // 1. 語言切換
-  function setLanguage(english: boolean) {
-    isEnglish = english;
-    localStorage.setItem("isEnglish", String(isEnglish));
-
-    if (langToggle) {
-      // @ts-ignore
-      langToggle.querySelector(".lang-text").textContent = isEnglish
-        ? "EN"
-        : "中";
-    }
-
-    // 切換所有的 data-cn / data-en 顯示
-    document.querySelectorAll("[data-cn]").forEach((el) => {
-      // @ts-ignore
-      el.textContent = isEnglish ? el.dataset.en : el.dataset.cn;
-    });
-
-    // @ts-ignore
-    if (textSearch) {
-      // @ts-ignore
-      textSearch.placeholder = isEnglish
-        ? "Search keywords..."
-        : "搜尋題目關鍵字...";
-    }
-  }
-
-  // 初始化狀態
-  if (localStorage.getItem("isEnglish") === "true") {
-    setLanguage(true);
-  }
-
-  langToggle?.addEventListener("click", () => {
-    setLanguage(!isEnglish);
-  });
-
-  // 2. 監聽標籤篩選事件 (來自 TagFilter 元件)
-  let filterLogic = "AND"; // 預設為與邏輯
-
-  document.addEventListener("tag-filter-change", (e) => {
-    // @ts-ignore
-    const newTags = e.detail.selectedTags;
-    // @ts-ignore
-    const logic = e.detail.logic; // 取得邏輯: 'AND' | 'OR'
-
-    selectedTags = new Set(newTags);
-    if (logic) filterLogic = logic;
-
-    updateFilter();
-  });
-
-  // 3. 核心篩選函式
-  textSearch?.addEventListener("input", updateFilter);
-
-  function updateFilter() {
-    // @ts-ignore
-    const term = textSearch.value.toLowerCase();
-    let visibleCount = 0;
-
-    rows.forEach((row) => {
-      // @ts-ignore
-      const rowTags = row.dataset.tagsCn.split(",");
-      // @ts-ignore
-      const searchContent = row.dataset.search;
-
-      // 邏輯: (標籤符合) AND (搜尋文字符合)
-      let matchTags;
-
-      if (selectedTags.size === 0) {
-        matchTags = true;
-      } else {
-        if (filterLogic === "OR") {
-          // OR: 只要任一選中標籤存在於文章中即可
-          matchTags = Array.from(selectedTags).some((t) => rowTags.includes(t));
-        } else {
-          // AND: 所有選中標籤都必須存在於文章中 (預設)
-          matchTags = Array.from(selectedTags).every((t) =>
-            rowTags.includes(t),
-          );
-        }
-      }
-
-      const matchText = searchContent.includes(term);
-
-      if (matchTags && matchText) {
-        // @ts-ignore
-        row.style.display = "flex";
-        visibleCount++;
-      } else {
-        // @ts-ignore
-        row.style.display = "none";
-      }
-    });
-
-    if (noResults && resultCount) {
-      noResults.style.display = visibleCount === 0 ? "block" : "none";
-      resultCount.textContent = `共 ${visibleCount} 篇`;
-    }
-
-    // 篩選後重新排序 (確保順序正確)
-    updateSort();
-  }
-
-  // 4. Check URL Params (for Header Search)
-  const urlParams = new URLSearchParams(window.location.search);
-  const q = urlParams.get("q");
-  if (q && textSearch) {
-    // @ts-ignore
-    textSearch.value = q;
-    updateFilter();
-  }
-
-  // 5. 排序功能
-  document.addEventListener("sort-change", (e) => {
-    // @ts-ignore
-    currentSortField = e.detail.field;
-    // @ts-ignore
-    currentSortOrder = e.detail.order;
-    updateSort();
-  });
-
-  function updateSort() {
-    if (!postList) return;
-
-    const visibleRows = Array.from(rows).filter(
-      (row) =>
-        // @ts-ignore
-        row.style.display !== "none",
-    );
-
-    visibleRows.sort((a, b) => {
-      // @ts-ignore
-      let aVal = a.dataset[currentSortField];
-      // @ts-ignore
-      let bVal = b.dataset[currentSortField];
-
-      // 轉為數字比較
-      aVal = Number(aVal);
-      bVal = Number(bVal);
-
-      if (currentSortOrder === "asc") {
-        return aVal - bVal;
-      } else {
-        return bVal - aVal;
-      }
-    });
-
-    // DOM Reorder
-    // 注意: appendChild 會移動已存在的元素，而不是複製
-    visibleRows.forEach((row) => postList.appendChild(row));
-  }
+  import { initFilterSystem } from "../scripts/postFilter";
+  initFilterSystem();
 </script>
 
 <style>
@@ -306,6 +155,7 @@ const uniqueTags = Array.from(allTagsCN).sort();
   }
 
   /* 列表樣式 */
+  /* 列表樣式 */
   .file-list-container {
     border: 1px solid var(--color-border-default);
     border-radius: 6px;
@@ -314,7 +164,7 @@ const uniqueTags = Array.from(allTagsCN).sort();
   }
 
   .file-list-header {
-    display: flex;
+    /* Grid layout handled by .post-list-grid */
     padding: 16px;
     background-color: var(--color-canvas-subtle);
     border-bottom: 1px solid var(--color-border-default);
@@ -324,31 +174,15 @@ const uniqueTags = Array.from(allTagsCN).sort();
   }
 
   .col-icon {
-    width: 32px;
-    color: var(--color-fg-muted);
+    /* width managed by grid */
   }
 
   .col-title {
-    flex: 2;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     padding-right: 1rem;
   }
-  .col-tags {
-    flex: 1.5;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-  }
-
-  .col-date {
-    width: 120px;
-    text-align: right;
-    color: var(--color-fg-muted);
-    font-size: 0.85rem;
-  }
+  
+  /* Difficulty, Tags, Date widths handled by grid */
+  
   .result-count {
     font-size: 0.85rem;
     color: var(--color-fg-muted);
@@ -357,7 +191,8 @@ const uniqueTags = Array.from(allTagsCN).sort();
 
   @media (max-width: 768px) {
     .file-list-header,
-    .col-icon {
+    .col-icon,
+    .col-difficulty {
       display: none;
     }
     .search-wrapper {

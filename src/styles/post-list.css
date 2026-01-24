@@ -1,0 +1,54 @@
+/* Post List Grid Layout - Single Source of Truth */
+
+.post-list-grid {
+    display: grid;
+    /* 
+     Grid Columns:
+     1. Icon: Fixed width 40px
+     2. Title: Flexible (min 200px, takes most space)
+     3. Difficulty: Fixed width 100px
+     4. Tags: Flexible (takes remaining space)
+     5. Date: Fixed width 120px
+  */
+    grid-template-columns: 40px minmax(200px, 2.5fr) 110px 2fr 120px;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Common tweaks for content within cells */
+.col-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.col-tags {
+    overflow: hidden;
+}
+
+.col-date {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    /* Align numbers nicely */
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .post-list-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        /* Reset grid gap, use flex gap */
+    }
+
+    /* Reset widths for mobile flex layout */
+    .col-icon,
+    .col-difficulty,
+    .col-title,
+    .col-tags,
+    .col-date {
+        width: auto;
+        flex: initial;
+    }
+}

@@ -1,28 +1,57 @@
 ---
+import { UI_TEXT } from "../i18n/ui";
 
+interface Props {
+  activeCategory?: string;
+}
+
+const { activeCategory } = Astro.props;
 ---
 
 <header class="site-header">
   <div class="header-inner">
     <div class="header-title-row">
-      <a href="/" class="site-title">解題筆記</a>
+      <a href="/" class="site-title" data-cn={UI_TEXT.header_title.cn} data-en={UI_TEXT.header_title.en}>{UI_TEXT.header_title.cn}</a>
     </div>
 
     <nav class="header-nav-row">
       <ul class="nav-links">
-        <li><a href="/" class="active">所有文章</a></li>
-        <!-- <li><a href="/LeetCode">LeetCode</a></li> -->
-        <!-- <li><a href="/CodeForce">CodeForce</a></li> -->
+        <li>
+          <a href="/" class={`nav-link ${activeCategory === 'all' || !activeCategory ? 'active' : ''}`} data-category="all" data-cn={UI_TEXT.nav_all.cn} data-en={UI_TEXT.nav_all.en}>{UI_TEXT.nav_all.cn}</a>
+        </li>
+        <li>
+          <a href="/?category=leetcode" class={`nav-link ${activeCategory === 'leetcode' ? 'active' : ''}`} data-category="leetcode" data-cn={UI_TEXT.nav_leetcode.cn} data-en={UI_TEXT.nav_leetcode.en}>{UI_TEXT.nav_leetcode.cn}</a>
+        </li>
+        <li>
+          <a href="/?category=zerojudge" class={`nav-link ${activeCategory === 'zerojudge' ? 'active' : ''}`} data-category="zerojudge" data-cn={UI_TEXT.nav_zerojudge.cn} data-en={UI_TEXT.nav_zerojudge.en}>{UI_TEXT.nav_zerojudge.cn}</a>
+        </li>
       </ul>
+
+<script>
+  if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get("category") || "all";
+    document.querySelectorAll(".nav-link").forEach(link => {
+        // @ts-ignore
+        if (link.dataset.category === category) {
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
+  }
+</script>
 
       <form action="/" method="get" class="search-form">
         <div class="search-group">
           <input
             type="text"
             name="q"
-            placeholder="搜尋文章..."
+            placeholder={UI_TEXT.search_placeholder.cn}
             class="search-input"
             required
+            data-cn-placeholder={UI_TEXT.search_placeholder.cn}
+            data-en-placeholder={UI_TEXT.search_placeholder.en}
           />
           <button type="submit" class="search-btn">
             <i class="bx bx-search"></i>

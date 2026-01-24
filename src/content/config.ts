@@ -1,6 +1,6 @@
 // src/content/config.ts
 import { z, defineCollection } from 'astro:content';
-import { LEETCODE_COLLECTION } from '../constants';
+import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from '../constants';
 const postsCollection = defineCollection({
     type: 'content',
     schema: z.object({
@@ -9,12 +9,13 @@ const postsCollection = defineCollection({
         date: z.string(),
         category: z.string(), // 來源網站
         problem_id: z.string(), // 題目ID
-        difficulty: z.string(), // 難度
-        link: z.string(),
+        difficulty: z.string().optional(), // 難度 (LeetCode: easy/medium/hard, CodeForce: number, ZeroJudge: null)
+        link: z.string().optional(), // ZeroJudge often has fixed ID link, maybe optional? But schema said link previously. User edited md to have link.
         en_title: z.string().optional(),
         en_link: z.string().optional()
     }),
 });
 export const collections = {
-    [LEETCODE_COLLECTION]: postsCollection, // key 'LeetCode' 對應資料夾名稱 src/content/LeetCode
+    [LEETCODE_COLLECTION]: postsCollection,
+    [ZEROJUDGE_COLLECTION]: postsCollection,
 };

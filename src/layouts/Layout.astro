@@ -8,10 +8,11 @@ import type { MarkdownHeading } from "astro";
 interface Props {
   title: string;
   headings?: MarkdownHeading[];
+  activeCategory?: string;
 }
 
 // 1. 接收 headings 參數 (Astro 會自動傳入 Markdown 的標題資訊)
-const { title, headings } = Astro.props;
+const { title, headings, activeCategory } = Astro.props;
 
 // 簡單判斷：如果有 headings 且數量大於 0, 代表這是一篇需要目錄的文章
 const showTOC = headings && headings.length > 0;
@@ -53,7 +54,7 @@ const showTOC = headings && headings.length > 0;
   </head>
 
   <body>
-    <Header />
+    <Header activeCategory={activeCategory} />
 
     <main class:list={["content", { "has-toc": showTOC }]}>
       <article class="article-body">
