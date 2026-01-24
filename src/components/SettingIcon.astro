@@ -1,2 +1,297 @@
 ---
+import { UI_TEXT } from "../i18n/ui";
 ---
+
+<!-- 觸發按鈕 -->
+<button id="setting-toggle" class="setting-btn" aria-label="開啟設定面板">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <circle cx="12" cy="12" r="3"></circle>
+    <path
+      d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+    ></path>
+  </svg>
+</button>
+
+<!-- 設定面板 -->
+<div id="settings-panel" class="settings-panel">
+  <!-- Header -->
+  <div class="panel-header">
+    <h3 class="panel-title">Display Settings</h3>
+    <button id="close-settings-btn" class="close-btn">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- 選項 1: 標籤顏色 -->
+  <div class="toggle-row">
+    <div>
+      <div class="toggle-label">Tag Colors</div>
+      <span class="toggle-desc">Use colored tags for categories</span>
+    </div>
+    <label class="switch">
+      <input type="checkbox" checked disabled />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <!-- 選項 2: Hover 特效 -->
+  <div class="toggle-row">
+    <div>
+      <div class="toggle-label">Hover Glow</div>
+      <span class="toggle-desc">Show neon indicator on hover</span>
+    </div>
+    <label class="switch">
+      <input type="checkbox" checked disabled />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <!-- 選項 3: 聚光燈 -->
+  <div class="toggle-row">
+    <div>
+      <div class="toggle-label">Spotlight</div>
+      <span class="toggle-desc">Follow cursor light effect</span>
+    </div>
+    <label class="switch">
+      <input type="checkbox" disabled />
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+
+<style>
+  /* 按鈕樣式 (參考 ThemeIcon / LanguageToggle) */
+  .setting-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 140px; /* 20 + 40 + 20 + 40 + 20 */
+    z-index: 1000;
+    background-color: var(--color-canvas-default);
+    border: 1px solid var(--color-border-default);
+    cursor: pointer;
+    color: var(--color-fg-default);
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .setting-btn:hover {
+    background-color: var(--color-canvas-subtle);
+    transform: scale(1.1);
+  }
+
+  /* 面板樣式 */
+  .settings-panel {
+    position: fixed;
+    bottom: 80px; /* 位於按鈕列上方 */
+    right: 20px;
+    width: 280px;
+    background-color: var(--color-card-bg); /* 使用卡片背景色 */
+    border: 1px solid var(--color-border-default);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+
+    /* 進出動畫 */
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .settings-panel.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+  }
+
+  /* 面板 Header */
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border-muted);
+  }
+
+  .panel-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-fg-default);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+
+  .close-btn:hover {
+    color: var(--color-fg-default);
+    background-color: var(--color-canvas-subtle);
+  }
+
+  /* 選項列 */
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .toggle-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .toggle-label {
+    font-size: 0.9rem;
+    color: var(--color-fg-default);
+    font-weight: 500;
+  }
+
+  .toggle-desc {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* Switch 本體 */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  /* 滑軌 (Slider) */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-canvas-subtle);
+    transition: 0.3s;
+    border-radius: 34px;
+    border: 1px solid var(--color-border-default);
+  }
+
+  /* 圓鈕 (Knob) */
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--color-fg-muted);
+    transition: 0.3s;
+    border-radius: 50%;
+  }
+
+  /* Checked 狀態 */
+  input:checked + .slider {
+    background-color: var(--color-accent-fg); /* 使用強調色 */
+    border-color: var(--color-accent-fg);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(18px);
+    background-color: #ffffff; /* 圓鈕變白 */
+  }
+  
+  /* Disabled state styling just in case */
+  input:disabled + .slider {
+      opacity: 0.6;
+      cursor: not-allowed;
+  }
+</style>
+
+<script is:inline>
+  const openBtn = document.getElementById("setting-toggle");
+  const closeBtn = document.getElementById("close-settings-btn");
+  const panel = document.getElementById("settings-panel");
+
+  function openPanel() {
+    panel?.classList.add("active");
+  }
+
+  function closePanel() {
+    panel?.classList.remove("active");
+  }
+
+  openBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    // Toggle
+    if (panel?.classList.contains("active")) {
+        closePanel();
+    } else {
+        openPanel();
+    }
+  });
+
+  closeBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closePanel();
+  });
+
+  // 點擊面板外部關閉
+  document.addEventListener("click", (e) => {
+    if (
+      panel?.classList.contains("active") &&
+      !panel.contains(e.target) &&
+      !openBtn?.contains(e.target)
+    ) {
+      closePanel();
+    }
+  });
+</script>
