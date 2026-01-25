@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /*讓所有元素的寬度包含 padding 和 border */
 *,
 *::before,
