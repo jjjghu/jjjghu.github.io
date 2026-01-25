@@ -185,7 +185,8 @@ code:not(pre code) {
 
 /* 程式碼區塊 (Code Block) - 使用三個反引號包起來的區域 */
 pre {
-  background-color: #24292E !important;
+  background-color: color-mix(in srgb, #24292E var(--bg-overlay-alpha), transparent) !important;
+  /* background-color:  #24292E !important; */
   /* background-color: var(--color-canvas-subtle; */
   border-radius: 6px;
   padding: 16px;
