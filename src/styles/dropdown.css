@@ -27,9 +27,9 @@
 }
 
 .dropdown-btn.active {
-    background-color: rgba(56, 139, 253, 0.15);
-    color: #58a6ff;
-    border-color: rgba(56, 139, 253, 0.4);
+    background-color: color-mix(in srgb, var(--color-accent-fg), transparent 60%);
+    color: var(--color-accent-bg);
+    border-color: color-mix(in srgb, var(--color-accent-fg), transparent 20%);
 }
 
 /* Dropdown Menu */
@@ -72,8 +72,8 @@
 }
 
 .dropdown-option.active {
-    background-color: rgba(56, 139, 253, 0.15);
-    color: #58a6ff;
+    background-color: color-mix(in srgb, var(--color-accent-fg), transparent 60%);
+    color: var(--color-accent-bg);
 }
 
 
