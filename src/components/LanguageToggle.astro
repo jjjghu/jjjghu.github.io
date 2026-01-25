@@ -1,5 +1,7 @@
 ---
+
 ---
+
 <button id="lang-toggle" class="lang-toggle-btn" aria-label="切換語言">
   <span class="lang-text">EN</span>
 </button>
@@ -15,7 +17,7 @@
     cursor: pointer;
     color: var(--color-fg-default);
     padding: 0;
-    width: 40px; 
+    width: 40px;
     height: 40px;
     display: flex;
     align-items: center;
@@ -31,55 +33,67 @@
     background-color: var(--color-canvas-subtle);
     transform: scale(1.1);
   }
+
+  @media (max-width: 600px) {
+    #lang-toggle {
+      right: 20px;
+      bottom: 80px;
+    }
+  }
 </style>
 
 <script is:inline>
   // 使用 IIFE 避免全域變數污染
-  (function() {
+  (function () {
     const langBtn = document.getElementById("lang-toggle");
     const langText = langBtn?.querySelector(".lang-text");
 
     function getStoredLanguage() {
-      if (typeof localStorage !== "undefined" && localStorage.getItem("isEnglish")) {
+      if (
+        typeof localStorage !== "undefined" &&
+        localStorage.getItem("isEnglish")
+      ) {
         return localStorage.getItem("isEnglish") === "true";
       }
       return false; // Default to Chinese
     }
 
     function setLanguage(isEnglish) {
-        // 1. Update localStorage
-        localStorage.setItem("isEnglish", String(isEnglish));
+      // 1. Update localStorage
+      localStorage.setItem("isEnglish", String(isEnglish));
 
-        // 2. Update Button Text
-        if (langText) {
-            langText.textContent = isEnglish ? "EN" : "中";
-        }
+      // 2. Update Button Text
+      if (langText) {
+        langText.textContent = isEnglish ? "EN" : "中";
+      }
 
-        // 3. Update Global Data Attributes (Text)
-        document.querySelectorAll("[data-cn]").forEach((el) => {
-            // @ts-ignore
-            el.textContent = isEnglish ? (el.dataset.en || el.dataset.cn) : el.dataset.cn;
-        });
+      // 3. Update Global Data Attributes (Text)
+      document.querySelectorAll("[data-cn]").forEach((el) => {
+        // @ts-ignore
+        el.textContent = isEnglish
+          ? el.dataset.en || el.dataset.cn
+          : el.dataset.cn;
+      });
 
-        // 4. Update Placeholders
-        document.querySelectorAll("[data-cn-placeholder]").forEach((el) => {
-            // @ts-ignore
-            el.placeholder = isEnglish 
-                ? (el.dataset.enPlaceholder || el.dataset.cnPlaceholder) 
-                : el.dataset.cnPlaceholder;
-        });
+      // 4. Update Placeholders
+      document.querySelectorAll("[data-cn-placeholder]").forEach((el) => {
+        // @ts-ignore
+        el.placeholder = isEnglish
+          ? el.dataset.enPlaceholder || el.dataset.cnPlaceholder
+          : el.dataset.cnPlaceholder;
+      });
 
-        // 5. Dispatch Event for custom handling (e.g., links, filters)
-        const event = new CustomEvent("language-change", { 
-            detail: { isEnglish } 
-        });
-        document.dispatchEvent(event);
+      // 5. Dispatch Event for custom handling (e.g., links, filters)
+      const event = new CustomEvent("language-change", {
+        detail: { isEnglish },
+      });
+      document.dispatchEvent(event);
     }
 
     // Toggle Click
     langBtn?.addEventListener("click", () => {
-        const current = getStoredLanguage();
-        setLanguage(!current);
+      const current = getStoredLanguage();
+      setLanguage(!current);
     });
 
     // Init Logic on Load
@@ -91,7 +105,7 @@
 
     // 如果頁面還有動態生成的內容，可能需要 MutationObserver 或再次觸發
     document.addEventListener("astro:page-load", () => {
-        setLanguage(getStoredLanguage());
+      setLanguage(getStoredLanguage());
     });
   })();
 </script>

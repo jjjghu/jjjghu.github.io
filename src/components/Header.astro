@@ -155,24 +155,32 @@ const { activeCategory } = Astro.props;
 
   /* RWD 手機版調整 */
   @media (max-width: 768px) {
-    .header-nav-row {
-      flex-direction: column;
-      align-items: flex-start;
-      margin-top: 1rem; /* 手機版才需要這個間距 */
+    .site-header {
+      padding: 1.25rem 0;
     }
 
     .header-title-row {
-      /* 手機版可能需要改變排列方式，這邊視您的需求而定 */
-      /* flex-wrap: wrap; */
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .header-nav-row {
+      width: 100%;
+      justify-content: center;
+      margin-top: 0;
     }
 
     .nav-links {
-      flex-wrap: wrap;
-      gap: 1rem;
+      justify-content: center;
+      gap: 1.5rem;
+      font-size: 0.85rem;
     }
 
     .site-title {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
+      text-align: center;
+      white-space: nowrap;
     }
   }
 </style>

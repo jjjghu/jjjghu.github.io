@@ -3,17 +3,40 @@
 .post-list-grid {
     display: grid;
     /* 
-     Grid Columns:
-     1. Icon: Fixed width 40px
-     2. Title: Flexible (min 200px, takes most space)
-     3. Difficulty: Fixed width 100px
-     4. Tags: Flexible (takes remaining space)
-     5. Date: Fixed width 120px
+     Grid Columns (12 total):
+     1. Title Block (Icon + Text): 6 columns
+     2. Difficulty: 2 columns
+     3. Tags: 3 columns
+     4. Date: 1 column
   */
-    grid-template-columns: 40px minmax(200px, 2.5fr) 110px 2fr 120px;
+    grid-template-columns: repeat(12, 1fr);
     gap: 16px;
     align-items: center;
     width: 100%;
+}
+
+/* Desktop Grid Spans (Utility-like classes) */
+@media (min-width: 769px) {
+    .md\:col-span-6 {
+        grid-column: span 6;
+    }
+
+    .md\:col-span-2 {
+        grid-column: span 2;
+    }
+
+    .md\:col-span-3 {
+        grid-column: span 3;
+    }
+
+    .md\:col-span-1 {
+        grid-column: span 1;
+    }
+
+    /* Optional: Alignment tweaks for header matching content */
+    .col-title {
+        padding-left: 8px;
+    }
 }
 
 /* Common tweaks for content within cells */
@@ -31,6 +54,11 @@
     text-align: right;
     font-variant-numeric: tabular-nums;
     /* Align numbers nicely */
+}
+
+.row-meta-info {
+    display: contents;
+    /* Allows children to be direct grid items on desktop */
 }
 
 /* Mobile Responsive */
