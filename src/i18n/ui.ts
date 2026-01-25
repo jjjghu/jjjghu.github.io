@@ -1,6 +1,8 @@
 export const UI_TEXT = {
     // Header
     header_title: { cn: '解題筆記', en: 'Coding Notes' },
+    header_title_prefix: { cn: '解題', en: 'Coding ' },
+    header_title_accent: { cn: '筆記', en: 'Notes' },
     nav_all: { cn: '所有文章', en: 'All Posts' },
     nav_leetcode: { cn: 'LeetCode', en: 'LeetCode' },
     nav_zerojudge: { cn: 'ZeroJudge', en: 'ZeroJudge' },

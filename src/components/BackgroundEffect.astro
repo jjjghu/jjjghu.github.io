@@ -40,7 +40,12 @@
             var(--color-accent-fg-alpha-15, rgba(112, 160, 255, 0.15)), 
             transparent 70%
         );
-        opacity: 0.6; /* Slight transparency */
+        opacity: 0; /* Hidden by default */
+        transition: opacity 0.5s ease;
+    }
+
+    :global(html.bg-lines-enabled) .ambient-light {
+        opacity: 0.6;
     }
 
     /* 2. Background Pattern */
