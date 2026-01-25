@@ -55,25 +55,43 @@ const showTOC = headings && headings.length > 0;
       }
 
       // Blocking script to apply custom settings immediately (to prevent FOUC)
-      (function() {
-          if (typeof localStorage === 'undefined') return;
-          
-          const root = document.documentElement;
+      (function () {
+        if (typeof localStorage === "undefined") return;
 
-          // 1. Accent Color
-          const savedColor = localStorage.getItem("customAccentColor");
-          if (savedColor) {
-              root.style.setProperty("--color-accent-fg", savedColor);
+        const root = document.documentElement;
+
+        // 1. Accent Color
+        const savedColor = localStorage.getItem("customAccentColor");
+        if (savedColor) {
+          root.style.setProperty("--color-accent-fg", savedColor);
+        }
+
+        // 2. Global Toggles
+        const toggles = [
+          "bgLinesEnabled",
+          "hoverGlowEnabled",
+          "spotlightEnabled",
+          "bgTransparencyEnabled",
+        ];
+        toggles.forEach((key) => {
+          const className = key.replace(/([A-Z])/g, "-$1").toLowerCase(); // bgLinesEnabled -> bg-lines-enabled
+
+          const stored = localStorage.getItem(key);
+
+          // Special case for transparency: boolean toggles CSS variable
+          if (key === "bgTransparencyEnabled") {
+            const isEnabled = stored === null ? true : stored === "true"; // Default true
+            root.style.setProperty(
+              "--bg-overlay-alpha",
+              isEnabled ? "40%" : "100%",
+            );
+          } else {
+            // Standard Class Toggles
+            if (stored === "true") {
+              root.classList.add(className);
+            }
           }
-
-          // 2. Global Toggles
-          const toggles = ['bgLinesEnabled', 'hoverGlowEnabled', 'spotlightEnabled'];
-          toggles.forEach(key => {
-              const className = key.replace(/([A-Z])/g, "-$1").toLowerCase(); // bgLinesEnabled -> bg-lines-enabled
-              if (localStorage.getItem(key) === 'true') {
-                  root.classList.add(className);
-              }
-          });
+        });
       })();
     </script>
   </head>

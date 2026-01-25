@@ -10,7 +10,6 @@ import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
 import { UI_TEXT } from "../i18n/ui";
 import "../styles/post-list.css";
 
-
 // 抓取文章並排序 (預設: 題號 小 -> 大)
 const leetcodePosts = await getCollection(LEETCODE_COLLECTION);
 const zerojudgePosts = await getCollection(ZEROJUDGE_COLLECTION);
@@ -48,21 +47,45 @@ const uniqueTags = Array.from(allTagsCN).sort();
         <DifficultyDropDown />
       </div>
 
-
-
       <!-- 篩選結果數量 -->
       <div class="result-count" id="result-count">
-        {UI_TEXT.result_count_prefix.cn} {sortedPosts.length} {UI_TEXT.result_count_suffix.cn}
+        {UI_TEXT.result_count_prefix.cn}
+        {sortedPosts.length}
+        {UI_TEXT.result_count_suffix.cn}
       </div>
     </div>
 
     <div class="file-list-container">
       <div class="file-list-header post-list-grid">
         <div class="col-icon"></div>
-        <div class="col-title" data-cn={UI_TEXT.col_title.cn} data-en={UI_TEXT.col_title.en}>{UI_TEXT.col_title.cn}</div>
-        <div class="col-difficulty" data-cn={UI_TEXT.col_difficulty.cn} data-en={UI_TEXT.col_difficulty.en}>{UI_TEXT.col_difficulty.cn}</div>
-        <div class="col-tags" data-cn={UI_TEXT.col_tags.cn} data-en={UI_TEXT.col_tags.en}>{UI_TEXT.col_tags.cn}</div>
-        <div class="col-date" data-cn={UI_TEXT.col_date.cn} data-en={UI_TEXT.col_date.en}>{UI_TEXT.col_date.cn}</div>
+        <div
+          class="col-title"
+          data-cn={UI_TEXT.col_title.cn}
+          data-en={UI_TEXT.col_title.en}
+        >
+          {UI_TEXT.col_title.cn}
+        </div>
+        <div
+          class="col-difficulty"
+          data-cn={UI_TEXT.col_difficulty.cn}
+          data-en={UI_TEXT.col_difficulty.en}
+        >
+          {UI_TEXT.col_difficulty.cn}
+        </div>
+        <div
+          class="col-tags"
+          data-cn={UI_TEXT.col_tags.cn}
+          data-en={UI_TEXT.col_tags.en}
+        >
+          {UI_TEXT.col_tags.cn}
+        </div>
+        <div
+          class="col-date"
+          data-cn={UI_TEXT.col_date.cn}
+          data-en={UI_TEXT.col_date.en}
+        >
+          {UI_TEXT.col_date.cn}
+        </div>
       </div>
 
       <div id="post-list">
@@ -131,20 +154,26 @@ const uniqueTags = Array.from(allTagsCN).sort();
     background-color: var(--color-canvas-default);
   }
 
-
-
   /* 列表樣式 */
   .file-list-container {
     border: 1px solid var(--color-border-default);
     border-radius: 6px;
-    background-color: var(--color-card-bg); /* Use card bg for consistency */
+    background-color: color-mix(
+      in srgb,
+      var(--color-card-bg) var(--bg-overlay-alpha),
+      transparent
+    );
     overflow: hidden;
   }
 
   .file-list-header {
     /* Grid layout handled by .post-list-grid */
     padding: 16px;
-    background-color: var(--color-canvas-subtle);
+    background-color: color-mix(
+      in srgb,
+      var(--color-canvas-subtle) var(--bg-overlay-alpha),
+      transparent
+    );
     border-bottom: 1px solid var(--color-border-default);
     font-size: 0.85rem;
     font-weight: 600;
@@ -158,9 +187,9 @@ const uniqueTags = Array.from(allTagsCN).sort();
   .col-title {
     padding-right: 1rem;
   }
-  
+
   /* Difficulty, Tags, Date widths handled by grid */
-  
+
   .result-count {
     font-size: 0.85rem;
     color: var(--color-fg-muted);

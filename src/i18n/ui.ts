@@ -47,5 +47,7 @@ export const UI_TEXT = {
     settings_spotlight_desc: { cn: '跟隨滑鼠的聚光燈效果', en: 'Follow cursor light effect' },
     settings_theme_color: { cn: '主題顏色', en: 'Theme Color' },
     settings_theme_color_desc: { cn: '自訂主要顏色', en: 'Customize primary color' },
+    settings_transparency: { cn: '背景透明度', en: 'Transparency' },
+    settings_transparency_desc: { cn: '開啟透明玻璃效果', en: 'Enable glass transparency effect' },
     settings_reset_color: { cn: '重置', en: 'Reset' },
 };

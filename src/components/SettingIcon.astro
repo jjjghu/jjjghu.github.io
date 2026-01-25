@@ -26,8 +26,12 @@ import { UI_TEXT } from "../i18n/ui";
 <div id="settings-panel" class="settings-panel">
   <!-- Header -->
   <div class="panel-header">
-    <h3 class="panel-title" data-cn={UI_TEXT.settings_title.cn} data-en={UI_TEXT.settings_title.en}>
-        {UI_TEXT.settings_title.cn}
+    <h3
+      class="panel-title"
+      data-cn={UI_TEXT.settings_title.cn}
+      data-en={UI_TEXT.settings_title.en}
+    >
+      {UI_TEXT.settings_title.cn}
     </h3>
     <button id="close-settings-btn" class="close-btn">
       <svg
@@ -49,8 +53,19 @@ import { UI_TEXT } from "../i18n/ui";
   <!-- 選項 1: 背景線條 -->
   <div class="toggle-row">
     <div>
-      <div class="toggle-label" data-cn={UI_TEXT.settings_bg_lines.cn} data-en={UI_TEXT.settings_bg_lines.en}>{UI_TEXT.settings_bg_lines.cn}</div>
-      <span class="toggle-desc" data-cn={UI_TEXT.settings_bg_lines_desc.cn} data-en={UI_TEXT.settings_bg_lines_desc.en}>{UI_TEXT.settings_bg_lines_desc.cn}</span>
+      <div
+        class="toggle-label"
+        data-cn={UI_TEXT.settings_bg_lines.cn}
+        data-en={UI_TEXT.settings_bg_lines.en}
+      >
+        {UI_TEXT.settings_bg_lines.cn}
+      </div>
+      <span
+        class="toggle-desc"
+        data-cn={UI_TEXT.settings_bg_lines_desc.cn}
+        data-en={UI_TEXT.settings_bg_lines_desc.en}
+        >{UI_TEXT.settings_bg_lines_desc.cn}</span
+      >
     </div>
     <label class="switch">
       <input type="checkbox" id="bg-lines-toggle" />
@@ -61,8 +76,19 @@ import { UI_TEXT } from "../i18n/ui";
   <!-- 選項 2: Hover 特效 -->
   <div class="toggle-row">
     <div>
-      <div class="toggle-label" data-cn={UI_TEXT.settings_hover_glow.cn} data-en={UI_TEXT.settings_hover_glow.en}>{UI_TEXT.settings_hover_glow.cn}</div>
-      <span class="toggle-desc" data-cn={UI_TEXT.settings_hover_glow_desc.cn} data-en={UI_TEXT.settings_hover_glow_desc.en}>{UI_TEXT.settings_hover_glow_desc.cn}</span>
+      <div
+        class="toggle-label"
+        data-cn={UI_TEXT.settings_hover_glow.cn}
+        data-en={UI_TEXT.settings_hover_glow.en}
+      >
+        {UI_TEXT.settings_hover_glow.cn}
+      </div>
+      <span
+        class="toggle-desc"
+        data-cn={UI_TEXT.settings_hover_glow_desc.cn}
+        data-en={UI_TEXT.settings_hover_glow_desc.en}
+        >{UI_TEXT.settings_hover_glow_desc.cn}</span
+      >
     </div>
     <label class="switch">
       <input type="checkbox" id="hover-glow-toggle" />
@@ -73,8 +99,19 @@ import { UI_TEXT } from "../i18n/ui";
   <!-- 選項 3: 聚光燈 -->
   <div class="toggle-row">
     <div>
-      <div class="toggle-label" data-cn={UI_TEXT.settings_spotlight.cn} data-en={UI_TEXT.settings_spotlight.en}>{UI_TEXT.settings_spotlight.cn}</div>
-      <span class="toggle-desc" data-cn={UI_TEXT.settings_spotlight_desc.cn} data-en={UI_TEXT.settings_spotlight_desc.en}>{UI_TEXT.settings_spotlight_desc.cn}</span>
+      <div
+        class="toggle-label"
+        data-cn={UI_TEXT.settings_spotlight.cn}
+        data-en={UI_TEXT.settings_spotlight.en}
+      >
+        {UI_TEXT.settings_spotlight.cn}
+      </div>
+      <span
+        class="toggle-desc"
+        data-cn={UI_TEXT.settings_spotlight_desc.cn}
+        data-en={UI_TEXT.settings_spotlight_desc.en}
+        >{UI_TEXT.settings_spotlight_desc.cn}</span
+      >
     </div>
     <label class="switch">
       <input type="checkbox" id="spotlight-toggle" />
@@ -82,17 +119,58 @@ import { UI_TEXT } from "../i18n/ui";
     </label>
   </div>
 
-  <!-- 選項 4: 主題顏色 -->
+  <!-- 選項 4: 透明度開關 -->
   <div class="toggle-row">
     <div>
-      <div class="toggle-label" data-cn={UI_TEXT.settings_theme_color.cn} data-en={UI_TEXT.settings_theme_color.en}>{UI_TEXT.settings_theme_color.cn}</div>
-      <span class="toggle-desc" data-cn={UI_TEXT.settings_theme_color_desc.cn} data-en={UI_TEXT.settings_theme_color_desc.en}>{UI_TEXT.settings_theme_color_desc.cn}</span>
+      <div
+        class="toggle-label"
+        data-cn={UI_TEXT.settings_transparency.cn}
+        data-en={UI_TEXT.settings_transparency.en}
+      >
+        {UI_TEXT.settings_transparency.cn}
+      </div>
+      <span
+        class="toggle-desc"
+        data-cn={UI_TEXT.settings_transparency_desc.cn}
+        data-en={UI_TEXT.settings_transparency_desc.en}
+        >{UI_TEXT.settings_transparency_desc.cn}</span
+      >
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="transparency-toggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <!-- 選項 5: 主題顏色 -->
+  <div class="toggle-row">
+    <div>
+      <div
+        class="toggle-label"
+        data-cn={UI_TEXT.settings_theme_color.cn}
+        data-en={UI_TEXT.settings_theme_color.en}
+      >
+        {UI_TEXT.settings_theme_color.cn}
+      </div>
+      <span
+        class="toggle-desc"
+        data-cn={UI_TEXT.settings_theme_color_desc.cn}
+        data-en={UI_TEXT.settings_theme_color_desc.en}
+        >{UI_TEXT.settings_theme_color_desc.cn}</span
+      >
     </div>
     <div class="color-control">
-        <input type="color" id="theme-color-picker" value="#70A0FF" />
-        <button id="reset-color-btn" class="reset-btn" aria-label="Reset Color" title={UI_TEXT.settings_reset_color.cn} data-cn-title={UI_TEXT.settings_reset_color.cn} data-en-title={UI_TEXT.settings_reset_color.en}>
-            <i class='bx bx-refresh'></i>
-        </button>
+      <input type="color" id="theme-color-picker" value="#70A0FF" />
+      <button
+        id="reset-color-btn"
+        class="reset-btn"
+        aria-label="Reset Color"
+        title={UI_TEXT.settings_reset_color.cn}
+        data-cn-title={UI_TEXT.settings_reset_color.cn}
+        data-en-title={UI_TEXT.settings_reset_color.en}
+      >
+        <i class="bx bx-refresh"></i>
+      </button>
     </div>
   </div>
 </div>
@@ -264,156 +342,181 @@ import { UI_TEXT } from "../i18n/ui";
     transform: translateX(18px);
     background-color: #ffffff; /* 圓鈕變白 */
   }
-  
+
   /* Disabled state styling just in case */
   input:disabled + .slider {
-      opacity: 0.6;
-      cursor: not-allowed;
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   /* Color Picker Control */
   .color-control {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   input[type="color"] {
-      -webkit-appearance: none;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      overflow: hidden;
-      padding: 0;
-      background: transparent;
+    -webkit-appearance: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+    padding: 0;
+    background: transparent;
   }
-  
+
   input[type="color"]::-webkit-color-swatch-wrapper {
-      padding: 0; 
+    padding: 0;
   }
-  
+
   input[type="color"]::-webkit-color-swatch {
-      border: 2px solid var(--color-border-default);
-      border-radius: 50%;
+    border: 2px solid var(--color-border-default);
+    border-radius: 50%;
   }
 
   .reset-btn {
-      background: transparent;
-      border: 1px solid var(--color-border-default);
-      color: var(--color-fg-muted);
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      padding: 0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
+    background: transparent;
+    border: 1px solid var(--color-border-default);
+    color: var(--color-fg-muted);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
   }
-  
+
   .reset-btn:hover {
-      background-color: var(--color-canvas-subtle);
-      color: var(--color-fg-default);
-      border-color: var(--color-accent-fg);
+    background-color: var(--color-canvas-subtle);
+    color: var(--color-fg-default);
+    border-color: var(--color-accent-fg);
   }
 </style>
 
 <script>
-  import { getSettingsManager } from '../scripts/settingsManager';
+  import { getSettingsManager } from "../scripts/settingsManager";
 
   // Initialize Manager
   const settings = getSettingsManager();
 
   // 1. Register Settings
   settings.register({
-      key: 'bgLinesEnabled',
-      type: 'boolean',
-      defaultValue: false,
-      cssClass: 'bg-lines-enabled'
+    key: "bgLinesEnabled",
+    type: "boolean",
+    defaultValue: false,
+    cssClass: "bg-lines-enabled",
   });
 
   settings.register({
-      key: 'hoverGlowEnabled',
-      type: 'boolean',
-      defaultValue: true, // Based on previous user preference or default
-      cssClass: 'hover-glow-enabled'
+    key: "hoverGlowEnabled",
+    type: "boolean",
+    defaultValue: true, // Based on previous user preference or default
+    cssClass: "hover-glow-enabled",
   });
 
   settings.register({
-      key: 'spotlightEnabled',
-      type: 'boolean',
-      defaultValue: false,
-      cssClass: 'spotlight-enabled'
+    key: "spotlightEnabled",
+    type: "boolean",
+    defaultValue: false,
+    cssClass: "spotlight-enabled",
   });
 
   settings.register({
-      key: 'customAccentColor',
-      type: 'color',
-      defaultValue: null,
-      cssVar: '--color-accent-fg'
+    key: "bgTransparencyEnabled",
+    type: "boolean",
+    defaultValue: true,
+    cssClass: "transparent-enabled",
+    onApply: (value) => {
+      const root = document.documentElement;
+      if (value) {
+        root.style.setProperty("--bg-overlay-alpha", "40%");
+      } else {
+        root.style.setProperty("--bg-overlay-alpha", "100%");
+      }
+    },
+  });
+
+  settings.register({
+    key: "customAccentColor",
+    type: "color",
+    defaultValue: null,
+    cssVar: "--color-accent-fg",
   });
 
   // 2. Bind UI Elements
   function bindToggle(id, key) {
-      const toggle = document.getElementById(id);
-      if (toggle) {
-          // Set initial state
-          toggle.checked = settings.get(key);
-          
-          // Listen for changes
-          toggle.addEventListener('change', (e) => {
-              settings.set(key, e.target.checked);
-          });
-      }
+    const toggle = document.getElementById(id);
+    if (toggle) {
+      // Set initial state
+      (toggle as HTMLInputElement).checked = settings.get(key);
+
+      // Listen for changes
+      toggle.addEventListener("change", (e) => {
+        settings.set(key, (e.target as HTMLInputElement).checked);
+      });
+    }
   }
 
-  bindToggle('bg-lines-toggle', 'bgLinesEnabled');
-  bindToggle('hover-glow-toggle', 'hoverGlowEnabled');
-  bindToggle('spotlight-toggle', 'spotlightEnabled');
+  bindToggle("bg-lines-toggle", "bgLinesEnabled");
+  bindToggle("hover-glow-toggle", "hoverGlowEnabled");
+  bindToggle("spotlight-toggle", "spotlightEnabled");
+  bindToggle("transparency-toggle", "bgTransparencyEnabled");
 
   // 3. Bind Color Picker
   const colorPicker = document.getElementById("theme-color-picker");
   const resetBtn = document.getElementById("reset-color-btn");
 
   if (colorPicker) {
-      // Init
-      const savedColor = settings.get('customAccentColor');
-      if (savedColor) {
-          colorPicker.value = savedColor;
-      } else {
-          // Fallback to computed if not set
-          const computed = getComputedStyle(document.documentElement).getPropertyValue("--color-accent-fg").trim();
-          colorPicker.value = computed; 
-      }
+    // Init
+    const savedColor = settings.get("customAccentColor");
+    if (savedColor) {
+      (colorPicker as HTMLInputElement).value = savedColor;
+    } else {
+      // Fallback to computed if not set
+      const computed = getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-accent-fg")
+        .trim();
+      (colorPicker as HTMLInputElement).value = computed;
+    }
 
-      // Change
-      colorPicker.addEventListener("input", (e) => {
-          settings.set('customAccentColor', e.target.value);
-      });
+    // Change
+    colorPicker.addEventListener("input", (e) => {
+      settings.set("customAccentColor", (e.target as HTMLInputElement).value);
+    });
   }
 
   if (resetBtn) {
-      resetBtn.addEventListener("click", () => {
-          settings.reset('customAccentColor');
-          // Update picker visual
-          setTimeout(() => {
-             const computed = getComputedStyle(document.documentElement).getPropertyValue("--color-accent-fg").trim();
-             if (colorPicker) colorPicker.value = computed;
-          }, 10);
-      });
+    resetBtn.addEventListener("click", () => {
+      settings.reset("customAccentColor");
+      // Update picker visual
+      setTimeout(() => {
+        const computed = getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-accent-fg")
+          .trim();
+        if (colorPicker) (colorPicker as HTMLInputElement).value = computed;
+      }, 10);
+    });
   }
 
   // 4. Theme Sync Observer (Specific logic for color picker visual sync)
   const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-          if (mutation.attributeName === "class" && !settings.get('customAccentColor')) {
-               const defaultColor = getComputedStyle(document.documentElement).getPropertyValue("--color-accent-fg").trim();
-               if (colorPicker) colorPicker.value = defaultColor;
-          }
-      });
+    mutations.forEach((mutation) => {
+      if (
+        mutation.attributeName === "class" &&
+        !settings.get("customAccentColor")
+      ) {
+        const defaultColor = getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-accent-fg")
+          .trim();
+        if (colorPicker) (colorPicker as HTMLInputElement).value = defaultColor;
+      }
+    });
   });
   observer.observe(document.documentElement, { attributes: true });
 
@@ -433,9 +536,9 @@ import { UI_TEXT } from "../i18n/ui";
   openBtn?.addEventListener("click", (e) => {
     e.stopPropagation();
     if (panel?.classList.contains("active")) {
-        closePanel();
+      closePanel();
     } else {
-        openPanel();
+      openPanel();
     }
   });
 
@@ -447,8 +550,8 @@ import { UI_TEXT } from "../i18n/ui";
   document.addEventListener("click", (e) => {
     if (
       panel?.classList.contains("active") &&
-      !panel.contains(e.target) &&
-      !openBtn?.contains(e.target)
+      !panel.contains(e.target as Node) &&
+      !openBtn?.contains(e.target as Node)
     ) {
       closePanel();
     }

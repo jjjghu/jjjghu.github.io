@@ -12,63 +12,97 @@ const { activeCategory } = Astro.props;
   <div class="header-inner">
     <div class="header-title-row">
       <a href="/" class="site-title">
-        <span data-cn={UI_TEXT.header_title_prefix.cn} data-en={UI_TEXT.header_title_prefix.en}>{UI_TEXT.header_title_prefix.cn}</span><span class="accent-text" data-cn={UI_TEXT.header_title_accent.cn} data-en={UI_TEXT.header_title_accent.en}>{UI_TEXT.header_title_accent.cn}</span>
+        <span
+          data-cn={UI_TEXT.header_title_prefix.cn}
+          data-en={UI_TEXT.header_title_prefix.en}
+          >{UI_TEXT.header_title_prefix.cn}</span
+        ><span
+          class="accent-text"
+          data-cn={UI_TEXT.header_title_accent.cn}
+          data-en={UI_TEXT.header_title_accent.en}
+          >{UI_TEXT.header_title_accent.cn}</span
+        >
       </a>
-    </div>
+      <nav class="header-nav-row">
+        <ul class="nav-links">
+          <li>
+            <a
+              href="/"
+              class="nav-link"
+              data-category="all"
+              data-cn={UI_TEXT.nav_all.cn}
+              data-en={UI_TEXT.nav_all.en}>{UI_TEXT.nav_all.cn}</a
+            >
+          </li>
+          <li>
+            <a
+              href="/?category=leetcode"
+              class="nav-link"
+              data-category="leetcode"
+              data-cn={UI_TEXT.nav_leetcode.cn}
+              data-en={UI_TEXT.nav_leetcode.en}>{UI_TEXT.nav_leetcode.cn}</a
+            >
+          </li>
+          <li>
+            <a
+              href="/?category=zerojudge"
+              class="nav-link"
+              data-category="zerojudge"
+              data-cn={UI_TEXT.nav_zerojudge.cn}
+              data-en={UI_TEXT.nav_zerojudge.en}>{UI_TEXT.nav_zerojudge.cn}</a
+            >
+          </li>
+        </ul>
 
-    <nav class="header-nav-row">
-      <ul class="nav-links">
-        <li>
-          <a href="/" class="nav-link" data-category="all" data-cn={UI_TEXT.nav_all.cn} data-en={UI_TEXT.nav_all.en}>{UI_TEXT.nav_all.cn}</a>
-        </li>
-        <li>
-          <a href="/?category=leetcode" class="nav-link" data-category="leetcode" data-cn={UI_TEXT.nav_leetcode.cn} data-en={UI_TEXT.nav_leetcode.en}>{UI_TEXT.nav_leetcode.cn}</a>
-        </li>
-        <li>
-          <a href="/?category=zerojudge" class="nav-link" data-category="zerojudge" data-cn={UI_TEXT.nav_zerojudge.cn} data-en={UI_TEXT.nav_zerojudge.en}>{UI_TEXT.nav_zerojudge.cn}</a>
-        </li>
-      </ul>
-
-      <script is:inline>
-        (function() {
+        <script is:inline>
+          (function () {
             const params = new URLSearchParams(window.location.search);
             const category = params.get("category") || "all";
             const links = document.querySelectorAll(".nav-link");
-            links.forEach(link => {
-                if (link.dataset.category === category) {
-                    link.classList.add("active");
-                } else {
-                    link.classList.remove("active");
-                }
+            links.forEach((link) => {
+              if (link.dataset.category === category) {
+                link.classList.add("active");
+              } else {
+                link.classList.remove("active");
+              }
             });
-        })();
-      </script>
-
-
-    </nav>
+          })();
+        </script>
+      </nav>
+    </div>
   </div>
 </header>
 
 <style>
   .site-header {
-    background-color: color-mix(in srgb, var(--color-canvas-default), transparent 80%);
+    background-color: color-mix(
+      in srgb,
+      var(--color-canvas-default) var(--bg-overlay-alpha),
+      transparent
+    );
     border-bottom: 1px solid var(--color-border-muted);
-    padding: 1rem 0;
-    margin-bottom: 2rem;
+    /* 這裡控制 Header 的總高度，上下 padding 一樣就會置中 */
+    padding: 1.5rem 0;
+    margin-bottom: 1rem;
   }
 
   .header-inner {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
+    height: 100%; /* 確保高度充滿 */
   }
 
   /* 第一行樣式 */
   .header-title-row {
     display: flex;
     justify-content: space-between;
+
+    /* [關鍵] 讓標題與導航連結垂直置中對齊 */
     align-items: center;
-    margin-bottom: 1rem;
+
+    /* [關鍵] 移除原本的 margin-bottom，消除下方多餘空白 */
+    margin-bottom: 0;
   }
 
   .site-title {
@@ -77,16 +111,16 @@ const { activeCategory } = Astro.props;
     color: var(--color-fg-default);
     text-decoration: none;
     letter-spacing: 1px;
+    /* 移除行高造成的額外偏移，或是設為 1 */
+    line-height: 1;
+    display: flex;
+    align-items: center;
   }
 
   /* 第二行導航列樣式 */
   .header-nav-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    /* 手機版自動換行 */
-    gap: 1rem;
+    align-items: center; /* 確保導航內的項目也是垂直置中 */
   }
 
   .nav-links {
@@ -95,6 +129,7 @@ const { activeCategory } = Astro.props;
     margin: 0;
     display: flex;
     gap: 1.5rem;
+    align-items: center; /* 確保 li 垂直置中 */
   }
 
   .nav-links a {
@@ -102,14 +137,16 @@ const { activeCategory } = Astro.props;
     font-weight: 600;
     font-size: 0.95rem;
     text-transform: uppercase;
-    /* 強制大寫 */
     transition: color 0.2s;
+    /* 確保連結文字垂直置中 */
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
 
   .nav-links a:hover,
   .nav-links a.active {
     color: var(--color-accent-fg);
-    /* 藍色 */
   }
 
   .accent-text {
@@ -121,6 +158,12 @@ const { activeCategory } = Astro.props;
     .header-nav-row {
       flex-direction: column;
       align-items: flex-start;
+      margin-top: 1rem; /* 手機版才需要這個間距 */
+    }
+
+    .header-title-row {
+      /* 手機版可能需要改變排列方式，這邊視您的需求而定 */
+      /* flex-wrap: wrap; */
     }
 
     .nav-links {
