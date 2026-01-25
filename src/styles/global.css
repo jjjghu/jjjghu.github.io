@@ -7,21 +7,21 @@
 
 /* 全域變數設定，方便管理顏色*/
 :root {
-  --color-canvas-default: #0d1117;
+  --color-canvas-default: rgb(13, 17, 23);
   /* 最深背景色 */
-  --color-canvas-subtle: #161b22;
+  --color-canvas-subtle: rgb(22, 27, 34);
   /* 程式碼區塊背景色 */
-  --color-canvas-overlay: #21262d;
+  --color-canvas-overlay: rgb(33, 38, 45);
   /* 下拉選單背景色 */
-  --color-border-default: #30363d;
+  --color-border-default: rgb(48, 54, 61);
   /* 邊框顏色 */
-  --color-border-muted: #21262d;
+  --color-border-muted: rgb(33, 38, 45);
   /* 標題下方的分隔線 */
-  --color-fg-default: #c9d1d9;
+  --color-fg-default: rgb(201, 209, 217);
   /* 主要文字顏色 */
-  --color-fg-muted: #8b949e;
+  --color-fg-muted: rgb(139, 148, 158);
   /* 次要文字顏色 */
-  --color-accent-fg: #70A0FF;
+  --color-accent-fg: rgb(112, 160, 255);
   /* 連結顏色 */
   --color-neutral-muted: rgba(35, 43, 53, 0.2);
   /* 行內程式碼背景 */
@@ -29,28 +29,28 @@
   /* 行內程式碼邊框 */
 
   /* 新增：頁面背景與卡片背景 (Dark Mode) */
-  --color-page-bg: #0d1117;
+  --color-page-bg: rgb(13, 17, 23);
   /* 頁面底色 */
-  --color-card-bg: #161b22;
+  --color-card-bg: rgb(22, 27, 34);
   /* 卡片底色 (比底色稍亮) */
 }
 
 html.light {
-  --color-canvas-default: #ffffff;
+  --color-canvas-default: rgb(255, 255, 255);
   /* 背景變白 */
-  --color-canvas-subtle: #f6f8fa;
+  --color-canvas-subtle: rgb(246, 248, 250);
   /* 程式碼區塊背景變淺灰 */
-  --color-canvas-overlay: #ffffff;
+  --color-canvas-overlay: rgb(255, 255, 255);
   /* 下拉選單背景色 */
-  --color-border-default: #d0d7de;
+  --color-border-default: rgb(208, 215, 222);
   /* 邊框 */
-  --color-border-muted: #d8dee4;
+  --color-border-muted: rgb(216, 222, 228);
   /* 分隔線 */
-  --color-fg-default: #24292f;
+  --color-fg-default: rgb(36, 41, 47);
   /* 文字變深黑 */
-  --color-fg-muted: #57606a;
+  --color-fg-muted: rgb(87, 96, 106);
   /* 次要文字 */
-  --color-accent-fg: #0969da;
+  --color-accent-fg: rgb(9, 105, 218);
   /* 連結變深藍 */
   --color-neutral-muted: rgba(175, 184, 193, 0.2);
   /* 行內程式碼背景 */
@@ -58,9 +58,9 @@ html.light {
   /* 行內程式碼邊框*/
 
   /* 新增：頁面背景與卡片背景 (Light Mode) */
-  --color-page-bg: #f6f8fa;
+  --color-page-bg: rgb(246, 248, 250);
   /* 頁面底色 (淺灰) */
-  --color-card-bg: #ffffff;
+  --color-card-bg: rgb(255, 255, 255);
   /* 卡片底色 (白) */
 }
 
@@ -81,6 +81,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   line-height: 1.5;
   word-wrap: break-word;
+  isolation: isolate;
+  /* Create stacking context so negative z-index children sit on top of background */
 }
 
 /* 連結樣式 */
