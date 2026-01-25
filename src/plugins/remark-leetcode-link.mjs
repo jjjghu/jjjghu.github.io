@@ -2,6 +2,8 @@
 import fs from 'fs';
 import path from 'path';
 
+/* 讓 [[題目編號]] 變成連結 */
+
 // 簡單的遞迴遍歷函數，取代 unist-util-visit 以避免依賴問題
 function visit(node, type, visitor) {
     if (node.type === type) {
