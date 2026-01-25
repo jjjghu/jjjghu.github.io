@@ -23,7 +23,8 @@ const cssVars = {
 ---
 
 <span
-    class="difficulty-badge"
+    class="badge"
+    data-variant="difficulty"
     style={cssVars}
     data-cn={labelCN}
     data-en={labelEN}
@@ -32,22 +33,37 @@ const cssVars = {
 </span>
 
 <style>
-    .difficulty-badge {
-        display: inline-flex;
-        padding: 2px 10px;
-        font-size: 12px;
-        font-weight: 400;
-        border-radius: 999px;
-        border: 1px solid rgba(240, 246, 252, 0.1);
-        background-color: #2d333b;
-        /* margin-right: 12px; */
-        white-space: nowrap;
-        /* 這裡可以加邊框或背景，看設計風格，這裡目前採用文字顏色區分 */
-        color: var(--badge-color-dark);
+    .badge[data-variant="difficulty"] {
+        --badge-bg: color-mix(
+            in srgb,
+            var(--badge-color-dark) 10%,
+            transparent
+        );
+        --badge-border: color-mix(
+            in srgb,
+            var(--badge-color-dark) 20%,
+            transparent
+        );
+        --badge-fg: var(--badge-color-dark);
     }
-    :global(.light) .difficulty-badge {
-        background-color: #f6f8fa;
-        border-color: #d0d7de;
-        color: var(--badge-color-light);
+    .badge[data-variant="difficulty"]:hover {
+        --badge-bg-hover: color-mix(
+            in srgb,
+            var(--badge-color-dark) 20%,
+            transparent
+        );
+    }
+    :global(.light) .badge[data-variant="difficulty"] {
+        --badge-fg: var(--badge-color-light);
+        --badge-border: color-mix(
+            in srgb,
+            var(--badge-color-light) 80%,
+            transparent
+        );
+        --badge-bg: color-mix(
+            in srgb,
+            var(--badge-color-light) 10%,
+            transparent
+        );
     }
 </style>

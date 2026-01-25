@@ -1,6 +1,7 @@
 ---
 import { getTagCN, getTagEN } from "../utils/postHelper.ts";
 import "../styles/dropdown.css";
+import "../styles/badges.css";
 import { UI_TEXT } from "../i18n/ui";
 
 interface Props {
@@ -16,7 +17,12 @@ const { tags } = Astro.props;
         <span data-cn={UI_TEXT.filter_tags.cn} data-en={UI_TEXT.filter_tags.en}
             >{UI_TEXT.filter_tags.cn}</span
         >
-        <span id="selected-count" class="badge" style="display:none">0</span>
+        <span
+            id="selected-count"
+            class="badge"
+            data-variant="count"
+            style="display:none">0</span
+        >
     </button>
 
     <div id="tag-dropdown" class="dropdown-menu tag-dropdown">
@@ -42,7 +48,8 @@ const { tags } = Astro.props;
                         <label class="tag-chip">
                             <input type="checkbox" value={tagCN} />
                             <span
-                                class="chip-content"
+                                class="badge"
+                                data-variant="filter-chip"
                                 data-cn={tagCN}
                                 data-en={tagEN}
                             >
@@ -134,7 +141,7 @@ const { tags } = Astro.props;
         const chips = tagList?.querySelectorAll(".tag-chip");
 
         chips?.forEach((chip) => {
-            const span = chip.querySelector(".chip-content");
+            const span = chip.querySelector(".badge");
             if (span) {
                 // @ts-ignore
                 const cn = (span.dataset.cn || "").toLowerCase();
@@ -218,7 +225,7 @@ const { tags } = Astro.props;
         if (selectedCountBadge && tagFilterBtn) {
             if (selectedTags.size > 0) {
                 selectedCountBadge.textContent = selectedTags.size.toString();
-                selectedCountBadge.style.display = "inline-block";
+                selectedCountBadge.style.display = "inline-flex"; // badge is inline-flex
                 tagFilterBtn.classList.add("active");
             } else {
                 selectedCountBadge.style.display = "none";
@@ -263,13 +270,72 @@ const { tags } = Astro.props;
         border-color: rgba(56, 139, 253, 0.4);
     }
 
-    .badge {
-        background-color: var(--color-accent-fg);
-        color: white;
-        font-size: 0.75rem;
-        padding: 0 6px;
-        border-radius: 10px;
+    /* --- Badge Variants --- */
+
+    /* 1. Count Badge */
+    .badge[data-variant="count"] {
+        --badge-bg: var(--color-accent-fg);
+        --badge-fg: white;
+        --badge-radius: 10px;
+        --badge-px: 6px;
+        --badge-py: 0;
+        --badge-fs: 0.75rem;
         line-height: 1.4;
+    }
+
+    /* 2. Filter Chip Badge */
+    .badge[data-variant="filter-chip"] {
+        --badge-bg: var(--color-canvas-subtle);
+        --badge-border: var(--color-border-muted);
+        --badge-fg: var(--color-fg-default);
+        --badge-radius: 20px;
+        --badge-fs: 0.85rem;
+        --badge-py: 4px;
+        --badge-px: 10px;
+        cursor: pointer;
+    }
+
+    .tag-chip:hover .badge[data-variant="filter-chip"] {
+        --badge-bg: var(--color-border-default);
+        --badge-border: var(--color-border-default);
+    }
+
+    /* Selected State for Filter Chip */
+    .tag-chip input:checked + .badge[data-variant="filter-chip"] {
+        --badge-bg: color-mix(in srgb, var(--color-accent-fg), transparent 60%);
+        --badge-fg: var(
+            --color-page-bg
+        ); /* Ensuring readable contrast against the dim accent, or stick to white/accent-fg?? 
+           Original was: color: var(--color-accent-bg); 
+           If accent-bg is undefined, it defaults to inherit.
+           Let's use a safe color like pure white or a specific variable if we knew content.
+           Since accent-fg is usually blue. Blue + 60% transparent is darkish blue on dark theme.
+           Wait, `transparent 60%` means 40% opaque color? No, mix(color, transparent 60%) usually means 40% color, 60% transparent.
+           If theme is dark, this is a dim background.
+           Let's just use `var(--color-fg-default)` or `white` to be safe, or just `var(--color-accent-fg)` for text if background is very dim.
+           
+           Actually, checking old code:
+           background-color: color-mix(..., transparent 60%);
+           color: var(--color-accent-bg);
+           
+           I will use a high contrast color for text. white is usually safe for chips.
+           Or maybe `var(--color-fg-default)`.
+        */
+        --badge-fg: #ffffff;
+
+        --badge-border: color-mix(
+            in srgb,
+            var(--color-accent-fg),
+            transparent 20%
+        );
+    }
+
+    /* Light Mode Tweak for selected state visibility */
+    :global(.light)
+        .tag-chip
+        input:checked
+        + .badge[data-variant="filter-chip"] {
+        --badge-fg: #ffffff; /* Make sure text is white on the blueish chip */
     }
 
     .tag-filter-container {
@@ -350,34 +416,6 @@ const { tags } = Astro.props;
     }
     .tag-chip input {
         display: none;
-    }
-    .chip-content {
-        display: inline-flex;
-        padding: 4px 10px;
-        font-size: 0.85rem;
-        background-color: var(--color-canvas-subtle);
-        border: 1px solid var(--color-border-muted);
-        border-radius: 20px;
-        color: var(--color-fg-default);
-        transition: all 0.2s ease;
-    }
-    .tag-chip:hover .chip-content {
-        background-color: var(--color-border-default);
-        border-color: var(--color-border-default);
-    }
-    /* Selected State */
-    .tag-chip input:checked + .chip-content {
-        background-color: color-mix(
-            in srgb,
-            var(--color-accent-fg),
-            transparent 60%
-        );
-        color: var(--color-accent-bg);
-        border-color: color-mix(
-            in srgb,
-            var(--color-accent-fg),
-            transparent 20%
-        );
     }
 
     /* --- Footer Area --- */

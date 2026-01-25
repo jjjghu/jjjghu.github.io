@@ -76,7 +76,6 @@
 
 .col-difficulty {
     display: flex;
-    align-items: center;
     min-width: 0;
 }
 
@@ -85,7 +84,7 @@
 }
 
 .col-date {
-    text-align: right;
+    text-align: center;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
     color: var(--color-fg-muted);

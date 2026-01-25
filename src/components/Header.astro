@@ -117,6 +117,10 @@ const { activeCategory } = Astro.props;
     align-items: center;
   }
 
+  .accent-text {
+    color: var(--color-accent-fg);
+  }
+
   /* 第二行導航列樣式 */
   .header-nav-row {
     display: flex;
@@ -146,10 +150,6 @@ const { activeCategory } = Astro.props;
 
   .nav-links a:hover,
   .nav-links a.active {
-    color: var(--color-accent-fg);
-  }
-
-  .accent-text {
     color: var(--color-accent-fg);
   }
 
