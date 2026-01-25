@@ -129,9 +129,3 @@ html.hover-glow-enabled .file-row:hover .title-text {
     color: var(--color-accent-fg);
     transition: color 0.2s ease;
 }
-
-/* 5. Icon Color Change on Hover */
-html.hover-glow-enabled .file-row:hover .file-icon {
-    color: var(--color-accent-fg);
-    transition: color 0.2s ease;
-}
