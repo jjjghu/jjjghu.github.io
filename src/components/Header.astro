@@ -11,60 +11,47 @@ const { activeCategory } = Astro.props;
 <header class="site-header">
   <div class="header-inner">
     <div class="header-title-row">
-      <a href="/" class="site-title" data-cn={UI_TEXT.header_title.cn} data-en={UI_TEXT.header_title.en}>{UI_TEXT.header_title.cn}</a>
+      <a href="/" class="site-title">
+        <span data-cn={UI_TEXT.header_title_prefix.cn} data-en={UI_TEXT.header_title_prefix.en}>{UI_TEXT.header_title_prefix.cn}</span><span class="accent-text" data-cn={UI_TEXT.header_title_accent.cn} data-en={UI_TEXT.header_title_accent.en}>{UI_TEXT.header_title_accent.cn}</span>
+      </a>
     </div>
 
     <nav class="header-nav-row">
       <ul class="nav-links">
         <li>
-          <a href="/" class={`nav-link ${activeCategory === 'all' || !activeCategory ? 'active' : ''}`} data-category="all" data-cn={UI_TEXT.nav_all.cn} data-en={UI_TEXT.nav_all.en}>{UI_TEXT.nav_all.cn}</a>
+          <a href="/" class="nav-link" data-category="all" data-cn={UI_TEXT.nav_all.cn} data-en={UI_TEXT.nav_all.en}>{UI_TEXT.nav_all.cn}</a>
         </li>
         <li>
-          <a href="/?category=leetcode" class={`nav-link ${activeCategory === 'leetcode' ? 'active' : ''}`} data-category="leetcode" data-cn={UI_TEXT.nav_leetcode.cn} data-en={UI_TEXT.nav_leetcode.en}>{UI_TEXT.nav_leetcode.cn}</a>
+          <a href="/?category=leetcode" class="nav-link" data-category="leetcode" data-cn={UI_TEXT.nav_leetcode.cn} data-en={UI_TEXT.nav_leetcode.en}>{UI_TEXT.nav_leetcode.cn}</a>
         </li>
         <li>
-          <a href="/?category=zerojudge" class={`nav-link ${activeCategory === 'zerojudge' ? 'active' : ''}`} data-category="zerojudge" data-cn={UI_TEXT.nav_zerojudge.cn} data-en={UI_TEXT.nav_zerojudge.en}>{UI_TEXT.nav_zerojudge.cn}</a>
+          <a href="/?category=zerojudge" class="nav-link" data-category="zerojudge" data-cn={UI_TEXT.nav_zerojudge.cn} data-en={UI_TEXT.nav_zerojudge.en}>{UI_TEXT.nav_zerojudge.cn}</a>
         </li>
       </ul>
 
-<script>
-  if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-    const params = new URLSearchParams(window.location.search);
-    const category = params.get("category") || "all";
-    document.querySelectorAll(".nav-link").forEach(link => {
-        // @ts-ignore
-        if (link.dataset.category === category) {
-            link.classList.add("active");
-        } else {
-            link.classList.remove("active");
-        }
-    });
-  }
-</script>
+      <script is:inline>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const category = params.get("category") || "all";
+            const links = document.querySelectorAll(".nav-link");
+            links.forEach(link => {
+                if (link.dataset.category === category) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+        })();
+      </script>
 
-      <form action="/" method="get" class="search-form">
-        <div class="search-group">
-          <input
-            type="text"
-            name="q"
-            placeholder={UI_TEXT.search_placeholder.cn}
-            class="search-input"
-            required
-            data-cn-placeholder={UI_TEXT.search_placeholder.cn}
-            data-en-placeholder={UI_TEXT.search_placeholder.en}
-          />
-          <button type="submit" class="search-btn">
-            <i class="bx bx-search"></i>
-          </button>
-        </div>
-      </form>
+
     </nav>
   </div>
 </header>
 
 <style>
   .site-header {
-    background-color: var(--color-canvas-default);
+    background-color: color-mix(in srgb, var(--color-canvas-default), transparent 80%);
     border-bottom: 1px solid var(--color-border-muted);
     padding: 1rem 0;
     margin-bottom: 2rem;
@@ -125,41 +112,7 @@ const { activeCategory } = Astro.props;
     /* 藍色 */
   }
 
-  /* 搜尋框樣式 */
-  .search-group {
-    display: flex;
-    align-items: center;
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
-    overflow: hidden;
-    background-color: var(--color-canvas-subtle);
-  }
-
-  .search-input {
-    background: transparent;
-    border: none;
-    padding: 6px 12px;
-    color: var(--color-fg-default);
-    outline: none;
-    font-size: 0.9rem;
-    width: 150px;
-    transition: width 0.3s;
-  }
-
-  .search-input:focus {
-    width: 200px;
-    /* 點擊時變寬 */
-  }
-
-  .search-btn {
-    background: transparent;
-    border: none;
-    color: var(--color-fg-muted);
-    padding: 6px 10px;
-    cursor: pointer;
-  }
-
-  .search-btn:hover {
+  .accent-text {
     color: var(--color-accent-fg);
   }
 

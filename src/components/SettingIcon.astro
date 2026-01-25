@@ -321,7 +321,103 @@ import { UI_TEXT } from "../i18n/ui";
   }
 </style>
 
-<script is:inline>
+<script>
+  import { getSettingsManager } from '../scripts/settingsManager';
+
+  // Initialize Manager
+  const settings = getSettingsManager();
+
+  // 1. Register Settings
+  settings.register({
+      key: 'bgLinesEnabled',
+      type: 'boolean',
+      defaultValue: false,
+      cssClass: 'bg-lines-enabled'
+  });
+
+  settings.register({
+      key: 'hoverGlowEnabled',
+      type: 'boolean',
+      defaultValue: true, // Based on previous user preference or default
+      cssClass: 'hover-glow-enabled'
+  });
+
+  settings.register({
+      key: 'spotlightEnabled',
+      type: 'boolean',
+      defaultValue: false,
+      cssClass: 'spotlight-enabled'
+  });
+
+  settings.register({
+      key: 'customAccentColor',
+      type: 'color',
+      defaultValue: null,
+      cssVar: '--color-accent-fg'
+  });
+
+  // 2. Bind UI Elements
+  function bindToggle(id, key) {
+      const toggle = document.getElementById(id);
+      if (toggle) {
+          // Set initial state
+          toggle.checked = settings.get(key);
+          
+          // Listen for changes
+          toggle.addEventListener('change', (e) => {
+              settings.set(key, e.target.checked);
+          });
+      }
+  }
+
+  bindToggle('bg-lines-toggle', 'bgLinesEnabled');
+  bindToggle('hover-glow-toggle', 'hoverGlowEnabled');
+  bindToggle('spotlight-toggle', 'spotlightEnabled');
+
+  // 3. Bind Color Picker
+  const colorPicker = document.getElementById("theme-color-picker");
+  const resetBtn = document.getElementById("reset-color-btn");
+
+  if (colorPicker) {
+      // Init
+      const savedColor = settings.get('customAccentColor');
+      if (savedColor) {
+          colorPicker.value = savedColor;
+      } else {
+          // Fallback to computed if not set
+          const computed = getComputedStyle(document.documentElement).getPropertyValue("--color-accent-fg").trim();
+          colorPicker.value = computed; 
+      }
+
+      // Change
+      colorPicker.addEventListener("input", (e) => {
+          settings.set('customAccentColor', e.target.value);
+      });
+  }
+
+  if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+          settings.reset('customAccentColor');
+          // Update picker visual
+          setTimeout(() => {
+             const computed = getComputedStyle(document.documentElement).getPropertyValue("--color-accent-fg").trim();
+             if (colorPicker) colorPicker.value = computed;
+          }, 10);
+      });
+  }
+
+  // 4. Theme Sync Observer (Specific logic for color picker visual sync)
+  const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+          if (mutation.attributeName === "class" && !settings.get('customAccentColor')) {
+               const defaultColor = getComputedStyle(document.documentElement).getPropertyValue("--color-accent-fg").trim();
+               if (colorPicker) colorPicker.value = defaultColor;
+          }
+      });
+  });
+  observer.observe(document.documentElement, { attributes: true });
+
+  // 5. Panel Open/Close Logic (UI only)
   const openBtn = document.getElementById("setting-toggle");
   const closeBtn = document.getElementById("close-settings-btn");
   const panel = document.getElementById("settings-panel");
@@ -336,7 +432,6 @@ import { UI_TEXT } from "../i18n/ui";
 
   openBtn?.addEventListener("click", (e) => {
     e.stopPropagation();
-    // Toggle
     if (panel?.classList.contains("active")) {
         closePanel();
     } else {
@@ -349,7 +444,6 @@ import { UI_TEXT } from "../i18n/ui";
     closePanel();
   });
 
-  // 點擊面板外部關閉
   document.addEventListener("click", (e) => {
     if (
       panel?.classList.contains("active") &&
@@ -359,109 +453,4 @@ import { UI_TEXT } from "../i18n/ui";
       closePanel();
     }
   });
-
-  // --- Theme Color Logic ---
-  const colorPicker = document.getElementById("theme-color-picker");
-  const resetBtn = document.getElementById("reset-color-btn");
-  const rootElement = document.documentElement;
-
-  // 1. Load saved color
-  const savedColor = localStorage.getItem("customAccentColor");
-  if (savedColor) {
-      rootElement.style.setProperty("--color-accent-fg", savedColor);
-      if (colorPicker) colorPicker.value = savedColor;
-  } else {
-      // Set picker to current computed value if no custom color
-      // Note: This might change between dark/light mode so it's an approximation
-      const computedColor = getComputedStyle(rootElement).getPropertyValue("--color-accent-fg").trim();
-      if (colorPicker) colorPicker.value = computedColor;
-  }
-
-  // 2. Handle Color Change
-  colorPicker?.addEventListener("input", (e) => {
-      const color = e.target.value;
-      rootElement.style.setProperty("--color-accent-fg", color);
-      localStorage.setItem("customAccentColor", color);
-  });
-
-  // 3. Handle Reset
-  resetBtn?.addEventListener("click", () => {
-      rootElement.style.removeProperty("--color-accent-fg");
-      localStorage.removeItem("customAccentColor");
-      
-      // Update picker to reflect restored default (need to wait for style to re-apply)
-      setTimeout(() => {
-          const defaultColor = getComputedStyle(rootElement).getPropertyValue("--color-accent-fg").trim();
-          if (colorPicker) colorPicker.value = defaultColor;
-      }, 10);
-  });
-
-  // Listener for Theme Toggle changes (Light/Dark) to update picker if using default
-  const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-          if (mutation.attributeName === "class" && !localStorage.getItem("customAccentColor")) {
-               const defaultColor = getComputedStyle(rootElement).getPropertyValue("--color-accent-fg").trim();
-               if (colorPicker) colorPicker.value = defaultColor;
-          }
-      });
-  });
-  observer.observe(rootElement, { attributes: true });
-
-  // --- Hover Glow Logic ---
-  const hoverGlowToggle = document.getElementById("hover-glow-toggle");
-  
-  // 1. Load saved state
-  const isHoverGlowEnabled = localStorage.getItem("hoverGlowEnabled") === "true";
-  if (isHoverGlowEnabled) {
-      rootElement.classList.add("hover-glow-enabled");
-      if (hoverGlowToggle) hoverGlowToggle.checked = true;
-  }
-
-  // 2. Handle Toggle
-  hoverGlowToggle?.addEventListener("change", (e) => {
-      const checked = e.target.checked;
-      handleGlobalClass("hover-glow-enabled", checked);
-      localStorage.setItem("hoverGlowEnabled", String(checked));
-  });
-
-  // --- Background Lines Logic ---
-  const bgLinesToggle = document.getElementById("bg-lines-toggle");
-  const isBgLinesEnabled = localStorage.getItem("bgLinesEnabled") === "true";
-  
-  // Init
-  if (isBgLinesEnabled) {
-      rootElement.classList.add("bg-lines-enabled");
-      if (bgLinesToggle) bgLinesToggle.checked = true;
-  }
-
-  bgLinesToggle?.addEventListener("change", (e) => {
-      const checked = e.target.checked;
-      handleGlobalClass("bg-lines-enabled", checked);
-      localStorage.setItem("bgLinesEnabled", String(checked));
-  });
-
-  // --- Spotlight Logic ---
-  const spotlightToggle = document.getElementById("spotlight-toggle");
-  const isSpotlightEnabled = localStorage.getItem("spotlightEnabled") === "true";
-
-  // Init
-  if (isSpotlightEnabled) {
-      rootElement.classList.add("spotlight-enabled");
-      if (spotlightToggle) spotlightToggle.checked = true;
-  }
-
-  spotlightToggle?.addEventListener("change", (e) => {
-      const checked = e.target.checked;
-      handleGlobalClass("spotlight-enabled", checked);
-      localStorage.setItem("spotlightEnabled", String(checked));
-  });
-
-  // Helper
-  function handleGlobalClass(className, add) {
-      if (add) {
-          rootElement.classList.add(className);
-      } else {
-          rootElement.classList.remove(className);
-      }
-  }
 </script>
