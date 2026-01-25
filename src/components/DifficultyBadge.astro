@@ -19,6 +19,8 @@ const labelEN = getDifficultyLabel(difficulty, true); // 英文
 const cssVars = {
     "--badge-color-dark": colorObj.dark,
     "--badge-color-light": colorObj.light,
+    "background-color": colorObj.dark + "20", // 10% opacity
+    border: "1px solid " + colorObj.dark,
 };
 ---
 
@@ -37,10 +39,12 @@ const cssVars = {
         align-items: center;
         padding: 2px 10px;
         font-size: 12px;
+        line-height: 1.5; /* Ensure consistent height */
         font-weight: 400;
         border-radius: 999px;
-        border: 1px solid rgba(240, 246, 252, 0.1);
-        background-color: #2d333b;
+        /* 以下註解的部分在 cssVars 中已經設定 */
+        /* border: 1px solid rgba(240, 246, 252, 0.1); */
+        /* background-color: #2d333b; */
         /* margin-right: 12px; */
         white-space: nowrap;
         /* 這裡可以加邊框或背景，看設計風格，這裡目前採用文字顏色區分 */
