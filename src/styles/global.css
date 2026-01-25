@@ -198,6 +198,10 @@ pre {
   /* 0.9em */
 }
 
+.light pre {
+  background-color: #24292E !important;
+}
+
 /* 區塊內的程式碼文字 */
 pre code {
   background-color: transparent;
