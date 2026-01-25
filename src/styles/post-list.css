@@ -64,7 +64,7 @@
 
 .file-row:hover {
     background-color: color-mix(in srgb,
-            var(--color-canvas-subtle) var(--bg-overlay-alpha),
+            var(--color-accent-fg) 10%,
             transparent);
 }
 
