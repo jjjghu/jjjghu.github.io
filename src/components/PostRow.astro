@@ -72,25 +72,24 @@ const dateCN = formatDateCN(post.data.date);
         </div>
     </div>
 
-    <!-- 2. Meta 資訊區塊 (包含難度與標籤) -->
+    <!-- 2. Meta 資訊區塊 (包含難度與標籤) (佔據 2 + 3 欄) -->
     <!-- 
        關鍵點：
        Desktop: 這裡會被全域 CSS 設為 display: contents，子元素會直接變成 Grid Item。
        Mobile: 下方 CSS 會強制設為 display: flex，變成第二行的容器。
     -->
-    <div class="row-meta-info">
-        <div class="col-difficulty md:col-span-2">
-            <DifficultyBadge difficulty={difficulty} />
-        </div>
 
-        <div class="col-tags md:col-span-3">
-            <div class="tags-wrapper">
-                {
-                    enTags.map((tag: string) => {
-                        return <TagBadge tag={tag} />;
-                    })
-                }
-            </div>
+    <div class="col-difficulty md:col-span-2">
+        <DifficultyBadge difficulty={difficulty} />
+    </div>
+
+    <div class="col-tags md:col-span-3">
+        <div class="tags-wrapper">
+            {
+                enTags.map((tag: string) => {
+                    return <TagBadge tag={tag} />;
+                })
+            }
         </div>
     </div>
 
@@ -162,7 +161,11 @@ const dateCN = formatDateCN(post.data.date);
     /* Meta 區塊內部 */
     .col-difficulty {
         display: flex;
-        justify-content: center; /* Desktop 置中 */
+        /* [關鍵修復] 加上這行，確保垂直方向也置中 */
+        align-items: center;
+
+        /* 確保它有高度來進行置中運算 (視情況非必要，但在 Grid Item 中加上比較保險) */
+        height: 100%;
     }
 
     .tags-wrapper {
@@ -172,6 +175,10 @@ const dateCN = formatDateCN(post.data.date);
         height: 24px; /* 固定高度避免 Desktop 版面跳動，或是設為 auto */
         overflow: hidden; /* 標籤太多時隱藏 */
         align-items: center;
+    }
+
+    .col-title {
+        padding: 16px, 0px;
     }
 
     .col-date {
@@ -204,16 +211,10 @@ const dateCN = formatDateCN(post.data.date);
 
         /* 2. Meta 資訊行 (難度 + 標籤) */
         /* 必須覆蓋全域的 display: contents */
-        .row-meta-info {
-            display: flex !important;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            flex-wrap: wrap;
-        }
 
         .col-difficulty {
-            justify-content: flex-start; /* 手機版靠左 */
+            justify-content: flex-start; /* 手機版改回靠左 */
+            height: auto; /* 手機版高度自動 */
             width: auto;
         }
 
@@ -234,5 +235,8 @@ const dateCN = formatDateCN(post.data.date);
             margin-top: 2px;
             font-size: 0.75rem;
         }
+    }
+    .file-row:hover .file-icon {
+        color: var(--color-accent-fg);
     }
 </style>
