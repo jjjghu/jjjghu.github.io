@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,10 @@
 
     <style>
         /* 深色背景設定 */
-        body { background-color: #0B0C10; color: #C5C6C7; }
+        body {
+            background-color: #0B0C10;
+            color: #C5C6C7;
+        }
 
         /* 外框容器：稍微有一點底色和邊框 */
         .list-container {
@@ -22,7 +26,7 @@
         /* 
          * [核心特效開始] 
          */
-        
+
         /* 1. 列表項目：設定為 relative，作為光條定位的基準 */
         .list-row {
             position: relative;
@@ -31,45 +35,61 @@
             transition: background-color 0.2s ease;
             cursor: pointer;
         }
-        .list-row:last-child { border-bottom: none; }
+
+        .list-row:last-child {
+            border-bottom: none;
+        }
 
         /* 2. 左側光條：使用 ::before 偽元素製作 */
         .list-row::before {
             content: '';
             position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 3px;               /* 光條厚度 */
-            background: #64FFDA;      /* 青色 */
-            opacity: 0;               /* 預設隱藏 */
-            transform: scaleY(0.3);   /* 預設長度縮短 */
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            /* 光條厚度 */
+            background: #64FFDA;
+            /* 青色 */
+            opacity: 0;
+            /* 預設隱藏 */
+            transform: scaleY(0.3);
+            /* 預設長度縮短 */
             transition: all 0.2s ease-out;
-            box-shadow: 2px 0 10px rgba(100, 255, 218, 0.5); /* 螢光感來源 */
+            box-shadow: 2px 0 10px rgba(100, 255, 218, 0.5);
+            /* 螢光感來源 */
         }
 
         /* 3. Hover 觸發狀態 */
         .list-row:hover {
-            background-color: rgba(100, 255, 218, 0.04); /* 背景微微發光 */
+            background-color: rgba(100, 255, 218, 0.04);
+            /* 背景微微發光 */
         }
+
         .list-row:hover::before {
-            opacity: 1;               /* 顯示光條 */
-            transform: scaleY(1);     /* 瞬間拉長到 100% 高度 */
+            opacity: 1;
+            /* 顯示光條 */
+            transform: scaleY(1);
+            /* 瞬間拉長到 100% 高度 */
         }
 
         /* 4. 文字變色：讓標題跟著發光 */
         .row-title {
             transition: color 0.2s ease;
         }
+
         .list-row:hover .row-title {
             color: #64FFDA;
         }
     </style>
 </head>
+
 <body class="flex items-center justify-center min-h-screen">
 
     <!-- 頁面中間的列表容器 -->
     <div class="w-full max-w-2xl px-4">
         <h2 class="text-gray-400 text-sm font-bold mb-4 uppercase tracking-widest">Hover Glow Demo</h2>
-        
+
         <div class="list-container">
             <!-- 項目 1 -->
             <div class="list-row flex items-center justify-between">
@@ -92,4 +112,5 @@
     </div>
 
 </body>
+
 </html>

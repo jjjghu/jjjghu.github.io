@@ -5,6 +5,7 @@ import Footer from "../components/Footer.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import LanguageToggle from "../components/LanguageToggle.astro";
 import SettingIcon from "../components/SettingIcon.astro";
+import BackgroundEffect from "../components/BackgroundEffect.astro";
 import type { MarkdownHeading } from "astro";
 
 interface Props {
@@ -57,6 +58,7 @@ const showTOC = headings && headings.length > 0;
 
   <body>
     <Header activeCategory={activeCategory} />
+    <BackgroundEffect />
 
     <main class:list={["content", { "has-toc": showTOC }]}>
       <article class="article-body">

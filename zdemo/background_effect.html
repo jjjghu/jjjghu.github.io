@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background & Lighting Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* 基礎底色 - 極深藍黑 */
+        body {
+            background-color: #0B0C10;
+            margin: 0;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           1. 頂部高光 (Ambient Top Light)
+           ========================================= */
+        .ambient-light {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 500px; /* 光源影響範圍 */
+            pointer-events: none; /* 讓滑鼠可以穿透，不影響點擊 */
+            z-index: 0;
+            
+            /* 核心：徑向漸層 */
+            /* 從上方中間 (50% 0%) 發散出藍色光暈，慢慢變透明 */
+            background: radial-gradient(
+                circle at 50% 0%, 
+                rgba(88, 166, 255, 0.15), /* 亮部顏色 (藍色) */
+                transparent 70%           /* 邊緣完全透明 */
+            );
+        }
+
+        /* =========================================
+           2. 背景紋理 (Pattern / Grid / Stripes)
+           ========================================= */
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; /* 放在最底層 */
+            pointer-events: none;
+
+            /* [技巧] 這裡繪製網格 */
+            /* 1px 的白線 (透明度 0.03)，其餘透明 */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            
+            /* 格子大小：越小越密，越大越寬鬆 */
+            background-size: 50px 50px;
+
+            /* [進階技巧] 遮罩 (Mask) */
+            /* 讓網格只在中間顯示，四周漸漸消失，比較柔和 */
+            mask-image: radial-gradient(circle at center top, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center top, black 40%, transparent 100%);
+        }
+
+        /* 如果你只想要「直條紋 (Stripes)」，把上面的 background-image 改成這樣：
+        .bg-pattern.stripes-only {
+            background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 100%; 
+        }
+        */
+
+    </style>
+</head>
+<body class="flex flex-col items-center pt-24">
+
+    <!-- 1. 頂部高光層 -->
+    <div class="ambient-light"></div>
+
+    <!-- 2. 背景紋理層 -->
+    <div class="bg-pattern"></div>
+
+
+    <!-- 內容示範區 (為了讓你看出一點深度) -->
+    <div class="relative z-10 text-center space-y-4">
+        <h1 class="text-4xl font-bold tracking-wider">Background <span class="text-[#58A6FF]">Effect</span></h1>
+        <p class="text-gray-400">Pure CSS Ambient Light & Grid Pattern</p>
+        
+        <!-- 模擬一個卡片，展示光影在物體背後的效果 -->
+        <div class="mt-12 w-96 h-64 mx-auto rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm flex items-center justify-center">
+            <span class="text-xs text-gray-500">Content Layer</span>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -46,14 +46,14 @@ import { UI_TEXT } from "../i18n/ui";
     </button>
   </div>
 
-  <!-- 選項 1: 標籤顏色 -->
+  <!-- 選項 1: 背景線條 -->
   <div class="toggle-row">
     <div>
-      <div class="toggle-label" data-cn={UI_TEXT.settings_tag_colors.cn} data-en={UI_TEXT.settings_tag_colors.en}>{UI_TEXT.settings_tag_colors.cn}</div>
-      <span class="toggle-desc" data-cn={UI_TEXT.settings_tag_colors_desc.cn} data-en={UI_TEXT.settings_tag_colors_desc.en}>{UI_TEXT.settings_tag_colors_desc.cn}</span>
+      <div class="toggle-label" data-cn={UI_TEXT.settings_bg_lines.cn} data-en={UI_TEXT.settings_bg_lines.en}>{UI_TEXT.settings_bg_lines.cn}</div>
+      <span class="toggle-desc" data-cn={UI_TEXT.settings_bg_lines_desc.cn} data-en={UI_TEXT.settings_bg_lines_desc.en}>{UI_TEXT.settings_bg_lines_desc.cn}</span>
     </div>
     <label class="switch">
-      <input type="checkbox" checked disabled />
+      <input type="checkbox" id="bg-lines-toggle" />
       <span class="slider"></span>
     </label>
   </div>
@@ -65,7 +65,7 @@ import { UI_TEXT } from "../i18n/ui";
       <span class="toggle-desc" data-cn={UI_TEXT.settings_hover_glow_desc.cn} data-en={UI_TEXT.settings_hover_glow_desc.en}>{UI_TEXT.settings_hover_glow_desc.cn}</span>
     </div>
     <label class="switch">
-      <input type="checkbox" checked disabled />
+      <input type="checkbox" id="hover-glow-toggle" />
       <span class="slider"></span>
     </label>
   </div>
@@ -77,9 +77,23 @@ import { UI_TEXT } from "../i18n/ui";
       <span class="toggle-desc" data-cn={UI_TEXT.settings_spotlight_desc.cn} data-en={UI_TEXT.settings_spotlight_desc.en}>{UI_TEXT.settings_spotlight_desc.cn}</span>
     </div>
     <label class="switch">
-      <input type="checkbox" disabled />
+      <input type="checkbox" id="spotlight-toggle" />
       <span class="slider"></span>
     </label>
+  </div>
+
+  <!-- 選項 4: 主題顏色 -->
+  <div class="toggle-row">
+    <div>
+      <div class="toggle-label" data-cn={UI_TEXT.settings_theme_color.cn} data-en={UI_TEXT.settings_theme_color.en}>{UI_TEXT.settings_theme_color.cn}</div>
+      <span class="toggle-desc" data-cn={UI_TEXT.settings_theme_color_desc.cn} data-en={UI_TEXT.settings_theme_color_desc.en}>{UI_TEXT.settings_theme_color_desc.cn}</span>
+    </div>
+    <div class="color-control">
+        <input type="color" id="theme-color-picker" value="#70A0FF" />
+        <button id="reset-color-btn" class="reset-btn" aria-label="Reset Color" title={UI_TEXT.settings_reset_color.cn} data-cn-title={UI_TEXT.settings_reset_color.cn} data-en-title={UI_TEXT.settings_reset_color.en}>
+            <i class='bx bx-refresh'></i>
+        </button>
+    </div>
   </div>
 </div>
 
@@ -256,6 +270,55 @@ import { UI_TEXT } from "../i18n/ui";
       opacity: 0.6;
       cursor: not-allowed;
   }
+
+  /* Color Picker Control */
+  .color-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+  }
+
+  input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      overflow: hidden;
+      padding: 0;
+      background: transparent;
+  }
+  
+  input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0; 
+  }
+  
+  input[type="color"]::-webkit-color-swatch {
+      border: 2px solid var(--color-border-default);
+      border-radius: 50%;
+  }
+
+  .reset-btn {
+      background: transparent;
+      border: 1px solid var(--color-border-default);
+      color: var(--color-fg-muted);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+  }
+  
+  .reset-btn:hover {
+      background-color: var(--color-canvas-subtle);
+      color: var(--color-fg-default);
+      border-color: var(--color-accent-fg);
+  }
 </style>
 
 <script is:inline>
@@ -296,4 +359,109 @@ import { UI_TEXT } from "../i18n/ui";
       closePanel();
     }
   });
+
+  // --- Theme Color Logic ---
+  const colorPicker = document.getElementById("theme-color-picker");
+  const resetBtn = document.getElementById("reset-color-btn");
+  const rootElement = document.documentElement;
+
+  // 1. Load saved color
+  const savedColor = localStorage.getItem("customAccentColor");
+  if (savedColor) {
+      rootElement.style.setProperty("--color-accent-fg", savedColor);
+      if (colorPicker) colorPicker.value = savedColor;
+  } else {
+      // Set picker to current computed value if no custom color
+      // Note: This might change between dark/light mode so it's an approximation
+      const computedColor = getComputedStyle(rootElement).getPropertyValue("--color-accent-fg").trim();
+      if (colorPicker) colorPicker.value = computedColor;
+  }
+
+  // 2. Handle Color Change
+  colorPicker?.addEventListener("input", (e) => {
+      const color = e.target.value;
+      rootElement.style.setProperty("--color-accent-fg", color);
+      localStorage.setItem("customAccentColor", color);
+  });
+
+  // 3. Handle Reset
+  resetBtn?.addEventListener("click", () => {
+      rootElement.style.removeProperty("--color-accent-fg");
+      localStorage.removeItem("customAccentColor");
+      
+      // Update picker to reflect restored default (need to wait for style to re-apply)
+      setTimeout(() => {
+          const defaultColor = getComputedStyle(rootElement).getPropertyValue("--color-accent-fg").trim();
+          if (colorPicker) colorPicker.value = defaultColor;
+      }, 10);
+  });
+
+  // Listener for Theme Toggle changes (Light/Dark) to update picker if using default
+  const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+          if (mutation.attributeName === "class" && !localStorage.getItem("customAccentColor")) {
+               const defaultColor = getComputedStyle(rootElement).getPropertyValue("--color-accent-fg").trim();
+               if (colorPicker) colorPicker.value = defaultColor;
+          }
+      });
+  });
+  observer.observe(rootElement, { attributes: true });
+
+  // --- Hover Glow Logic ---
+  const hoverGlowToggle = document.getElementById("hover-glow-toggle");
+  
+  // 1. Load saved state
+  const isHoverGlowEnabled = localStorage.getItem("hoverGlowEnabled") === "true";
+  if (isHoverGlowEnabled) {
+      rootElement.classList.add("hover-glow-enabled");
+      if (hoverGlowToggle) hoverGlowToggle.checked = true;
+  }
+
+  // 2. Handle Toggle
+  hoverGlowToggle?.addEventListener("change", (e) => {
+      const checked = e.target.checked;
+      handleGlobalClass("hover-glow-enabled", checked);
+      localStorage.setItem("hoverGlowEnabled", String(checked));
+  });
+
+  // --- Background Lines Logic ---
+  const bgLinesToggle = document.getElementById("bg-lines-toggle");
+  const isBgLinesEnabled = localStorage.getItem("bgLinesEnabled") === "true";
+  
+  // Init
+  if (isBgLinesEnabled) {
+      rootElement.classList.add("bg-lines-enabled");
+      if (bgLinesToggle) bgLinesToggle.checked = true;
+  }
+
+  bgLinesToggle?.addEventListener("change", (e) => {
+      const checked = e.target.checked;
+      handleGlobalClass("bg-lines-enabled", checked);
+      localStorage.setItem("bgLinesEnabled", String(checked));
+  });
+
+  // --- Spotlight Logic ---
+  const spotlightToggle = document.getElementById("spotlight-toggle");
+  const isSpotlightEnabled = localStorage.getItem("spotlightEnabled") === "true";
+
+  // Init
+  if (isSpotlightEnabled) {
+      rootElement.classList.add("spotlight-enabled");
+      if (spotlightToggle) spotlightToggle.checked = true;
+  }
+
+  spotlightToggle?.addEventListener("change", (e) => {
+      const checked = e.target.checked;
+      handleGlobalClass("spotlight-enabled", checked);
+      localStorage.setItem("spotlightEnabled", String(checked));
+  });
+
+  // Helper
+  function handleGlobalClass(className, add) {
+      if (add) {
+          rootElement.classList.add(className);
+      } else {
+          rootElement.classList.remove(className);
+      }
+  }
 </script>

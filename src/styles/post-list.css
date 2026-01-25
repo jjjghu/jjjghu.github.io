@@ -52,3 +52,51 @@
         flex: initial;
     }
 }
+
+/* --- Hover Glow Effect (Controlled by Global Class) --- */
+
+/* 1. Set relative positioning for the glow bar reference */
+html.hover-glow-enabled .file-row {
+    position: relative;
+    /* transition: background-color 0.2s ease; -> Already in base style */
+}
+
+/* 2. The Glow Bar (Pseudo-element) */
+html.hover-glow-enabled .file-row::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    /* Thickness */
+    background: var(--color-accent-fg);
+    /* Use theme color */
+    opacity: 0;
+    /* Hidden by default */
+    transform: scaleY(0.3);
+    /* Shortened by default */
+    transition: all 0.2s ease-out;
+    /* Glow Shadow */
+    box-shadow: 0 0 10px var(--color-accent-fg);
+    pointer-events: none;
+}
+
+/* 3. Hover State */
+html.hover-glow-enabled .file-row:hover {
+    /* Optional: Slight background tint on hover (if not already handled) */
+    background-color: color-mix(in srgb, var(--color-accent-fg) 10%, transparent);
+    /* ->Already handled */
+}
+
+html.hover-glow-enabled .file-row:hover::before {
+    opacity: 1;
+    transform: scaleY(1);
+    /* Full height */
+}
+
+/* 4. Text Color Change on Hover (Optional, matching demo) */
+html.hover-glow-enabled .file-row:hover .title-text {
+    color: var(--color-accent-fg);
+    transition: color 0.2s ease;
+}
