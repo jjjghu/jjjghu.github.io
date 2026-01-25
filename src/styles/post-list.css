@@ -1,130 +1,214 @@
-/* Post List Grid Layout - Single Source of Truth */
+/* Post List Layout (Single Source of Truth)
+   - Desktop: true grid alignment shared by header + rows
+   - Mobile: readable stacked layout
+*/
 
+:root {
+    /* One place to tweak spacing */
+    --post-list-pad-y: 10px;
+    --post-list-pad-x: 16px;
+    --post-list-gap-x: 12px;
+    --post-list-gap-y: 8px;
+}
+
+/* Container that holds header + rows */
+.file-list-container {
+    border: 1px solid var(--color-border-default);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: color-mix(in srgb,
+            var(--color-card-bg) var(--bg-overlay-alpha),
+            transparent);
+}
+
+/* Shared grid for BOTH header and each row */
 .post-list-grid {
     display: grid;
-    /* 
-     Grid Columns (12 total):
-     1. Title Block (Icon + Text): 6 columns
-     2. Difficulty: 2 columns
-     3. Tags: 3 columns
-     4. Date: 1 column
-  */
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns:
+        minmax(0, 6fr)
+        /* title */
+        minmax(0, 2fr)
+        /* difficulty */
+        minmax(0, 3fr)
+        /* tags */
+        minmax(0, 1fr);
+    /* date */
+    column-gap: var(--post-list-gap-x);
+    row-gap: var(--post-list-gap-y);
     align-items: center;
     width: 100%;
 }
 
-/* Desktop Grid Spans (Utility-like classes) */
-@media (min-width: 769px) {
-    .md\:col-span-6 {
-        grid-column: span 6;
-    }
-
-    .md\:col-span-2 {
-        grid-column: span 2;
-    }
-
-    .md\:col-span-3 {
-        grid-column: span 3;
-    }
-
-    .md\:col-span-1 {
-        grid-column: span 1;
-    }
-
-    /* Optional: Alignment tweaks for header matching content */
-    .col-title {
-        padding-left: 8px;
-    }
+/* Header */
+.file-list-header {
+    padding: 14px var(--post-list-pad-x);
+    background-color: color-mix(in srgb,
+            var(--color-canvas-subtle) var(--bg-overlay-alpha),
+            transparent);
+    border-bottom: 1px solid var(--color-border-default);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-fg-default);
 }
 
-/* Common tweaks for content within cells */
+/* Row base */
+.file-row {
+    padding: var(--post-list-pad-y) var(--post-list-pad-x);
+    border-top: 1px solid var(--color-border-muted);
+    transition: background-color 0.2s ease;
+}
+
+.file-row:first-child {
+    border-top: none;
+}
+
+.file-row:hover {
+    background-color: color-mix(in srgb,
+            var(--color-canvas-subtle) var(--bg-overlay-alpha),
+            transparent);
+}
+
+/* Cells */
 .col-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    min-width: 0;
+    /* IMPORTANT for ellipsis inside grid */
+}
+
+.col-difficulty {
+    display: flex;
+    align-items: center;
+    min-width: 0;
 }
 
 .col-tags {
-    overflow: hidden;
+    min-width: 0;
 }
 
 .col-date {
     text-align: right;
+    white-space: nowrap;
     font-variant-numeric: tabular-nums;
-    /* Align numbers nicely */
+    color: var(--color-fg-muted);
+    font-size: 0.8rem;
+    font-family: ui-monospace, monospace;
 }
 
-.row-meta-info {
-    display: contents;
-    /* Allows children to be direct grid items on desktop */
+/* Title content */
+.title-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .post-list-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        /* Reset grid gap, use flex gap */
-    }
-
-    /* Reset widths for mobile flex layout */
-    .col-icon,
-    .col-difficulty,
-    .col-title,
-    .col-tags,
-    .col-date {
-        width: auto;
-        flex: initial;
-    }
+.file-icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    color: var(--color-fg-muted);
 }
 
-/* --- Hover Glow Effect (Controlled by Global Class) --- */
+.post-link {
+    min-width: 0;
+    flex: 1 1 auto;
+    color: var(--color-fg-default);
+    text-decoration: none;
+}
 
-/* 1. Set relative positioning for the glow bar reference */
+.post-link:hover {
+    color: var(--color-accent-fg);
+}
+
+.title-text {
+    display: block;
+    min-width: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tags */
+.tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    min-width: 0;
+}
+
+/* Header alignment tweaks (optional) */
+.file-list-header .col-date {
+    color: var(--color-fg-default);
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+
+/* --- Hover Glow Effect (keep your original behavior) --- */
 html.hover-glow-enabled .file-row {
     position: relative;
-    /* transition: background-color 0.2s ease; -> Already in base style */
 }
 
-/* 2. The Glow Bar (Pseudo-element) */
 html.hover-glow-enabled .file-row::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
     width: 3px;
-    /* Thickness */
     background: var(--color-accent-fg);
-    /* Use theme color */
     opacity: 0;
-    /* Hidden by default */
     transform: scaleY(0.3);
-    /* Shortened by default */
     transition: all 0.2s ease-out;
-    /* Glow Shadow */
     box-shadow: 0 0 10px var(--color-accent-fg);
     pointer-events: none;
-}
-
-/* 3. Hover State */
-html.hover-glow-enabled .file-row:hover {
-    /* Optional: Slight background tint on hover (if not already handled) */
-    background-color: color-mix(in srgb,
-            color-mix(in srgb, var(--color-accent-fg) 10%, transparent) var(--bg-overlay-alpha),
-            transparent);
 }
 
 html.hover-glow-enabled .file-row:hover::before {
     opacity: 1;
     transform: scaleY(1);
-    /* Full height */
 }
 
-/* 4. Text Color Change on Hover (Optional, matching demo) */
+html.hover-glow-enabled .file-row:hover .file-icon {
+    color: var(--color-accent-fg);
+}
+
 html.hover-glow-enabled .file-row:hover .title-text {
     color: var(--color-accent-fg);
     transition: color 0.2s ease;
+}
+
+/* =========================
+   Mobile
+   ========================= */
+@media (max-width: 768px) {
+    .file-list-header {
+        display: none;
+    }
+
+    .post-list-grid {
+        /* stack layout on mobile */
+        grid-template-columns: 1fr;
+        row-gap: 10px;
+    }
+
+    .file-row {
+        padding: 16px;
+    }
+
+    .title-text {
+        font-size: 1rem;
+        white-space: normal;
+    }
+
+    .col-date {
+        text-align: left;
+    }
+
+    /* Optional: create a "meta line" feel */
+    .col-difficulty,
+    .col-tags {
+        align-items: flex-start;
+    }
 }

@@ -26,11 +26,6 @@ const dateEN = formatDateEN(post.data.date);
 const dateCN = formatDateCN(post.data.date);
 ---
 
-<!-- 
-    注意：
-    1. 加入 post-list-grid 讓它吃到全域的 Grid 設定。
-    2. 加入 file-row 保留原本的樣式邏輯 (邊框、hover背景)。
--->
 <div
     class="file-row post-list-grid"
     data-search={searchContent}
@@ -40,31 +35,30 @@ const dateCN = formatDateCN(post.data.date);
     data-id={Number(post.data.problem_id) || 0}
     data-difficulty={difficulty ? difficulty.toLowerCase() : "none"}
 >
-    <!-- 1. 標題區塊 (佔 6 欄) -->
-    <div class="col-title md:col-span-6">
+    <!-- Title -->
+    <div class="col-title">
         <div class="title-container">
-            <!-- Icon -->
             <svg
                 class="file-icon"
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                ><path
-                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                ></path><polyline points="14 2 14 8 20 8"></polyline><line
-                    x1="16"
-                    y1="13"
-                    x2="8"
-                    y2="13"></line><line x1="16" y1="17" x2="8" y2="17"
-                ></line><polyline points="10 9 9 9 8 9"></polyline></svg
+                aria-hidden="true"
             >
-            <a href={`/${post.slug}`} class="post-link">
+                <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+
+            <a class="post-link" href={`/${post.slug}`}>
                 <span class="title-text" data-cn={cnTitle} data-en={enTitle}>
                     {cnTitle}
                 </span>
@@ -72,170 +66,20 @@ const dateCN = formatDateCN(post.data.date);
         </div>
     </div>
 
-    <!-- 2. Meta 資訊區塊 (包含難度與標籤) (佔據 2 + 3 欄) -->
-    <!-- 
-       關鍵點：
-       Desktop: 這裡會被全域 CSS 設為 display: contents，子元素會直接變成 Grid Item。
-       Mobile: 下方 CSS 會強制設為 display: flex，變成第二行的容器。
-    -->
-
-    <div class="col-difficulty md:col-span-2">
+    <!-- Difficulty -->
+    <div class="col-difficulty">
         <DifficultyBadge difficulty={difficulty} />
     </div>
 
-    <div class="col-tags md:col-span-3">
+    <!-- Tags -->
+    <div class="col-tags">
         <div class="tags-wrapper">
-            {
-                enTags.map((tag: string) => {
-                    return <TagBadge tag={tag} />;
-                })
-            }
+            {enTags.map((tag: string) => <TagBadge tag={tag} />)}
         </div>
     </div>
 
-    <!-- 3. 日期 (佔 1 欄) -->
-    <div class="col-date md:col-span-1" data-cn={dateCN} data-en={dateEN}>
+    <!-- Date -->
+    <div class="col-date" data-cn={dateCN} data-en={dateEN}>
         {dateCN}
     </div>
 </div>
-
-<style>
-    /* === 基礎樣式 === */
-    .file-row {
-        /* 這裡不需要 display: grid，因為 post-list-grid 已經處理了 */
-        padding: 10px 16px;
-        border-top: 1px solid var(--color-border-muted);
-        transition: background-color 0.2s;
-        /* 確保內容垂直置中 (針對 Grid Item 內部) */
-        align-items: center;
-    }
-
-    .file-row:first-child {
-        border-top: none;
-    }
-
-    .file-row:hover {
-        background-color: color-mix(
-            in srgb,
-            var(--color-canvas-subtle) var(--bg-overlay-alpha),
-            transparent
-        );
-    }
-
-    /* 標題與 Icon */
-    .title-container {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        width: 100%;
-        overflow: hidden; /* 防止標題撐開 */
-    }
-
-    .file-icon {
-        color: var(--color-fg-muted);
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-    }
-
-    .title-text {
-        font-size: 0.9rem;
-        font-weight: 500;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
-    }
-
-    .post-link {
-        color: var(--color-fg-default);
-        text-decoration: none;
-        overflow: hidden;
-        flex: 1;
-    }
-
-    .post-link:hover {
-        color: var(--color-accent-fg);
-    }
-
-    /* Meta 區塊內部 */
-    .col-difficulty {
-        display: flex;
-        /* [關鍵修復] 加上這行，確保垂直方向也置中 */
-        align-items: center;
-
-        /* 確保它有高度來進行置中運算 (視情況非必要，但在 Grid Item 中加上比較保險) */
-        height: 100%;
-    }
-
-    .tags-wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        overflow-x: auto;
-        align-items: center;
-    }
-
-    .col-title {
-        padding: 16px, 0px;
-    }
-
-    .col-date {
-        color: var(--color-fg-muted);
-        font-size: 0.8rem;
-        font-family: ui-monospace, monospace;
-        text-align: right;
-        white-space: nowrap;
-    }
-
-    /* === RWD 手機版樣式 (重要調整) === */
-    @media (max-width: 768px) {
-        .file-row {
-            /* 強制切換為 Flex Column */
-            display: flex !important;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 16px;
-        }
-
-        /* 1. 標題行 */
-        .col-title {
-            width: 100%;
-        }
-        .title-text {
-            font-size: 1rem;
-            white-space: normal; /* 手機版允許標題換行 */
-        }
-
-        /* 2. Meta 資訊行 (難度 + 標籤) */
-        /* 必須覆蓋全域的 display: contents */
-
-        .col-difficulty {
-            justify-content: flex-start; /* 手機版改回靠左 */
-            height: auto; /* 手機版高度自動 */
-            width: auto;
-        }
-
-        .col-tags {
-            flex: 1; /* 佔據剩餘空間 */
-            width: auto;
-        }
-
-        .tags-wrapper {
-            height: auto; /* 手機版高度自動 */
-            overflow: visible;
-        }
-
-        /* 3. 日期行 */
-        .col-date {
-            width: 100%;
-            text-align: left; /* 手機版靠左 (或靠右看你喜好) */
-            margin-top: 2px;
-            font-size: 0.75rem;
-        }
-    }
-    .file-row:hover .file-icon {
-        color: var(--color-accent-fg);
-    }
-</style>
