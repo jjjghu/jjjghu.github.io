@@ -2,9 +2,6 @@ import { defineConfig } from 'astro/config';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkLeetCodeLink from './src/plugins/remark-leetcode-link.mjs';
-
-import tailwindcss from '@tailwindcss/vite';
-
 export default defineConfig({
   site: 'https://jjjghu.github.io',
 
@@ -17,9 +14,5 @@ export default defineConfig({
       // 如果想要讓程式碼區塊自動換行，可以啟用 wrap
       wrap: true,
     },
-  },
-
-  vite: {
-    plugins: [tailwindcss()],
   },
 });
