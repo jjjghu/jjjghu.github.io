@@ -77,7 +77,11 @@ const dateCN = formatDateCN(post.data.date);
         border-top: none;
     }
     .file-row:hover {
-        background-color: var(--color-canvas-subtle);
+        background-color: color-mix(
+            in srgb,
+            var(--color-canvas-subtle) var(--bg-overlay-alpha),
+            transparent
+        );
     }
 
     .col-icon {

@@ -5,9 +5,14 @@ import { UI_TEXT } from "../i18n/ui";
 
 <footer class="site-footer">
   <div class="footer-container">
-
     <div class="footer-section copyright">
-      <span>Copyright © {currentYear} <span data-cn={UI_TEXT.header_title.cn} data-en={UI_TEXT.header_title.en}>{UI_TEXT.header_title.cn}</span> All rights reserved.</span>
+      <span
+        >Copyright © {currentYear}
+        <span
+          data-cn={UI_TEXT.header_title.cn}
+          data-en={UI_TEXT.header_title.en}>{UI_TEXT.header_title.cn}</span
+        > All rights reserved.</span
+      >
     </div>
 
     <!-- <div class="footer-section subscribe">
@@ -24,7 +29,6 @@ import { UI_TEXT } from "../i18n/ui";
         <li><a href="#"><i class='bx bxl-github'></i></a></li>
       </ul>
     </div> -->
-
   </div>
 </footer>
 
@@ -33,7 +37,12 @@ import { UI_TEXT } from "../i18n/ui";
     border-top: 1px solid var(--color-border-muted);
     padding: 2rem 0;
     margin-top: 4rem;
-    background-color: var(--color-canvas-subtle);
+
+    background-color: color-mix(
+      in srgb,
+      var(--color-canvas-subtle) var(--bg-overlay-alpha),
+      transparent
+    );
     /* 稍微深一點的背景 */
   }
 

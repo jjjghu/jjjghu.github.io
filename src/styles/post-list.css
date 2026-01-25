@@ -85,8 +85,9 @@ html.hover-glow-enabled .file-row::before {
 /* 3. Hover State */
 html.hover-glow-enabled .file-row:hover {
     /* Optional: Slight background tint on hover (if not already handled) */
-    background-color: color-mix(in srgb, var(--color-accent-fg) 10%, transparent);
-    /* ->Already handled */
+    background-color: color-mix(in srgb,
+            color-mix(in srgb, var(--color-accent-fg) 10%, transparent) var(--bg-overlay-alpha),
+            transparent);
 }
 
 html.hover-glow-enabled .file-row:hover::before {
