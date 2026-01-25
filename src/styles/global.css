@@ -284,3 +284,8 @@ pre code {
   border-color: #2da44e;
   color: #2da44e;
 }
+
+.row-meta-info {
+  display: contents;
+  /* Desktop 預設：讓子元素直接參與 Grid */
+}

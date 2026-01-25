@@ -5,20 +5,44 @@ import { UI_TEXT } from "../i18n/ui";
 
 <div class="dropdown-container difficulty-dropdown-container">
     <button id="diff-btn" class="dropdown-btn diff-btn" data-dropdown="diff">
-        <span class="diff-label" data-cn={UI_TEXT.diff_all.cn} data-en={UI_TEXT.diff_all.en}>{UI_TEXT.diff_all.cn}</span>
+        <span
+            class="diff-label"
+            data-cn={UI_TEXT.diff_all.cn}
+            data-en={UI_TEXT.diff_all.en}>{UI_TEXT.diff_all.cn}</span
+        >
         <i class="bx bx-chevron-down"></i>
     </button>
     <div id="diff-menu" class="dropdown-menu diff-menu">
-        <div class="dropdown-option diff-option active" data-value="all" data-cn={UI_TEXT.diff_all.cn} data-en={UI_TEXT.diff_all.en}>
+        <div
+            class="dropdown-option diff-option active"
+            data-value="all"
+            data-cn={UI_TEXT.diff_all.cn}
+            data-en={UI_TEXT.diff_all.en}
+        >
             {UI_TEXT.diff_all.cn}
         </div>
-        <div class="dropdown-option diff-option" data-value="easy" data-cn={UI_TEXT.diff_easy.cn} data-en={UI_TEXT.diff_easy.en}>
+        <div
+            class="dropdown-option diff-option"
+            data-value="easy"
+            data-cn={UI_TEXT.diff_easy.cn}
+            data-en={UI_TEXT.diff_easy.en}
+        >
             {UI_TEXT.diff_easy.cn}
         </div>
-        <div class="dropdown-option diff-option" data-value="medium" data-cn={UI_TEXT.diff_medium.cn} data-en={UI_TEXT.diff_medium.en}>
+        <div
+            class="dropdown-option diff-option"
+            data-value="medium"
+            data-cn={UI_TEXT.diff_medium.cn}
+            data-en={UI_TEXT.diff_medium.en}
+        >
             {UI_TEXT.diff_medium.cn}
         </div>
-        <div class="dropdown-option diff-option" data-value="hard" data-cn={UI_TEXT.diff_hard.cn} data-en={UI_TEXT.diff_hard.en}>
+        <div
+            class="dropdown-option diff-option"
+            data-value="hard"
+            data-cn={UI_TEXT.diff_hard.cn}
+            data-en={UI_TEXT.diff_hard.en}
+        >
             {UI_TEXT.diff_hard.cn}
         </div>
     </div>
@@ -64,7 +88,7 @@ import { UI_TEXT } from "../i18n/ui";
             // Dispatch Event
             const event = new CustomEvent("difficulty-change", {
                 detail: {
-                    value
+                    value,
                 },
             });
             document.dispatchEvent(event);
@@ -76,6 +100,27 @@ import { UI_TEXT } from "../i18n/ui";
     /* Custom Override */
     .diff-btn {
         min-width: 110px;
-        justify-content: space-between;
+        justify-content: space-between; /* 預設左右分開 */
+        display: flex;
+        align-items: center;
+    }
+
+    /* 手機版樣式調整 */
+    @media (max-width: 768px) {
+        .difficulty-dropdown-container {
+            width: 100%; /* 確保容器填滿 Grid 格子 */
+        }
+
+        .diff-btn {
+            min-width: 0; /* 允許縮小 */
+            width: 100%;
+        }
+
+        /* 避免文字太長時撐開佈局 */
+        .diff-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 </style>

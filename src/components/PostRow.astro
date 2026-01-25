@@ -19,7 +19,6 @@ const cnTags = rawTags.map(getTagCN);
 const enTags = rawTags.map(getTagEN);
 const difficulty = post.data.difficulty;
 
-// 組合搜尋字串 (包含中英文標題與標籤)
 const searchContent =
     `${cnTitle} ${enTitle} ${cnTags.join(" ")} ${enTags.join(" ")}`.toLowerCase();
 
@@ -27,6 +26,11 @@ const dateEN = formatDateEN(post.data.date);
 const dateCN = formatDateCN(post.data.date);
 ---
 
+<!-- 
+    注意：
+    1. 加入 post-list-grid 讓它吃到全域的 Grid 設定。
+    2. 加入 file-row 保留原本的樣式邏輯 (邊框、hover背景)。
+-->
 <div
     class="file-row post-list-grid"
     data-search={searchContent}
@@ -36,46 +40,81 @@ const dateCN = formatDateCN(post.data.date);
     data-id={Number(post.data.problem_id) || 0}
     data-difficulty={difficulty ? difficulty.toLowerCase() : "none"}
 >
-    <div class="col-icon">
-        <i class="bx bx-file-blank"></i>
-    </div>
-
-    <div class="col-title">
-        <a href={`/${post.slug}`} class="post-link">
-            <span class="title-text" data-cn={cnTitle} data-en={enTitle}>
-                {cnTitle}
-            </span>
-        </a>
-    </div>
-
-    <div class="col-difficulty">
-        <DifficultyBadge difficulty={difficulty} />
-    </div>
-
-    <div class="col-tags">
-        <div class="tags-wrapper">
-            {
-                enTags.map((tag: string) => {
-                    return <TagBadge tag={tag} />;
-                })
-            }
+    <!-- 1. 標題區塊 (佔 6 欄) -->
+    <div class="col-title md:col-span-6">
+        <div class="title-container">
+            <!-- Icon -->
+            <svg
+                class="file-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                ><path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path><polyline points="14 2 14 8 20 8"></polyline><line
+                    x1="16"
+                    y1="13"
+                    x2="8"
+                    y2="13"></line><line x1="16" y1="17" x2="8" y2="17"
+                ></line><polyline points="10 9 9 9 8 9"></polyline></svg
+            >
+            <a href={`/${post.slug}`} class="post-link">
+                <span class="title-text" data-cn={cnTitle} data-en={enTitle}>
+                    {cnTitle}
+                </span>
+            </a>
         </div>
     </div>
 
-    <div class="col-date" data-cn={dateCN} data-en={dateEN}>{dateCN}</div>
+    <!-- 2. Meta 資訊區塊 (包含難度與標籤) -->
+    <!-- 
+       關鍵點：
+       Desktop: 這裡會被全域 CSS 設為 display: contents，子元素會直接變成 Grid Item。
+       Mobile: 下方 CSS 會強制設為 display: flex，變成第二行的容器。
+    -->
+    <div class="row-meta-info">
+        <div class="col-difficulty md:col-span-2">
+            <DifficultyBadge difficulty={difficulty} />
+        </div>
+
+        <div class="col-tags md:col-span-3">
+            <div class="tags-wrapper">
+                {
+                    enTags.map((tag: string) => {
+                        return <TagBadge tag={tag} />;
+                    })
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 日期 (佔 1 欄) -->
+    <div class="col-date md:col-span-1" data-cn={dateCN} data-en={dateEN}>
+        {dateCN}
+    </div>
 </div>
 
 <style>
+    /* === 基礎樣式 === */
     .file-row {
-        /* display: flex; -> Handled by .post-list-grid */
+        /* 這裡不需要 display: grid，因為 post-list-grid 已經處理了 */
         padding: 10px 16px;
         border-top: 1px solid var(--color-border-muted);
-        /* align-items: center; -> Handled by .post-list-grid */
         transition: background-color 0.2s;
+        /* 確保內容垂直置中 (針對 Grid Item 內部) */
+        align-items: center;
     }
+
     .file-row:first-child {
         border-top: none;
     }
+
     .file-row:hover {
         background-color: color-mix(
             in srgb,
@@ -84,97 +123,116 @@ const dateCN = formatDateCN(post.data.date);
         );
     }
 
-    .col-icon {
-        color: var(--color-fg-muted);
+    /* 標題與 Icon */
+    .title-container {
         display: flex;
-        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        overflow: hidden; /* 防止標題撐開 */
     }
 
-    .col-title {
-        font-weight: 600;
+    .file-icon {
+        color: var(--color-fg-muted);
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
     }
+
+    .title-text {
+        font-size: 0.9rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
     .post-link {
         color: var(--color-fg-default);
         text-decoration: none;
-    }
-    .post-link:hover {
-        color: var(--color-accent-fg);
-        text-decoration: underline;
+        overflow: hidden;
+        flex: 1;
     }
 
+    .post-link:hover {
+        color: var(--color-accent-fg);
+    }
+
+    /* Meta 區塊內部 */
     .col-difficulty {
-        display: flex; /* keep flex for badge alignment */
+        display: flex;
+        justify-content: center; /* Desktop 置中 */
     }
 
     .tags-wrapper {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
+        height: 24px; /* 固定高度避免 Desktop 版面跳動，或是設為 auto */
+        overflow: hidden; /* 標籤太多時隱藏 */
+        align-items: center;
     }
 
     .col-date {
         color: var(--color-fg-muted);
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        font-family: ui-monospace, monospace;
+        text-align: right;
+        white-space: nowrap;
     }
 
+    /* === RWD 手機版樣式 (重要調整) === */
     @media (max-width: 768px) {
-        .col-icon {
-            display: none;
-        }
         .file-row {
-            padding: 12px;
-            /* .post-list-grid sets display: flex, flex-wrap: wrap */
+            /* 強制切換為 Flex Column */
+            display: flex !important;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 16px;
         }
+
+        /* 1. 標題行 */
         .col-title {
-            flex: 100%;
-            width: 100%; /* Ensure full width on mobile */
-            margin-bottom: 6px;
-        }
-        /* Mobile: 難度、標籤、日期 各自調整 */
-        .col-difficulty {
-            margin-right: 12px;
-            margin-bottom: 6px;
-        }
-        .col-tags {
-            flex: 1; /* 讓標籤佔據剩餘空間 */
-            min-width: 100px;
-            margin-bottom: 6px;
-        }
-        .col-date {
-            flex: 100%; /* 日期換行 */
             width: 100%;
-            text-align: left;
-            margin-top: 4px;
         }
-    }
+        .title-text {
+            font-size: 1rem;
+            white-space: normal; /* 手機版允許標題換行 */
+        }
 
-    @media (max-width: 768px) {
-        .col-icon {
-            display: none;
-        }
-        .file-row {
+        /* 2. Meta 資訊行 (難度 + 標籤) */
+        /* 必須覆蓋全域的 display: contents */
+        .row-meta-info {
+            display: flex !important;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
             flex-wrap: wrap;
-            padding: 12px;
         }
-        .col-title {
-            flex: 100%;
-            margin-bottom: 6px;
-        }
-        /* Mobile: 難度、標籤、日期 各自調整 */
+
         .col-difficulty {
+            justify-content: flex-start; /* 手機版靠左 */
             width: auto;
-            margin-right: 12px;
-            margin-bottom: 6px;
         }
+
         .col-tags {
-            flex: 1; /* 讓標籤佔據剩餘空間 */
-            min-width: 100px;
-            margin-bottom: 6px;
+            flex: 1; /* 佔據剩餘空間 */
+            width: auto;
         }
+
+        .tags-wrapper {
+            height: auto; /* 手機版高度自動 */
+            overflow: visible;
+        }
+
+        /* 3. 日期行 */
         .col-date {
-            flex: 100%; /* 日期換行 */
-            text-align: left;
-            margin-top: 4px;
+            width: 100%;
+            text-align: left; /* 手機版靠左 (或靠右看你喜好) */
+            margin-top: 2px;
+            font-size: 0.75rem;
         }
     }
 </style>
