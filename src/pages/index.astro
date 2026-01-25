@@ -8,16 +8,15 @@ import { sortPostsById, getAllUniqueTags } from "../utils/postHelper.ts";
 import { getCollection } from "astro:content";
 import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
 import { UI_TEXT } from "../i18n/ui";
+
 import "../styles/post-list.css";
 
-// 抓取文章並排序 (預設: 題號 小 -> 大)
+// data
 const leetcodePosts = await getCollection(LEETCODE_COLLECTION);
 const zerojudgePosts = await getCollection(ZEROJUDGE_COLLECTION);
 const sortedPosts = sortPostsById([...leetcodePosts, ...zerojudgePosts]);
 
-// 獲取所有標籤
 const allTagsCN = getAllUniqueTags(sortedPosts);
-
 const uniqueTags = Array.from(allTagsCN).sort();
 ---
 
@@ -36,7 +35,6 @@ const uniqueTags = Array.from(allTagsCN).sort();
         />
       </div>
 
-      <!-- 篩選標籤 -->
       <TagFilter tags={uniqueTags} />
 
       <div class="filter-controls-group">
@@ -44,7 +42,6 @@ const uniqueTags = Array.from(allTagsCN).sort();
         <div class="difficulty-filter-wrapper">
           <DifficultyDropDown />
         </div>
-        <!-- 篩選結果數量 -->
         <div class="result-count" id="result-count">
           {UI_TEXT.result_count_prefix.cn}
           {sortedPosts.length}
@@ -53,31 +50,32 @@ const uniqueTags = Array.from(allTagsCN).sort();
       </div>
     </div>
 
+    <!-- The list container: header + rows share the SAME grid -->
     <div class="file-list-container">
       <div class="file-list-header post-list-grid">
         <div
-          class="md:col-span-6"
+          class="col-title"
           data-cn={UI_TEXT.col_title.cn}
           data-en={UI_TEXT.col_title.en}
         >
           {UI_TEXT.col_title.cn}
         </div>
         <div
-          class="col-difficulty md:col-span-2"
+          class="col-difficulty"
           data-cn={UI_TEXT.col_difficulty.cn}
           data-en={UI_TEXT.col_difficulty.en}
         >
           {UI_TEXT.col_difficulty.cn}
         </div>
         <div
-          class="col-tags md:col-span-3"
+          class="col-tags"
           data-cn={UI_TEXT.col_tags.cn}
           data-en={UI_TEXT.col_tags.en}
         >
           {UI_TEXT.col_tags.cn}
         </div>
         <div
-          class="col-date md:col-span-1"
+          class="col-date"
           data-cn={UI_TEXT.col_date.cn}
           data-en={UI_TEXT.col_date.en}
         >
@@ -86,19 +84,15 @@ const uniqueTags = Array.from(allTagsCN).sort();
       </div>
 
       <div id="post-list">
-        {
-          sortedPosts.map((post) => {
-            return <PostRow post={post} />;
-          })
-        }
+        {sortedPosts.map((post) => <PostRow post={post} />)}
       </div>
+    </div>
 
-      <div
-        id="no-results"
-        style="display: none; padding: 2rem; text-align: center; color: var(--color-fg-muted);"
-      >
-        沒有找到符合的題目。
-      </div>
+    <div
+      id="no-results"
+      style="display: none; padding: 2rem; text-align: center; color: var(--color-fg-muted);"
+    >
+      沒有找到符合的題目。
     </div>
   </div>
 </Layout>
@@ -151,33 +145,6 @@ const uniqueTags = Array.from(allTagsCN).sort();
     background-color: var(--color-canvas-default);
   }
 
-  /* 列表樣式 */
-  .file-list-container {
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
-    background-color: color-mix(
-      in srgb,
-      var(--color-card-bg) var(--bg-overlay-alpha),
-      transparent
-    );
-    overflow: hidden;
-  }
-
-  .file-list-header {
-    /* Grid layout handled by .post-list-grid */
-    padding: 16px;
-    background-color: color-mix(
-      in srgb,
-      var(--color-canvas-subtle) var(--bg-overlay-alpha),
-      transparent
-    );
-    border-bottom: 1px solid var(--color-border-default);
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--color-fg-default);
-  }
-  /* Difficulty, Tags, Date widths handled by grid */
-
   .result-count {
     font-size: 0.85rem;
     color: var(--color-fg-muted);
@@ -188,15 +155,10 @@ const uniqueTags = Array.from(allTagsCN).sort();
     display: flex;
     gap: 12px;
     align-items: center;
-    flex: 1; /* Take remaining space in header */
+    flex: 1;
   }
 
-  /* RWD 手機版調整 */
   @media (max-width: 768px) {
-    .file-list-header {
-      display: none;
-    }
-
     .filter-bar {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -204,51 +166,39 @@ const uniqueTags = Array.from(allTagsCN).sort();
       align-items: center;
     }
 
-    /* 讓 Group 內的元素直接參與 Grid 排列，並聽從 order 指令 */
     .filter-controls-group {
       display: contents;
     }
 
-    /* --- 強制指定順序 (Order) --- */
-
-    /* 1. 搜尋框：最上方，佔滿兩欄 */
     .search-wrapper {
       order: 1;
       grid-column: span 2;
       width: 100%;
     }
 
-    /* 2. 排序：第二行左邊 */
     :global(.sort-dropdown-container) {
       order: 2;
       grid-column: span 1;
     }
 
-    /* 3. 難度：第二行右邊 */
     .difficulty-filter-wrapper {
       order: 3;
       grid-column: span 1;
     }
 
-    /* 4. [關鍵修正] 標籤篩選：第三行，佔滿兩欄 */
-    /* 透過 order: 4 確保它排在排序和難度之後 */
     :global(.tag-filter-container) {
       order: 4;
       grid-column: span 2;
     }
 
-    /* 5. [關鍵修正] 結果數量：最下方 */
-    /* 透過 order: 5 確保它排在標籤按鈕之後 */
     .result-count {
       order: 5;
       grid-column: span 2;
       text-align: right;
       font-size: 0.8rem;
-      color: var(--color-fg-muted);
       margin-top: -4px;
     }
 
-    /* --- 按鈕樣式 --- */
     :global(.drop-btn),
     :global(.dropdown-btn) {
       width: 100%;
@@ -257,11 +207,11 @@ const uniqueTags = Array.from(allTagsCN).sort();
     }
 
     :global(.tag-filter-container .dropdown-btn) {
-      justify-content: flex-start; /* 標籤按鈕靠左 */
+      justify-content: flex-start;
     }
 
     :global(.diff-btn) {
-      justify-content: space-between; /* 難度按鈕左右分開 */
+      justify-content: space-between;
       padding: 0 16px;
     }
   }
