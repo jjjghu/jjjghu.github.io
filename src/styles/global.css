@@ -136,6 +136,18 @@ ol {
   margin-bottom: 12px;
 }
 
+/* Markdown Content List Styles */
+.article-body ul {
+  list-style-type: disc;
+  padding-left: 2em;
+}
+
+.article-body ol {
+  list-style-type: decimal;
+  padding-left: 2em;
+}
+
+/* Global Reset overrides (optional, keeping original vague padding if needed, but scoping is better) */
 ul,
 ol {
   padding-left: 1em;
