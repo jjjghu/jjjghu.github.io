@@ -172,8 +172,7 @@ const dateCN = formatDateCN(post.data.date);
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
-        height: 24px; /* 固定高度避免 Desktop 版面跳動，或是設為 auto */
-        overflow: hidden; /* 標籤太多時隱藏 */
+        overflow-x: auto;
         align-items: center;
     }
 

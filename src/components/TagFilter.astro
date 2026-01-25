@@ -12,8 +12,10 @@ const { tags } = Astro.props;
 
 <div class="dropdown-container tag-filter-container">
     <button id="tag-filter-btn" class="dropdown-btn" data-dropdown="tag">
-        <i class="bx bx-filter-alt"></i> 
-        <span data-cn={UI_TEXT.filter_tags.cn} data-en={UI_TEXT.filter_tags.en}>{UI_TEXT.filter_tags.cn}</span>
+        <i class="bx bx-filter-alt"></i>
+        <span data-cn={UI_TEXT.filter_tags.cn} data-en={UI_TEXT.filter_tags.en}
+            >{UI_TEXT.filter_tags.cn}</span
+        >
         <span id="selected-count" class="badge" style="display:none">0</span>
     </button>
 
@@ -60,14 +62,19 @@ const { tags } = Astro.props;
                     class="logic-btn"
                     title="點擊切換篩選邏輯"
                 >
-                    <span class="logic-label" data-cn="配對:" data-en="Logic:">配對:</span>
-                    <span id="logic-text" class="logic-value"
-                        data-cn="包含所有 (AND)" data-en="Unmatch All (AND)"
-                        >包含所有 (AND)</span
+                    <span class="logic-label" data-cn="配對:" data-en="Logic:"
+                        >配對:</span
+                    >
+                    <span
+                        id="logic-text"
+                        class="logic-value"
+                        data-cn="包含所有 (AND)"
+                        data-en="Unmatch All (AND)">包含所有 (AND)</span
                     >
                 </button>
                 <button id="clear-tags" class="footer-btn text-btn">
-                    <i class="bx bx-refresh"></i> <span data-cn="重置" data-en="Reset">重置</span>
+                    <i class="bx bx-refresh"></i>
+                    <span data-cn="重置" data-en="Reset">重置</span>
                 </button>
             </div>
         </div>
@@ -166,17 +173,19 @@ const { tags } = Astro.props;
     // --- 4. Logic Toggle ---
     logicToggleBtn?.addEventListener("click", () => {
         filterLogic = filterLogic === "AND" ? "OR" : "AND";
-        
+
         // Update Text Logic
         const isEnglish = localStorage.getItem("isEnglish") === "true";
-        const cnText = filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
-        const enText = filterLogic === "AND" ? "Match All (AND)" : "Match Any (OR)";
+        const cnText =
+            filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
+        const enText =
+            filterLogic === "AND" ? "Match All (AND)" : "Match Any (OR)";
 
         if (logicText) {
             // Update datasets so global language switch works
             logicText.dataset.cn = cnText;
             logicText.dataset.en = enText;
-            
+
             // Render immediate
             logicText.textContent = isEnglish ? enText : cnText;
         }
@@ -358,14 +367,22 @@ const { tags } = Astro.props;
     }
     /* Selected State */
     .tag-chip input:checked + .chip-content {
-        background-color: rgba(56, 139, 253, 0.15);
-        color: #58a6ff;
-        border-color: rgba(56, 139, 253, 0.4);
+        background-color: color-mix(
+            in srgb,
+            var(--color-accent-fg),
+            transparent 60%
+        );
+        color: var(--color-accent-bg);
+        border-color: color-mix(
+            in srgb,
+            var(--color-accent-fg),
+            transparent 20%
+        );
     }
 
     /* --- Footer Area --- */
     /* Most styles moved to dropdown.css */
-    
+
     .footer-left {
         display: flex;
         gap: 8px;
@@ -395,7 +412,7 @@ const { tags } = Astro.props;
         color: var(--color-fg-default);
         background-color: var(--color-border-muted);
     }
-    
+
     /* Logic Toggle Button */
     .logic-btn {
         display: flex;
