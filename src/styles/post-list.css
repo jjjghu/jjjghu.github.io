@@ -10,7 +10,6 @@
      4. Date: 1 column
   */
     grid-template-columns: repeat(12, 1fr);
-    gap: 16px;
     align-items: center;
     width: 100%;
 }
