@@ -36,5 +36,6 @@
     "matrix": "矩陣",
     "union find": "並查集",
     "divide and conquer": "分治",
-    "randomized": "隨機化"
+    "randomized": "隨機化",
+    "shortest path": "最短路徑"
 }
