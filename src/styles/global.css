@@ -148,7 +148,7 @@ ol {
 /* Global Reset overrides (optional, keeping original vague padding if needed, but scoping is better) */
 ul,
 ol {
-  padding-left: 1em;
+  padding-left: 1em !important;
 }
 
 /* 修改列表標記顏色 */
@@ -198,8 +198,6 @@ code:not(pre code) {
 /* 程式碼區塊 (Code Block) - 使用三個反引號包起來的區域 */
 pre {
   background-color: color-mix(in srgb, #24292E var(--bg-overlay-alpha), transparent) !important;
-  /* background-color:  #24292E !important; */
-  /* background-color: var(--color-canvas-subtle; */
   border-radius: 6px;
   padding: 16px;
   overflow: auto;
@@ -295,4 +293,33 @@ pre code {
 .copy-code-btn.copied {
   border-color: #2da44e;
   color: #2da44e;
+}
+
+/* Global scrollbar (fix: consistent on hover & across elements) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-default);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-fg-muted);
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-default) transparent;
 }
