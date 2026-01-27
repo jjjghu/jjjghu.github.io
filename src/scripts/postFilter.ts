@@ -1,3 +1,5 @@
+import { FOUCManager } from "../utils/loading";
+
 export class PostFilterManager {
     private isEnglish: boolean = false;
     private selectedTags: Set<string> = new Set();
@@ -30,10 +32,7 @@ export class PostFilterManager {
         }
 
         // Fallback: Ensure loading state is removed eventually even if something fails
-        setTimeout(() => {
-            this.postList?.classList.remove('is-loading');
-            document.querySelector('.filter-bar')?.classList.remove('is-loading');
-        }, 1000);
+        FOUCManager.createSafetyNet('#post-list, .filter-bar');
 
         this.init();
     }
@@ -196,10 +195,8 @@ export class PostFilterManager {
         this.updateSort();
 
         // Remove loading state after first update
-        requestAnimationFrame(() => {
-            this.postList?.classList.remove("is-loading");
-            document.querySelector('.filter-bar')?.classList.remove('is-loading');
-        });
+        FOUCManager.reveal("#post-list");
+        FOUCManager.reveal(".filter-bar");
     }
 
     private updateSort() {
