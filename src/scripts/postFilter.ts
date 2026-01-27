@@ -32,6 +32,7 @@ export class PostFilterManager {
         // Fallback: Ensure loading state is removed eventually even if something fails
         setTimeout(() => {
             this.postList?.classList.remove('is-loading');
+            document.querySelector('.filter-bar')?.classList.remove('is-loading');
         }, 1000);
 
         this.init();
@@ -197,6 +198,7 @@ export class PostFilterManager {
         // Remove loading state after first update
         requestAnimationFrame(() => {
             this.postList?.classList.remove("is-loading");
+            document.querySelector('.filter-bar')?.classList.remove('is-loading');
         });
     }
 
