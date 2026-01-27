@@ -1,0 +1,6 @@
+/* Initial state: Hidden and non-interactive */
+.fouc-loading {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.3s ease-out;
+}
