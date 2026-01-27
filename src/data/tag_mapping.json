@@ -14,6 +14,7 @@
     "trie": "字典樹",
     "binary search": "二分搜",
     "recursion": "遞迴",
+    "memoization": "記憶化搜索",
     "dfs": "深度優先搜索",
     "bfs": "廣度優先搜索",
     "graph": "圖",
