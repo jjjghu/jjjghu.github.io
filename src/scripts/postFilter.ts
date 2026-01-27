@@ -51,6 +51,27 @@ export class PostFilterManager {
             }
         }
 
+        // Init Difficulty
+        const savedDiff = localStorage.getItem("difficultyPreference");
+        if (savedDiff) {
+            this.currentDifficulty = savedDiff;
+        }
+
+        // Init Tags
+        const savedTagPref = localStorage.getItem("tagPreference");
+        if (savedTagPref) {
+            try {
+                const parsed = JSON.parse(savedTagPref);
+                const tags = Array.isArray(parsed?.tags) ? parsed.tags : [];
+                const logic = parsed?.logic || 'AND';
+
+                this.selectedTags = new Set(tags);
+                this.filterLogic = logic;
+            } catch (e) {
+                console.warn("Failed to parse tag preference", e);
+            }
+        }
+
         // Listeners
         document.addEventListener("language-change", (e: any) => {
             this.isEnglish = e.detail.isEnglish;

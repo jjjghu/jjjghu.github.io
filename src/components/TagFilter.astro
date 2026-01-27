@@ -89,6 +89,11 @@ const { tags } = Astro.props;
 </div>
 
 <script>
+    import { getSettingsManager } from "../scripts/settingsManager";
+
+    // Initialize Settings
+    const settings = getSettingsManager();
+
     // @ts-ignore
     let selectedTags = new Set();
     let filterLogic = "AND"; // 'AND' | 'OR'
@@ -108,6 +113,62 @@ const { tags } = Astro.props;
     const checkboxes = document.querySelectorAll(
         '.tag-chip input[type="checkbox"]',
     );
+
+    // Register Setting
+    settings.register({
+        key: "tagPreference",
+        type: "select", // complex object stored as string/json
+        defaultValue: { tags: [], logic: "AND" },
+        onApply: (value) => {
+            // value is { tags: [], logic: '...' }
+            // Ensure safe defaults
+            const savedTags = Array.isArray(value?.tags) ? value.tags : [];
+            const savedLogic = value?.logic || "AND";
+
+            // 1. Update State
+            selectedTags = new Set(savedTags);
+            filterLogic = savedLogic;
+
+            // 2. Update Checkboxes UI
+            // @ts-ignore
+            checkboxes.forEach((box) => {
+                // @ts-ignore
+                box.checked = selectedTags.has(box.value);
+            });
+
+            // 3. Update Badge UI
+            updateBadge();
+
+            // 4. Update Logic UI
+            const isEnglish = localStorage.getItem("isEnglish") === "true";
+            const cnText =
+                filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
+            const enText =
+                filterLogic === "AND" ? "Match All (AND)" : "Match Any (OR)";
+
+            if (logicText) {
+                // Update datasets
+                logicText.dataset.cn = cnText;
+                logicText.dataset.en = enText;
+                // Render
+                logicText.textContent = isEnglish ? enText : cnText;
+            }
+            // Update active style
+            logicToggleBtn?.classList.toggle("is-or", filterLogic === "OR");
+
+            // 5. Dispatch Event
+            dispatchChange();
+        },
+    });
+
+    // Helper to save current state
+    function saveState() {
+        const state = {
+            tags: Array.from(selectedTags),
+            logic: filterLogic,
+        };
+        settings.set("tagPreference", state);
+    }
 
     // --- 1. Dropdown Toggle ---
     tagFilterBtn?.addEventListener("click", (e) => {
@@ -170,35 +231,20 @@ const { tags } = Astro.props;
             } else {
                 selectedTags.delete(val);
             }
-            // UPDATE UI Badge immediately
-            updateBadge();
-            // Dispatch immediately
-            dispatchChange();
+
+            // SAVE via Settings (will trigger onApply -> updateBadge -> dispatch)
+            // But verify: if onApply sets selectedTags again, it's fine.
+            // We just need to make sure we don't clear it.
+            // Actually, best practice: Update state locally or just pass new state to settings?
+            // Since we updated local set, we pass it.
+            saveState();
         });
     });
 
     // --- 4. Logic Toggle ---
     logicToggleBtn?.addEventListener("click", () => {
         filterLogic = filterLogic === "AND" ? "OR" : "AND";
-
-        // Update Text Logic
-        const isEnglish = localStorage.getItem("isEnglish") === "true";
-        const cnText =
-            filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
-        const enText =
-            filterLogic === "AND" ? "Match All (AND)" : "Match Any (OR)";
-
-        if (logicText) {
-            // Update datasets so global language switch works
-            logicText.dataset.cn = cnText;
-            logicText.dataset.en = enText;
-
-            // Render immediate
-            logicText.textContent = isEnglish ? enText : cnText;
-        }
-
-        // Update active style
-        logicToggleBtn?.classList.toggle("is-or", filterLogic === "OR");
+        saveState();
     });
 
     // --- 5. Actions: Clear ---
@@ -206,19 +252,15 @@ const { tags } = Astro.props;
     // Clear: Clears immediately and Updates
     clearTagsBtn?.addEventListener("click", () => {
         selectedTags.clear();
-        // @ts-ignore
-        checkboxes.forEach((box) => (box.checked = false));
-        updateBadge();
 
-        // Clear search
+        // Clear search UI locally (not part of settings but good UX)
         if (tagSearchInput) {
             // @ts-ignore
             tagSearchInput.value = "";
             tagSearchInput.dispatchEvent(new Event("input"));
         }
 
-        dispatchChange(); // Reset implies applying the clear
-        // tagDropdown?.classList.remove("show"); // Optional, maybe user wants to close
+        saveState();
     });
 
     function updateBadge() {
