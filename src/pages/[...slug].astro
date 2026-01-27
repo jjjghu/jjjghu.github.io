@@ -16,8 +16,17 @@ export async function getStaticPaths() {
     const allPosts = [...leetcodePosts, ...zerojudgePosts];
 
     return allPosts.map((post) => {
+        let finalSlug = post.slug;
+        const problemId = post.data.problem_id;
+
+        // Automatically strip problem ID from slug if it exists at the start
+        // e.g., "3651-minimum-cost..." -> "minimum-cost..."
+        if (problemId && finalSlug.startsWith(problemId + "-")) {
+            finalSlug = finalSlug.replace(problemId + "-", "");
+        }
+
         return {
-            params: { slug: post.slug },
+            params: { slug: finalSlug },
             props: { post },
         };
     });
