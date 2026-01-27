@@ -11,7 +11,8 @@
     --post-list-gap-y: 8px;
 }
 
-#post-list.is-loading {
+#post-list.is-loading,
+.filter-bar.is-loading {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;

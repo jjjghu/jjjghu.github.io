@@ -118,12 +118,26 @@ const { tags } = Astro.props;
     settings.register({
         key: "tagPreference",
         type: "select", // complex object stored as string/json
-        defaultValue: { tags: [], logic: "AND" },
+        defaultValue: JSON.stringify({ tags: [], logic: "AND" }),
         onApply: (value) => {
-            // value is { tags: [], logic: '...' }
-            // Ensure safe defaults
-            const savedTags = Array.isArray(value?.tags) ? value.tags : [];
-            const savedLogic = value?.logic || "AND";
+            // value might be object (default) or string (from storage)
+            let parsedObj = { tags: [], logic: "AND" };
+
+            if (typeof value === "string") {
+                try {
+                    parsedObj = JSON.parse(value);
+                } catch (e) {
+                    // console.warn("Parse error", e);
+                }
+            } else if (typeof value === "object" && value !== null) {
+                // @ts-ignore
+                parsedObj = value;
+            }
+
+            const savedTags = Array.isArray(parsedObj?.tags)
+                ? parsedObj.tags
+                : [];
+            const savedLogic = parsedObj?.logic || "AND";
 
             // 1. Update State
             selectedTags = new Set(savedTags);
@@ -167,7 +181,7 @@ const { tags } = Astro.props;
             tags: Array.from(selectedTags),
             logic: filterLogic,
         };
-        settings.set("tagPreference", state);
+        settings.set("tagPreference", JSON.stringify(state));
     }
 
     // --- 1. Dropdown Toggle ---
