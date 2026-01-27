@@ -29,12 +29,27 @@ export class PostFilterManager {
             this.textSearch.value = q;
         }
 
+        // Fallback: Ensure loading state is removed eventually even if something fails
+        setTimeout(() => {
+            this.postList?.classList.remove('is-loading');
+        }, 1000);
+
         this.init();
     }
 
     private init() {
         // Init Lang
         this.isEnglish = localStorage.getItem("isEnglish") === "true";
+
+        // Init Sort
+        const savedSort = localStorage.getItem("sortPreference");
+        if (savedSort) {
+            const [field, order] = savedSort.split('-');
+            if (field && order) {
+                this.currentSortField = field;
+                this.currentSortOrder = order;
+            }
+        }
 
         // Listeners
         document.addEventListener("language-change", (e: any) => {
@@ -157,6 +172,11 @@ export class PostFilterManager {
         }
 
         this.updateSort();
+
+        // Remove loading state after first update
+        requestAnimationFrame(() => {
+            this.postList?.classList.remove("is-loading");
+        });
     }
 
     private updateSort() {

@@ -6,69 +6,95 @@ import { UI_TEXT } from "../i18n/ui";
 <div class="dropdown-container sort-dropdown-container">
     <button id="sort-btn" class="dropdown-btn sort-btn" data-dropdown="sort">
         <i class="bx bx-sort-alt-2"></i>
-        <span class="sort-label" data-cn={UI_TEXT.sort_id_asc.cn} data-en={UI_TEXT.sort_id_asc.en}>{UI_TEXT.sort_id_asc.cn}</span>
+        <span
+            class="sort-label"
+            data-cn={UI_TEXT.sort_id_asc.cn}
+            data-en={UI_TEXT.sort_id_asc.en}>{UI_TEXT.sort_id_asc.cn}</span
+        >
     </button>
     <div id="sort-menu" class="dropdown-menu sort-menu">
-        <div class="dropdown-option sort-option active" data-field="id" data-order="asc" data-cn={UI_TEXT.sort_id_asc.cn} data-en={UI_TEXT.sort_id_asc.en}>
+        <div
+            class="dropdown-option sort-option active"
+            data-field="id"
+            data-order="asc"
+            data-cn={UI_TEXT.sort_id_asc.cn}
+            data-en={UI_TEXT.sort_id_asc.en}
+        >
             {UI_TEXT.sort_id_asc.cn}
         </div>
-        <div class="dropdown-option sort-option" data-field="id" data-order="desc" data-cn={UI_TEXT.sort_id_desc.cn} data-en={UI_TEXT.sort_id_desc.en}>
+        <div
+            class="dropdown-option sort-option"
+            data-field="id"
+            data-order="desc"
+            data-cn={UI_TEXT.sort_id_desc.cn}
+            data-en={UI_TEXT.sort_id_desc.en}
+        >
             {UI_TEXT.sort_id_desc.cn}
         </div>
-        <div class="dropdown-option sort-option" data-field="date" data-order="desc" data-cn={UI_TEXT.sort_date_newest.cn} data-en={UI_TEXT.sort_date_newest.en}>
+        <div
+            class="dropdown-option sort-option"
+            data-field="date"
+            data-order="desc"
+            data-cn={UI_TEXT.sort_date_newest.cn}
+            data-en={UI_TEXT.sort_date_newest.en}
+        >
             {UI_TEXT.sort_date_newest.cn}
         </div>
-        <div class="dropdown-option sort-option" data-field="date" data-order="asc" data-cn={UI_TEXT.sort_date_oldest.cn} data-en={UI_TEXT.sort_date_oldest.en}>
+        <div
+            class="dropdown-option sort-option"
+            data-field="date"
+            data-order="asc"
+            data-cn={UI_TEXT.sort_date_oldest.cn}
+            data-en={UI_TEXT.sort_date_oldest.en}
+        >
             {UI_TEXT.sort_date_oldest.cn}
         </div>
     </div>
 </div>
 
 <script>
+    import { getSettingsManager } from "../scripts/settingsManager";
+
     const sortBtn = document.getElementById("sort-btn");
     const sortMenu = document.getElementById("sort-menu");
     const sortOptions = document.querySelectorAll(".sort-option");
     const sortLabel = sortBtn?.querySelector(".sort-label");
 
-    // Toggle Menu
-    sortBtn?.addEventListener("click", (e) => {
-        e.stopPropagation();
-        sortMenu?.classList.toggle("show");
-    });
+    // Initialize Settings Manager
+    const settings = getSettingsManager();
 
-    // Close menu when clicking outside (Global listener handled in index.astro for mutex, 
-    // but we usually keep a local fallback or rely on the global one. 
-    // For now, let's keep the local one but updated to not conflict or just rely on index.
-    // Actually, mutex logic in index.astro will handle the "closing others", so we just need to ensure toggle works)
-    
-    // Handle Option Click
-    sortOptions.forEach((option) => {
-        option.addEventListener("click", (e) => {
-            e.stopPropagation(); 
-            // @ts-ignore
-            const field = e.target.dataset.field;
-            // @ts-ignore
-            const order = e.target.dataset.order;
+    settings.register({
+        key: "sortPreference",
+        type: "select", // effectively string
+        defaultValue: "id-asc",
+        onApply: (value) => {
+            const [field, order] = value.split("-");
 
-            // Update UI (active class)
-            sortOptions.forEach((o) => o.classList.remove("active"));
-            // @ts-ignore
-            e.target.classList.add("active");
-
-            // Update Label
-            if (sortLabel) {
+            // 1. Update Active Option UI
+            sortOptions.forEach((o) => {
                 // @ts-ignore
-                sortLabel.textContent = e.target.textContent.trim();
+                const oField = o.dataset.field;
                 // @ts-ignore
-                sortLabel.dataset.cn = e.target.dataset.cn;
-                // @ts-ignore
-                sortLabel.dataset.en = e.target.dataset.en;
-            }
+                const oOrder = o.dataset.order;
 
-            // Close menu
-            sortMenu?.classList.remove("show");
+                if (oField === field && oOrder === order) {
+                    o.classList.add("active");
 
-            // Dispatch Event
+                    // 2. Update Label UI
+                    if (sortLabel) {
+                        // @ts-ignore
+                        sortLabel.textContent = o.textContent.trim();
+                        // @ts-ignore
+                        sortLabel.dataset.cn = o.dataset.cn;
+                        // @ts-ignore
+                        sortLabel.dataset.en = o.dataset.en;
+                    }
+                } else {
+                    o.classList.remove("active");
+                }
+            });
+
+            // 3. Dispatch Event
             const event = new CustomEvent("sort-change", {
                 detail: {
                     field,
@@ -76,6 +102,29 @@ import { UI_TEXT } from "../i18n/ui";
                 },
             });
             document.dispatchEvent(event);
+        },
+    });
+
+    // Toggle Menu
+    sortBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sortMenu?.classList.toggle("show");
+    });
+
+    // Handle Option Click
+    sortOptions.forEach((option) => {
+        option.addEventListener("click", (e) => {
+            e.stopPropagation();
+            // @ts-ignore
+            const field = e.target.dataset.field;
+            // @ts-ignore
+            const order = e.target.dataset.order;
+
+            const value = `${field}-${order}`;
+            settings.set("sortPreference", value);
+
+            // Close menu
+            sortMenu?.classList.remove("show");
         });
     });
 </script>

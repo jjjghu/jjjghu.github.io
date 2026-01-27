@@ -83,7 +83,7 @@ const uniqueTags = Array.from(allTagsCN).sort();
         </div>
       </div>
 
-      <div id="post-list">
+      <div id="post-list" class="is-loading">
         {sortedPosts.map((post) => <PostRow post={post} />)}
       </div>
     </div>
