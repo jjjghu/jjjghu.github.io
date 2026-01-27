@@ -27,6 +27,24 @@ export class PostFilterManager {
         this.categoryParam = urlParams.get("category");
         const q = urlParams.get("q");
 
+        // --- Category Reset Logic ---
+        // We do this BEFORE init so init reads the reset (default) values
+        const currentCategory = this.categoryParam || 'default';
+        const lastCategory = localStorage.getItem('lastCategory');
+
+        if (lastCategory && lastCategory !== currentCategory) {
+            // Category changed, reset persistent filters
+            localStorage.removeItem('tagPreference');
+            localStorage.setItem('difficultyPreference', 'all');
+            // We don't strictly need to reset sort, but usually keeping sort is fine.
+            // Resetting search (q) is handled by the fact that URL is new, but if we had persisted search, we'd reset it too.
+
+            // Note: SettingsManager might have cached values if it was initialized earlier, 
+            // but since we page reloaded, it should be fresh.
+        }
+        localStorage.setItem('lastCategory', currentCategory);
+        // -----------------------------
+
         if (q && this.textSearch) {
             this.textSearch.value = q;
         }
@@ -38,6 +56,15 @@ export class PostFilterManager {
     }
 
     private init() {
+        // --- 0. UI Visibility based on Category ---
+        const diffContainer = document.getElementById('difficulty-dropdown-container');
+        if (this.categoryParam === 'zerojudge') {
+            if (diffContainer) diffContainer.style.display = 'none';
+        } else {
+            if (diffContainer) diffContainer.style.display = ''; // Restore default (flex/block)
+        }
+        // ------------------------------------------
+
         // Init Lang
         this.isEnglish = localStorage.getItem("isEnglish") === "true";
 
