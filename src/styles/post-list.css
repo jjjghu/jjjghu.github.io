@@ -11,6 +11,12 @@
     --post-list-gap-y: 8px;
 }
 
+#post-list.is-loading {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
 /* Container that holds header + rows */
 .file-list-container {
     border: 1px solid var(--color-border-default);
