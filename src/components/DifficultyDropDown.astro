@@ -49,10 +49,50 @@ import { UI_TEXT } from "../i18n/ui";
 </div>
 
 <script>
+    import { getSettingsManager } from "../scripts/settingsManager";
+
     const diffBtn = document.getElementById("diff-btn");
     const diffMenu = document.getElementById("diff-menu");
     const diffOptions = document.querySelectorAll(".diff-option");
     const diffLabel = diffBtn?.querySelector(".diff-label");
+
+    // Initialize Settings Manager
+    const settings = getSettingsManager();
+
+    settings.register({
+        key: "difficultyPreference",
+        type: "select",
+        defaultValue: "all",
+        onApply: (value) => {
+            // 1. Update Active Option UI
+            diffOptions.forEach((o) => {
+                // @ts-ignore
+                const oValue = o.dataset.value;
+                if (oValue === value) {
+                    o.classList.add("active");
+                    // 2. Update Label UI
+                    if (diffLabel) {
+                        // @ts-ignore
+                        diffLabel.textContent = o.textContent.trim();
+                        // @ts-ignore
+                        diffLabel.dataset.cn = o.dataset.cn;
+                        // @ts-ignore
+                        diffLabel.dataset.en = o.dataset.en;
+                    }
+                } else {
+                    o.classList.remove("active");
+                }
+            });
+
+            // 3. Dispatch Event
+            const event = new CustomEvent("difficulty-change", {
+                detail: {
+                    value,
+                },
+            });
+            document.dispatchEvent(event);
+        },
+    });
 
     // Toggle Menu
     diffBtn?.addEventListener("click", (e) => {
@@ -66,32 +106,10 @@ import { UI_TEXT } from "../i18n/ui";
             e.stopPropagation();
             // @ts-ignore
             const value = e.target.dataset.value;
-
-            // Update UI (active class)
-            diffOptions.forEach((o) => o.classList.remove("active"));
-            // @ts-ignore
-            e.target.classList.add("active");
-
-            // Update Label
-            if (diffLabel) {
-                // @ts-ignore
-                diffLabel.textContent = e.target.textContent.trim();
-                // @ts-ignore
-                diffLabel.dataset.cn = e.target.dataset.cn;
-                // @ts-ignore
-                diffLabel.dataset.en = e.target.dataset.en;
-            }
+            settings.set("difficultyPreference", value);
 
             // Close menu
             diffMenu?.classList.remove("show");
-
-            // Dispatch Event
-            const event = new CustomEvent("difficulty-change", {
-                detail: {
-                    value,
-                },
-            });
-            document.dispatchEvent(event);
         });
     });
 </script>
