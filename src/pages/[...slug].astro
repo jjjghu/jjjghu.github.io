@@ -8,6 +8,8 @@ import TagBadge from "../components/TagBadge.astro";
 import DifficultyBadge from "../components/DifficultyBadge.astro";
 
 // 1. 生成靜態路徑
+import { generateSlug } from "../utils/slug-generator.mjs";
+
 export async function getStaticPaths() {
     const leetcodePosts = await getCollection(LEETCODE_COLLECTION);
     const zerojudgePosts = await getCollection(ZEROJUDGE_COLLECTION);
@@ -16,14 +18,8 @@ export async function getStaticPaths() {
     const allPosts = [...leetcodePosts, ...zerojudgePosts];
 
     return allPosts.map((post) => {
-        let finalSlug = post.slug;
-        const problemId = post.data.problem_id;
-
-        // Automatically strip problem ID from slug if it exists at the start
-        // e.g., "3651-minimum-cost..." -> "minimum-cost..."
-        if (problemId && finalSlug.startsWith(problemId + "-")) {
-            finalSlug = finalSlug.replace(problemId + "-", "");
-        }
+        // Use the centralized slug generation logic
+        const finalSlug = generateSlug(post.slug, post.data.problem_id);
 
         return {
             params: { slug: finalSlug },
