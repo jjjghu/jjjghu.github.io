@@ -41,6 +41,12 @@
     background-color: color-mix(in srgb, var(--badge-color) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--badge-color) 20%, transparent);
     color: var(--badge-color);
+    cursor: default;
+}
+
+.difficulty-badge:hover {
+    background-color: color-mix(in srgb, var(--badge-color) 20%, transparent);
+    border-color: color-mix(in srgb, var(--badge-color) 40%, transparent);
 }
 
 /* Luogu Difficulty Map */
