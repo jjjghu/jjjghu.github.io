@@ -9,10 +9,17 @@ import DifficultyBadge from "../components/DifficultyBadge.astro";
 
 // 1. 生成靜態路徑
 import { generateSlug } from "../utils/slug-generator.mjs";
+import { isPublicPost } from "../utils/postHelper.ts";
 
 export async function getStaticPaths() {
-    const leetcodePosts = await getCollection(LEETCODE_COLLECTION);
-    const zerojudgePosts = await getCollection(ZEROJUDGE_COLLECTION);
+    const leetcodePosts = await getCollection(
+        LEETCODE_COLLECTION,
+        isPublicPost,
+    );
+    const zerojudgePosts = await getCollection(
+        ZEROJUDGE_COLLECTION,
+        isPublicPost,
+    );
 
     // Merge all posts
     const allPosts = [...leetcodePosts, ...zerojudgePosts];

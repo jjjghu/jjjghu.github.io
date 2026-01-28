@@ -5,7 +5,7 @@ export const UI_TEXT = {
     header_title_accent: { cn: '筆記', en: 'Notes' },
     nav_all: { cn: '所有文章', en: 'All Posts' },
     nav_leetcode: { cn: 'LeetCode', en: 'LeetCode' },
-    nav_zerojudge: { cn: 'ZeroJudge', en: 'ZeroJudge' },
+    nav_zerojudge: { cn: '其他', en: 'Other' },
     search_placeholder: { cn: '搜尋文章...', en: 'Search posts...' },
 
     // Filter Bar
