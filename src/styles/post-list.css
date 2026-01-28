@@ -209,6 +209,7 @@ html.hover-glow-enabled .file-row:hover .title-text {
     /* Optional: create a "meta line" feel */
     .col-difficulty,
     .col-tags {
+        justify-content: left;
         align-items: flex-start;
     }
 }
