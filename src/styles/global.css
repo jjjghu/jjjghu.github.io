@@ -217,6 +217,33 @@ pre {
 }
 
 /* 區塊內的程式碼文字 */
+
+/* 程式碼顯示行數開始 */
+pre code {
+  counter-reset: line;
+}
+
+pre code .line {
+  counter-increment: line;
+  padding-left: 2rem;
+  position: relative;
+}
+
+pre code .line::before {
+  content: counter(line);
+  position: absolute;
+  left: 0;
+  width: 1rem;
+  text-align: right;
+  opacity: 0.5;
+  font-size: 0.85em;
+  font-family: monospace;
+  user-select: none;
+  color: rgb(139, 148, 158);
+}
+
+/* 程式碼顯示行數結束 */
+
 pre code {
   background-color: transparent;
   /* 繼承 pre 的背景 */
