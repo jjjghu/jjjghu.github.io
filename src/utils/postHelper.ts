@@ -76,3 +76,11 @@ export function getAllUniqueTags(posts: PostEntry[]) {
 export function translateTag(tag: string) {
     return getTagCN(tag);
 }
+
+// 過濾掉隱藏的文章 (例如 .模板.md)
+export function isPublicPost(post: PostEntry) {
+    // 檢查檔名是否以 . 開頭
+    const parts = post.id.split("/");
+    const fileName = parts[parts.length - 1];
+    return !fileName.startsWith(".");
+}
