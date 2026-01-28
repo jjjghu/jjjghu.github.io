@@ -155,7 +155,9 @@ ol {
   height: auto;
   border-radius: 8px;
   display: block;
+  padding: 1rem auto;
   margin: 1rem auto;
+  background-color: white;
 }
 
 /* Global Reset overrides (optional, keeping original vague padding if needed, but scoping is better) */
@@ -222,6 +224,7 @@ pre {
 
 .light pre {
   background-color: color-mix(in srgb, #fefefe var(--bg-overlay-alpha), transparent) !important;
+  border: 1px solid var(--color-border-default);
 }
 
 /* Shiki dual theme: 在 dark 模式時，把 token 顏色換成 --shiki-dark */
