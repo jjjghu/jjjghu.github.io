@@ -4,7 +4,7 @@
     gap: 6px;
     white-space: nowrap;
     user-select: none;
-
+    line-height: 1.5;
     /* sizing token */
     padding: var(--badge-py, 2px) var(--badge-px, 10px);
     font-size: var(--badge-fs, 12px);

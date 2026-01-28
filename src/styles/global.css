@@ -135,6 +135,10 @@ ol {
 }
 
 /* Markdown Content List Styles */
+.article-body {
+  line-height: var(--article-line-height);
+}
+
 .article-body ul {
   list-style-type: disc;
   padding-left: 2em;
