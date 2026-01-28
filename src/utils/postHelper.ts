@@ -72,6 +72,32 @@ export function getAllUniqueTags(posts: PostEntry[]) {
     return allTags;
 }
 
+// 取得所有不重複難度
+export function getAllUniqueDifficulties(posts: PostEntry[]) {
+    const allDifficulties = new Set<string>();
+    posts.forEach((post) => {
+        const diff = post.data.difficulty;
+        if (diff) {
+            allDifficulties.add(diff);
+        }
+    });
+
+    // 排序邏輯: Easy/Medium/Hard 優先，其他按字母
+    const sorted = Array.from(allDifficulties).sort((a, b) => {
+        const order = ["Easy", "Medium", "Hard", "簡單", "中等", "困難"];
+        const idxA = order.indexOf(a);
+        const idxB = order.indexOf(b);
+
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+
+        return a.localeCompare(b, "zh-Hant");
+    });
+
+    return sorted;
+}
+
 // 保持向下兼容 (雖然主要建議用 getTagCN)
 export function translateTag(tag: string) {
     return getTagCN(tag);

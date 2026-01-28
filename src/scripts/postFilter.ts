@@ -172,15 +172,19 @@ export class PostFilterManager {
             const rowCategory = row.dataset.category;
 
             // 0. Category
-            let matchCategory = true;
-            if (this.categoryParam) {
-                matchCategory = rowCategory === this.categoryParam;
+            let targetCategory = this.categoryParam;
+            if (!targetCategory) {
+                targetCategory = "leetcode"; // Default to LeetCode
             }
+            let matchCategory = rowCategory === targetCategory;
 
             // 1. Difficulty
             let matchDifficulty = true;
             if (this.currentDifficulty !== "all") {
-                matchDifficulty = rowDifficulty === this.currentDifficulty;
+                // Ensure robustness against casing (e.g. Easy vs easy)
+                const currentDiff = (this.currentDifficulty || "").toLowerCase();
+                const currentRowDiff = (rowDifficulty || "").toLowerCase();
+                matchDifficulty = currentRowDiff === currentDiff;
             }
 
             // 2. Tags

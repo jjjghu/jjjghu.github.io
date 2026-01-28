@@ -29,15 +29,6 @@ const { activeCategory } = Astro.props;
             <a
               href="/"
               class="nav-link"
-              data-category="all"
-              data-cn={UI_TEXT.nav_all.cn}
-              data-en={UI_TEXT.nav_all.en}>{UI_TEXT.nav_all.cn}</a
-            >
-          </li>
-          <li>
-            <a
-              href="/?category=leetcode"
-              class="nav-link"
               data-category="leetcode"
               data-cn={UI_TEXT.nav_leetcode.cn}
               data-en={UI_TEXT.nav_leetcode.en}>{UI_TEXT.nav_leetcode.cn}</a
@@ -57,7 +48,7 @@ const { activeCategory } = Astro.props;
         <script is:inline>
           (function () {
             const params = new URLSearchParams(window.location.search);
-            const category = params.get("category") || "all";
+            const category = params.get("category") || "leetcode";
             const links = document.querySelectorAll(".nav-link");
             links.forEach((link) => {
               if (link.dataset.category === category) {

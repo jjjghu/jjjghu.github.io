@@ -1,12 +1,22 @@
 ---
 import "../styles/dropdown.css";
+import "../styles/badges.css";
 import { UI_TEXT } from "../i18n/ui";
+import { getDifficultyClass, getDifficultyLabel } from "../utils/difficulty";
+
+interface Props {
+    difficultiesLeetcode?: string[];
+    difficultiesZerojudge?: string[];
+}
+
+const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
 ---
 
 <div
     id="difficulty-dropdown-container"
     class="dropdown-container difficulty-dropdown-container"
 >
+    <!-- Button -->
     <button id="diff-btn" class="dropdown-btn diff-btn" data-dropdown="diff">
         <span
             class="diff-label"
@@ -15,7 +25,10 @@ import { UI_TEXT } from "../i18n/ui";
         >
         <i class="bx bx-chevron-down"></i>
     </button>
+
+    <!-- Menu -->
     <div id="diff-menu" class="dropdown-menu diff-menu">
+        <!-- Default "All" Option -->
         <div
             class="dropdown-option diff-option active"
             data-value="all"
@@ -24,30 +37,47 @@ import { UI_TEXT } from "../i18n/ui";
         >
             {UI_TEXT.diff_all.cn}
         </div>
-        <div
-            class="dropdown-option diff-option"
-            data-value="easy"
-            data-cn={UI_TEXT.diff_easy.cn}
-            data-en={UI_TEXT.diff_easy.en}
-        >
-            {UI_TEXT.diff_easy.cn}
-        </div>
-        <div
-            class="dropdown-option diff-option"
-            data-value="medium"
-            data-cn={UI_TEXT.diff_medium.cn}
-            data-en={UI_TEXT.diff_medium.en}
-        >
-            {UI_TEXT.diff_medium.cn}
-        </div>
-        <div
-            class="dropdown-option diff-option"
-            data-value="hard"
-            data-cn={UI_TEXT.diff_hard.cn}
-            data-en={UI_TEXT.diff_hard.en}
-        >
-            {UI_TEXT.diff_hard.cn}
-        </div>
+
+        {/* Dynamic Options for Leetcode (Class: diff-group-leetcode) */}
+        {
+            difficultiesLeetcode.map((diff) => {
+                const diffClass = getDifficultyClass(diff);
+                const labelCN = getDifficultyLabel(diff, false);
+                const labelEN = getDifficultyLabel(diff, true);
+
+                return (
+                    <div
+                        class={`dropdown-option diff-option diff-group-leetcode ${diffClass}`}
+                        data-value={diff.toLowerCase()}
+                        data-cn={labelCN}
+                        data-en={labelEN}
+                    >
+                        {labelCN}
+                    </div>
+                );
+            })
+        }
+
+        {/* Dynamic Options for Zerojudge (Class: diff-group-zerojudge) */}
+        {
+            difficultiesZerojudge.map((diff) => {
+                const diffClass = getDifficultyClass(diff);
+                const labelCN = getDifficultyLabel(diff, false);
+                const labelEN = getDifficultyLabel(diff, true);
+
+                return (
+                    <div
+                        class={`dropdown-option diff-option diff-group-zerojudge ${diffClass}`}
+                        data-value={diff.toLowerCase()}
+                        data-cn={labelCN}
+                        data-en={labelEN}
+                        style="display: none;"
+                    >
+                        {labelCN}
+                    </div>
+                );
+            })
+        }
     </div>
 </div>
 
@@ -59,8 +89,47 @@ import { UI_TEXT } from "../i18n/ui";
     const diffOptions = document.querySelectorAll(".diff-option");
     const diffLabel = diffBtn?.querySelector(".diff-label");
 
+    // Groups
+    const leetcodeOptions = document.querySelectorAll(".diff-group-leetcode");
+    const zerojudgeOptions = document.querySelectorAll(".diff-group-zerojudge");
+
     // Initialize Settings Manager
     const settings = getSettingsManager();
+
+    // Helper to update label text based on current language
+    function updateLabelText(element: HTMLElement | null, isEnglish: boolean) {
+        if (!element) return;
+        // @ts-ignore
+        const text = isEnglish ? element.dataset.en : element.dataset.cn;
+        if (text) {
+            element.textContent = text;
+        }
+    }
+
+    // Helper: Switch Visibility based on category
+    function updateDropdownVisibility(category: string | null) {
+        const target = category || "leetcode";
+
+        if (target === "leetcode") {
+            leetcodeOptions.forEach(
+                (el) => ((el as HTMLElement).style.display = "block"),
+            );
+            zerojudgeOptions.forEach(
+                (el) => ((el as HTMLElement).style.display = "none"),
+            );
+        } else {
+            leetcodeOptions.forEach(
+                (el) => ((el as HTMLElement).style.display = "none"),
+            );
+            zerojudgeOptions.forEach(
+                (el) => ((el as HTMLElement).style.display = "block"),
+            );
+        }
+    }
+
+    // Initial check from URL
+    const params = new URLSearchParams(window.location.search);
+    updateDropdownVisibility(params.get("category"));
 
     settings.register({
         key: "difficultyPreference",
@@ -68,19 +137,26 @@ import { UI_TEXT } from "../i18n/ui";
         defaultValue: "all",
         onApply: (value) => {
             // 1. Update Active Option UI
+            let matched = false;
             diffOptions.forEach((o) => {
                 // @ts-ignore
                 const oValue = o.dataset.value;
+
+                // Compare loose equality (string vs string)
                 if (oValue === value) {
+                    matched = true;
                     o.classList.add("active");
                     // 2. Update Label UI
                     if (diffLabel) {
                         // @ts-ignore
-                        diffLabel.textContent = o.textContent.trim();
-                        // @ts-ignore
                         diffLabel.dataset.cn = o.dataset.cn;
                         // @ts-ignore
                         diffLabel.dataset.en = o.dataset.en;
+
+                        // Force update text now
+                        const isEnglish =
+                            localStorage.getItem("isEnglish") === "true";
+                        updateLabelText(diffLabel as HTMLElement, isEnglish);
                     }
                 } else {
                     o.classList.remove("active");
@@ -114,6 +190,25 @@ import { UI_TEXT } from "../i18n/ui";
             // Close menu
             diffMenu?.classList.remove("show");
         });
+    });
+
+    // Listen for language change to update current label and dropdown items
+    document.addEventListener("language-change", (e: any) => {
+        const isEnglish = e.detail.isEnglish;
+
+        // Update main label
+        updateLabelText(diffLabel as HTMLElement, isEnglish);
+
+        // Update dropdown options
+        diffOptions.forEach((opt) => {
+            updateLabelText(opt as HTMLElement, isEnglish);
+        });
+    });
+
+    // Initial sync
+    const initialIsEnglish = localStorage.getItem("isEnglish") === "true";
+    diffOptions.forEach((opt) => {
+        updateLabelText(opt as HTMLElement, initialIsEnglish);
     });
 </script>
 

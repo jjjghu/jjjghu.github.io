@@ -28,7 +28,8 @@
 
 .dropdown-btn.active {
     background-color: color-mix(in srgb, var(--color-accent-fg), transparent 60%);
-    color: var(--color-accent-bg);
+    color: var(--color-fg-default);
+    /* Fixed text color for active state to be visible */
     border-color: color-mix(in srgb, var(--color-accent-fg), transparent 20%);
 }
 
@@ -48,6 +49,10 @@
     flex-direction: column;
     overflow: hidden;
     min-width: 160px;
+    max-height: 400px;
+    /* Limit height */
+    overflow-y: auto;
+    /* Scroll if too many items */
 }
 
 
@@ -73,9 +78,17 @@
 
 .dropdown-option.active {
     background-color: color-mix(in srgb, var(--color-accent-fg), transparent 60%);
-    color: var(--color-accent-bg);
+    color: var(--color-fg-default);
 }
 
+/* IMPORTANT: Override for colored difficulty options */
+/* If the option has a specific color class (via badges.css), we want to use that color for text */
+.dropdown-option[class*="diff-"] {
+    /* Using the badge color variable if available, or just inheriting color */
+    /* The badge classes set --badge-color, so we can use it */
+    color: var(--badge-color, var(--color-fg-default));
+    font-weight: 500;
+}
 
 /* Search Input inside Dropdown (for TagFilter) */
 .dropdown-search-container {

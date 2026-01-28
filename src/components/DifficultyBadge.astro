@@ -1,5 +1,6 @@
 ---
-import { getDifficultyColor, getDifficultyLabel } from "../utils/difficulty";
+import { getDifficultyClass, getDifficultyLabel } from "../utils/difficulty";
+import "../styles/badges.css";
 
 interface Props {
     difficulty?: string | null;
@@ -7,63 +8,19 @@ interface Props {
 
 const { difficulty } = Astro.props;
 
-// 如果沒有難度 (例如 ZeroJudge)，就不渲染
 if (!difficulty) {
     return;
 }
 
-const colorObj = getDifficultyColor(difficulty);
+const diffClass = getDifficultyClass(difficulty);
 const labelCN = getDifficultyLabel(difficulty, false); // 預設中文
 const labelEN = getDifficultyLabel(difficulty, true); // 英文
-
-const cssVars = {
-    "--badge-color-dark": colorObj.dark,
-    "--badge-color-light": colorObj.light,
-};
 ---
 
 <span
-    class="badge"
-    data-variant="difficulty"
-    style={cssVars}
+    class={`difficulty-badge ${diffClass}`}
     data-cn={labelCN}
     data-en={labelEN}
 >
     {labelCN}
 </span>
-
-<style>
-    .badge[data-variant="difficulty"] {
-        --badge-bg: color-mix(
-            in srgb,
-            var(--badge-color-dark) 10%,
-            transparent
-        );
-        --badge-border: color-mix(
-            in srgb,
-            var(--badge-color-dark) 20%,
-            transparent
-        );
-        --badge-fg: var(--badge-color-dark);
-    }
-    .badge[data-variant="difficulty"]:hover {
-        --badge-bg-hover: color-mix(
-            in srgb,
-            var(--badge-color-dark) 20%,
-            transparent
-        );
-    }
-    :global(.light) .badge[data-variant="difficulty"] {
-        --badge-fg: var(--badge-color-light);
-        --badge-border: color-mix(
-            in srgb,
-            var(--badge-color-light) 80%,
-            transparent
-        );
-        --badge-bg: color-mix(
-            in srgb,
-            var(--badge-color-light) 10%,
-            transparent
-        );
-    }
-</style>

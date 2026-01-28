@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>難度標籤配色方案 - 洛谷風格</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        // 這裡定義背景色，模擬你的網站環境
+                        bg: {
+                            light: '#F8FAFC', // 亮色底
+                            dark: '#0B0C10',  // 深色底
+                            panel: '#1E1E1E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* =================================================================
+           核心配色系統 (CSS Variables)
+           你可以直接把這段複製到你的 global.css
+           ================================================================= */
+        :root {
+            /* 1. 暫無評定 (Gray) */
+            --diff-gray: #9CA3AF; 
+            
+            /* 2. 入門 (Red) */
+            --diff-red: #EF4444;   /* Luogu: Red */
+            
+            /* 3. 普及- (Orange) */
+            --diff-orange: #F97316; /* Luogu: Orange */
+            
+            /* 4. 普及/提高- (Yellow) */
+            --diff-yellow: #EAB308; /* Luogu: Yellow */
+            
+            /* 5. 普及+/提高 (Green) */
+            --diff-green: #22C55E;  /* Luogu: Green */
+            
+            /* 6. 提高+/省選- (Blue) */
+            --diff-blue: #3B82F6;   /* Luogu: Blue */
+            
+            /* 7. 省選/NOI- (Purple) */
+            --diff-purple: #A855F7; /* Luogu: Purple */
+            
+            /* 8. NOI/NOI+/CTSC (Black -> Dark Mode: Silver/White) */
+            --diff-black: #0F172A; 
+        }
+
+        /* 暗黑模式下的顏色微調 (讓螢光感更強，對比度更高) */
+        .dark {
+            --diff-gray: #94A3B8;
+            --diff-red: #F87171;    /* 亮紅 */
+            --diff-orange: #FB923C; /* 亮橘 */
+            --diff-yellow: #FACC15; /* 亮黃 */
+            --diff-green: #4ADE80;  /* 螢光綠 */
+            --diff-blue: #60A5FA;   /* 亮藍 */
+            --diff-purple: #C084FC; /* 亮紫 */
+            --diff-black: #E2E8F0;  /* 銀白 (取代黑色) */
+        }
+
+        /* =================================================================
+           標籤樣式 (Badge Style)
+           這是你列表上用的小膠囊樣式
+           ================================================================= */
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 10px;
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 500;
+            border-radius: 9999px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            font-family: 'JetBrains Mono', monospace;
+            
+            /* 玻璃擬態核心：使用 CSS 變數 */
+            background-color: rgba(var(--tag-rgb), 0.1);
+            border: 1px solid rgba(var(--tag-rgb), 0.2);
+            color: var(--tag-color);
+        }
+
+        /* 定義各種難度的顏色變數映射 */
+        .diff-0 { --tag-color: var(--diff-gray); --tag-rgb: 156, 163, 175; }
+        .diff-1 { --tag-color: var(--diff-red); --tag-rgb: 239, 68, 68; }
+        .diff-2 { --tag-color: var(--diff-orange); --tag-rgb: 249, 115, 22; }
+        .diff-3 { --tag-color: var(--diff-yellow); --tag-rgb: 234, 179, 8; }
+        .diff-4 { --tag-color: var(--diff-green); --tag-rgb: 34, 197, 94; }
+        .diff-5 { --tag-color: var(--diff-blue); --tag-rgb: 59, 130, 246; }
+        .diff-6 { --tag-color: var(--diff-purple); --tag-rgb: 168, 85, 247; }
+        .diff-7 { --tag-color: var(--diff-black); --tag-rgb: 15, 23, 42; }
+        
+        /* Dark Mode 下的 RGB 修正 (為了背景色透明度正確) */
+        .dark .diff-7 { --tag-color: var(--diff-black); --tag-rgb: 226, 232, 240; }
+
+
+        /* =================================================================
+           文字選單樣式 (Dropdown Style)
+           這是你截圖中下拉選單的純文字樣式
+           ================================================================= */
+        .dropdown-item {
+            font-weight: 700;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+            color: var(--tag-color); /* 直接使用文字顏色 */
+        }
+        .dropdown-item:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        .dark .dropdown-item:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* Body 背景過渡 */
+        body { transition: background-color 0.3s, color 0.3s; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center bg-bg-light dark:bg-bg-dark text-slate-800 dark:text-slate-200 p-8 transition-colors duration-300">
+
+    <!-- 切換按鈕 -->
+    <div class="fixed top-6 right-6 flex gap-4">
+        <button id="theme-toggle" class="px-4 py-2 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700 font-medium text-sm flex items-center gap-2 hover:scale-105 transition-transform">
+            <span class="dark:hidden">☀️ Light Mode</span>
+            <span class="hidden dark:inline">🌙 Dark Mode</span>
+        </button>
+    </div>
+
+    <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-12">
+        
+        <!-- 左側：標籤樣式 (Badge Style) - 用於文章列表 -->
+        <div class="space-y-6">
+            <h2 class="text-xl font-bold border-b border-slate-300 dark:border-slate-700 pb-2 mb-4">列表標籤樣式 (Badges)</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">適用於首頁列表、文章內頁。</p>
+
+            <div class="flex flex-col gap-3 items-start">
+                <span class="tag-badge diff-0">暫無評定</span>
+                <span class="tag-badge diff-1">入門</span>
+                <span class="tag-badge diff-2">普及-</span>
+                <span class="tag-badge diff-3">普及/提高-</span>
+                <span class="tag-badge diff-4">普及+/提高</span>
+                <span class="tag-badge diff-5">提高+/省選-</span>
+                <span class="tag-badge diff-6">省選/NOI-</span>
+                <span class="tag-badge diff-7">NOI/NOI+/CTSC</span>
+            </div>
+        </div>
+
+        <!-- 右側：下拉選單樣式 (Dropdown Style) - 用於篩選器 -->
+        <div class="space-y-6">
+            <h2 class="text-xl font-bold border-b border-slate-300 dark:border-slate-700 pb-2 mb-4">下拉選單樣式 (Dropdown)</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">模擬洛谷原版選單，強調文字顏色。</p>
+
+            <div class="bg-white dark:bg-[#15171E] border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl p-2 w-64">
+                <div class="text-xs text-slate-400 px-3 py-1 mb-1">請選擇難度</div>
+                <div class="dropdown-item diff-0">暫無評定</div>
+                <div class="dropdown-item diff-1">入門</div>
+                <div class="dropdown-item diff-2">普及-</div>
+                <div class="dropdown-item diff-3">普及/提高-</div>
+                <div class="dropdown-item diff-4">普及+/提高</div>
+                <div class="dropdown-item diff-5">提高+/省選-</div>
+                <div class="dropdown-item diff-6">省選/NOI-</div>
+                <div class="dropdown-item diff-7">NOI/NOI+/CTSC</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 實作說明 -->
+    <div class="mt-16 max-w-2xl text-center text-sm text-slate-500 dark:text-slate-500">
+        <p>Tip: 點擊右上角按鈕切換主題，觀察 NOI 級別顏色在黑底/白底的變化。</p>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        toggleBtn.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+            }
+        });
+    </script>
+
+</body>
+</html>
