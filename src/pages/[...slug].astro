@@ -101,6 +101,25 @@ const tags = post.data.tags || [];
         });
     </script>
 
+    <script
+        type="application/ld+json"
+        set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: post.data.title,
+            image: [],
+            datePublished: post.data.date,
+            dateModified: post.data.date,
+            author: [
+                {
+                    "@type": "Person",
+                    name: "Chiu",
+                    url: "https://jjjghu.github.io",
+                },
+            ],
+        })}
+    />
+
     <style>
         .post-card {
             background-color: color-mix(
@@ -113,6 +132,7 @@ const tags = post.data.tags || [];
             padding: 2rem;
             padding-top: 2rem; /* Restore padding */
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            line-height: 1.75;
         }
 
         .post-header-row {

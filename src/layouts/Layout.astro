@@ -13,10 +13,18 @@ interface Props {
   title: string;
   headings?: MarkdownHeading[];
   activeCategory?: string;
+  description?: string;
+  image?: string;
 }
 
 // 1. 接收 headings 參數 (Astro 會自動傳入 Markdown 的標題資訊)
-const { title, headings, activeCategory } = Astro.props;
+const { title, headings, activeCategory, description, image } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const defaultDescription =
+  "Coding problem solutions and notes for LeetCode and ZeroJudge.";
+const finalDescription = description || defaultDescription;
+const finalImage = new URL(image || "/og-image.png", Astro.site); // Ensure you have an image or use a default one
 
 // 簡單判斷：如果有 headings 且數量大於 0, 代表這是一篇需要目錄的文章
 const showTOC = headings && headings.length > 0;
@@ -27,7 +35,28 @@ const showTOC = headings && headings.length > 0;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <meta name="description" content={finalDescription} />
+    <meta
+      name="keywords"
+      content="LeetCode, ZeroJudge, Programming, Solution, Algorithm, C++, CP"
+    />
+    <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={finalDescription} />
+    <meta property="og:image" content={finalImage} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={finalDescription} />
+    <meta property="twitter:image" content={finalImage} />
+
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
