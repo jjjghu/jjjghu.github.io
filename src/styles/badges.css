@@ -1,3 +1,4 @@
+/* Base Badge */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -5,12 +6,10 @@
     white-space: nowrap;
     user-select: none;
     line-height: 1.5;
-    /* sizing token */
     padding: var(--badge-py, 2px) var(--badge-px, 10px);
     font-size: var(--badge-fs, 12px);
     border-radius: var(--badge-radius, 999px);
 
-    /* visual token */
     background-color: var(--badge-bg, transparent);
     border: 1px solid var(--badge-border, transparent);
     color: var(--badge-fg, inherit);
@@ -21,4 +20,71 @@
 .badge:hover {
     background-color: var(--badge-bg-hover, var(--badge-bg));
     border-color: var(--badge-border-hover, var(--badge-border));
+}
+
+/* Difficulty Badge */
+.difficulty-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* Default Fallback */
+    --badge-color: var(--diff-gray);
+
+    /* Using color-mix for background and border transparency */
+    background-color: color-mix(in srgb, var(--badge-color) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--badge-color) 20%, transparent);
+    color: var(--badge-color);
+}
+
+/* Luogu Difficulty Map */
+.diff-0 {
+    --badge-color: var(--diff-gray);
+}
+
+.diff-1 {
+    --badge-color: var(--diff-red);
+}
+
+.diff-2 {
+    --badge-color: var(--diff-orange);
+}
+
+.diff-3 {
+    --badge-color: var(--diff-yellow);
+}
+
+.diff-4 {
+    --badge-color: var(--diff-green);
+}
+
+.diff-5 {
+    --badge-color: var(--diff-blue);
+}
+
+.diff-6 {
+    --badge-color: var(--diff-purple);
+}
+
+.diff-7 {
+    --badge-color: var(--diff-black);
+}
+
+/* LeetCode Specific Map (Preserving Original Colors) */
+.diff-easy {
+    --badge-color: var(--leetcode-easy);
+}
+
+.diff-medium {
+    --badge-color: var(--leetcode-medium);
+}
+
+.diff-hard {
+    --badge-color: var(--leetcode-hard);
 }

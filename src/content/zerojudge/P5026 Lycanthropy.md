@@ -6,6 +6,7 @@ title: "P5026 Lycanthropy"
 problem_id: "P5026"
 tags: ["array", "prefix sum", "difference"]
 
+difficulty: "普及+/提高" 
 link: "https://www.luogu.com.cn/problem/P5026"
 date: "2026-01-28"
 ---

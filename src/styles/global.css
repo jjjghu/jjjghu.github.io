@@ -33,6 +33,21 @@
   /* 頁面底色 */
   --color-card-bg: rgb(22, 27, 34);
   /* 卡片底色 (比底色稍亮) */
+
+  /* 難度顏色 (Dark Mode) */
+  --diff-gray: #9ca3af;
+  --diff-red: #f87171;
+  --diff-orange: #fb923c;
+  --diff-yellow: #facc15;
+  --diff-green: #4ade80;
+  --diff-blue: #60a5fa;
+  --diff-purple: #c084fc;
+  --diff-black: #e2e8f0;
+
+  /* LeetCode Colors (Dark) */
+  --leetcode-easy: #00B8A3;
+  --leetcode-medium: #FFC01E;
+  --leetcode-hard: #FF375F;
 }
 
 html.light {
@@ -62,6 +77,21 @@ html.light {
   /* 頁面底色 (淺灰) */
   --color-card-bg: rgb(255, 255, 255);
   /* 卡片底色 (白) */
+
+  /* 難度顏色 (Light Mode) */
+  --diff-gray: #9ca3af;
+  --diff-red: #ef4444;
+  --diff-orange: #f97316;
+  --diff-yellow: #eab308;
+  --diff-green: #22c55e;
+  --diff-blue: #3b82f6;
+  --diff-purple: #a855f7;
+  --diff-black: #0f172a;
+
+  /* LeetCode Colors (Light) */
+  --leetcode-easy: #00af9b;
+  --leetcode-medium: #e5ac1b;
+  --leetcode-hard: #ff2d55;
 }
 
 /* 讓切換時有平滑的過渡效果 */

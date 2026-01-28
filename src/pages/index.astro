@@ -4,7 +4,12 @@ import PostRow from "../components/PostRow.astro";
 import TagFilter from "../components/TagFilter.astro";
 import SortDropDown from "../components/SortDropDown.astro";
 import DifficultyDropDown from "../components/DifficultyDropDown.astro";
-import { sortPostsById, getAllUniqueTags, isPublicPost } from "../utils/postHelper.ts";
+import {
+  sortPostsById,
+  getAllUniqueTags,
+  isPublicPost,
+  getAllUniqueDifficulties,
+} from "../utils/postHelper.ts";
 import { getCollection } from "astro:content";
 import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
 import { UI_TEXT } from "../i18n/ui";
@@ -18,6 +23,9 @@ const sortedPosts = sortPostsById([...leetcodePosts, ...zerojudgePosts]);
 
 const allTagsCN = getAllUniqueTags(sortedPosts);
 const uniqueTags = Array.from(allTagsCN).sort();
+
+const uniqueDifficultiesLeetcode = getAllUniqueDifficulties(leetcodePosts);
+const uniqueDifficultiesZerojudge = getAllUniqueDifficulties(zerojudgePosts);
 ---
 
 <Layout title={UI_TEXT.header_title.cn}>
@@ -40,7 +48,12 @@ const uniqueTags = Array.from(allTagsCN).sort();
       <div class="filter-controls-group">
         <SortDropDown />
         <div class="difficulty-filter-wrapper">
-          <DifficultyDropDown />
+          <div class="difficulty-filter-wrapper">
+            <DifficultyDropDown
+              difficultiesLeetcode={uniqueDifficultiesLeetcode}
+              difficultiesZerojudge={uniqueDifficultiesZerojudge}
+            />
+          </div>
         </div>
         <div class="result-count" id="result-count">
           {UI_TEXT.result_count_prefix.cn}
