@@ -63,7 +63,10 @@ export default defineConfig({
     remarkPlugins: [remarkMath, remarkLeetCodeLink],
     rehypePlugins: [rehypeKatex],
     shikiConfig: {
-      theme: 'dark-plus',
+      themes: {
+        dark: "dark-plus",
+        light: "light-plus",
+      },
       wrap: false,
     },
   },

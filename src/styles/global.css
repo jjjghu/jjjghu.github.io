@@ -201,7 +201,6 @@ code:not(pre code) {
 
 /* 程式碼區塊 (Code Block) - 使用三個反引號包起來的區域 */
 pre {
-  background-color: color-mix(in srgb, #24292E var(--bg-overlay-alpha), transparent) !important;
   border-radius: 6px;
   padding: 16px;
   overflow: auto;
@@ -213,13 +212,26 @@ pre {
 }
 
 .light pre {
-  background-color: #24292E !important;
+  background-color: color-mix(in srgb, #fefefe var(--bg-overlay-alpha), transparent) !important;
 }
+
+/* Shiki dual theme: 在 dark 模式時，把 token 顏色換成 --shiki-dark */
+html:not(.light) pre.astro-code span[style*="--shiki-dark"] {
+  color: var(--shiki-dark) !important;
+}
+
+/* dark 模式的 code block 背景也一起修正 */
+html:not(.light) pre.astro-code {
+  background-color: color-mix(in srgb, #24292E var(--bg-overlay-alpha), transparent) !important;
+  /* background-color: var(--shiki-dark-bg) !important; */
+  color: var(--shiki-dark) !important;
+}
+
 
 /* 區塊內的程式碼文字 */
 
 /* 程式碼顯示行數開始 */
-pre code {
+/* pre code {
   counter-reset: line;
 }
 
@@ -240,7 +252,7 @@ pre code .line::before {
   font-family: monospace;
   user-select: none;
   color: rgb(139, 148, 158);
-}
+} */
 
 /* 程式碼顯示行數結束 */
 
