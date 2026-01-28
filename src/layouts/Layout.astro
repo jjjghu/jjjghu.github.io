@@ -24,7 +24,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const defaultDescription =
   "Coding problem solutions and notes for LeetCode and ZeroJudge.";
 const finalDescription = description || defaultDescription;
-const finalImage = new URL(image || "/og-image.png", Astro.site); // Ensure you have an image or use a default one
+const finalImage = new URL(image || "/og-image.png", Astro.site).href;
 
 // 簡單判斷：如果有 headings 且數量大於 0, 代表這是一篇需要目錄的文章
 const showTOC = headings && headings.length > 0;
@@ -45,17 +45,17 @@ const showTOC = headings && headings.length > 0;
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={finalDescription} />
     <meta property="og:image" content={finalImage} />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={Astro.url} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={finalDescription} />
-    <meta property="twitter:image" content={finalImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={finalDescription} />
+    <meta name="twitter:image" content={finalImage} />
+    <meta name="twitter:url" content={canonicalURL} />
 
     <link
       rel="stylesheet"
