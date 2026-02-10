@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats Widget with Tooltip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        dark: { bg: '#0B0C10', panel: '#11141B', border: '#252A34', accent: '#64FFDA' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #0B0C10; color: #C5C6C7; display: flex; justify-content: center; padding-top: 100px; }
+
+        /* =========================================
+           數據膠囊 (Stats Capsule) 基礎樣式
+           ========================================= */
+        .stats-capsule {
+            display: inline-flex;
+            align-items: center;
+            height: 38px;
+            padding: 0 12px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #9CA3AF;
+            transition: all 0.2s ease;
+            user-select: none;
+            position: relative; /* 確保 tooltip 定位基準 */
+        }
+
+        .stats-capsule:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #E5E7EB;
+        }
+
+        .stats-divider {
+            width: 1px;
+            height: 14px;
+            background-color: rgba(255, 255, 255, 0.15);
+            margin: 0 12px;
+        }
+
+        /* 單個數據項目 */
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative; /* 讓內部的 tooltip 以此為基準定位 */
+            cursor: help;       /* 滑鼠變成問號，提示可查看詳情 */
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: #D1D5DB;
+        }
+        
+        .stat-unit {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        /* =========================================
+           Tooltip (懸浮氣泡) 樣式 - 關鍵修改
+           ========================================= */
+        .stat-tooltip {
+            position: absolute;
+            bottom: 130%;        /* 位於項目上方 */
+            left: 50%;           /* 水平置中 */
+            transform: translateX(-50%) translateY(5px); /* 初始位置稍微下移 */
+            
+            background-color: #4B5563; /* 深灰色背景 (Tailwind Gray-600) */
+            color: #FFFFFF;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif; /* 提示文字用無襯線字體較好讀 */
+            white-space: nowrap; /* 防止文字換行 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            
+            /* 隱藏狀態 */
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none; /* 防止滑鼠誤觸 tooltip 本身 */
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 50;
+        }
+
+        /* Tooltip 下方的小箭頭 */
+        .stat-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;       /* 接在氣泡下方 */
+            left: 50%;
+            margin-left: -5px; /* 寬度的一半，讓它居中 */
+            border-width: 5px;
+            border-style: solid;
+            border-color: #4B5563 transparent transparent transparent; /* 只有上方有顏色 */
+        }
+
+        /* Hover 時顯示 Tooltip */
+        .stat-item:hover .stat-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0); /* 浮上來的動畫 */
+        }
+
+        /* RWD: 手機版隱藏單位 */
+        @media (max-width: 640px) {
+            .stat-unit { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 數據膠囊 -->
+    <div class="stats-capsule">
+        
+        <!-- 數據 1: 文章數 -->
+        <div class="stat-item">
+            <svg class="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span class="stat-value">113</span>
+            <span class="stat-unit">篇</span>
+            
+            <!-- Tooltip -->
+            <div class="stat-tooltip">文章總數: 113</div>
+        </div>
+
+        <!-- 分隔線 -->
+        <div class="stats-divider"></div>
+
+        <!-- 數據 2: 總瀏覽量 -->
+        <div class="stat-item">
+            <svg class="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span class="stat-value">25.4k</span>
+            <span class="stat-unit">次</span>
+
+            <!-- Tooltip: 顯示精確數字 -->
+            <div class="stat-tooltip">總瀏覽量: 25,430</div>
+        </div>
+
+    </div>
+
+</body>
+</html>

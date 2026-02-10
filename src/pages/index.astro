@@ -60,6 +60,12 @@ const uniqueDifficultiesZerojudge = getAllUniqueDifficulties(zerojudgePosts);
           {sortedPosts.length}
           {UI_TEXT.result_count_suffix.cn}
         </div>
+        <div class="visitor-count">
+          <i class="bx bx-user"></i>
+          <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv">...</span>
+          </span>
+        </div>
       </div>
     </div>
 
@@ -163,6 +169,14 @@ const uniqueDifficultiesZerojudge = getAllUniqueDifficulties(zerojudgePosts);
     font-size: 0.85rem;
     color: var(--color-fg-muted);
     margin-left: auto;
+  }
+
+  .visitor-count {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
   }
 
   .filter-controls-group {

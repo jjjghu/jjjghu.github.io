@@ -21,8 +21,7 @@ interface Props {
 const { title, headings, activeCategory, description, image } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const defaultDescription =
-  "程式題目的解題思路";
+const defaultDescription = "程式題目的解題思路";
 const finalDescription = description || defaultDescription;
 const finalImage = new URL(image || "/og-image.png", Astro.site).href;
 
@@ -66,6 +65,9 @@ const showTOC = headings && headings.length > 0;
       rel="stylesheet"
     />
 
+    <script
+      async
+      src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <script is:inline>
       const theme = (() => {
         if (

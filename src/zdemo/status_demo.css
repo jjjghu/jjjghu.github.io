@@ -1,0 +1,8 @@
+@media (max-width: 640px) {
+    .stat-unit {
+        display: none; /* 手機版隱藏單位文字，節省空間 */
+    }
+    .stats-capsule {
+        padding: 0 8px; /* 稍微縮小內距 */
+    }
+}
