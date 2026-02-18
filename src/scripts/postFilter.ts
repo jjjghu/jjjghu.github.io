@@ -259,13 +259,15 @@ export class PostFilterManager {
             }
 
             // Default numeric sort (date)
-            aVal = Number(aVal);
-            bVal = Number(bVal);
+            // data-date is stored as a timestamp number (valueOf())
+            const timeA = Number(aVal);
+            const timeB = Number(bVal);
+            console.log(timeA, timeB);
 
             if (this.currentSortOrder === "asc") {
-                return aVal - bVal;
+                return timeA - timeB;
             } else {
-                return bVal - aVal;
+                return timeB - timeA;
             }
         });
 
