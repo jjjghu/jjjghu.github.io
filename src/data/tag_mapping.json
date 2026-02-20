@@ -40,5 +40,7 @@
     "randomized": "隨機化",
     "shortest path": "最短路徑",
     "difference": "差分", 
-    "backtracking": "回溯"
+    "backtracking": "回溯",
+    "binary search tree": "二叉搜索樹",
+    "topological sort": "拓撲排序"
 }
