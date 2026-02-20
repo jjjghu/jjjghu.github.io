@@ -19,6 +19,7 @@
     height: 38px;
     transition: all 0.2s;
     outline: none;
+    min-width: 140px;
     /* remove focus outline for nicer look, focus visible handled by browser usually or add custom */
 }
 
