@@ -6,9 +6,10 @@ export const UI_TEXT = {
     nav_all: { cn: '所有文章', en: 'All Posts' },
     nav_leetcode: { cn: 'LeetCode', en: 'LeetCode' },
     nav_zerojudge: { cn: '其他', en: 'Other' },
+    nav_roadmap: { cn: '題單', en: 'Roadmap' },
     nav_note: { cn: '演算法筆記', en: 'Notes' },
     search_placeholder: { cn: '搜尋文章...', en: 'Search posts...' },
-    
+
     // Filter Bar
     search_keywords_placeholder: { cn: '搜尋題目關鍵字...', en: 'Search keywords...' },
     filter_tags: { cn: '篩選標籤', en: 'Filter Tags' },
