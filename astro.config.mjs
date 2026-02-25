@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import remarkLeetCodeLink from './src/plugins/remark-leetcode-link.mjs';
+import remarkLink from './src/plugins/remark-link.mjs';
 import sitemap from '@astrojs/sitemap';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -36,7 +36,7 @@ const getPostMetadata = () => {
 
       // Approximate standard slug generation (should match Astro's behavior roughly)
       let name = file.replace(/\.(md|mdx)$/, '');
-      // Note: matches remark-leetcode-link logic to include chinese chars
+      // Note: matches remark-link logic to include chinese chars
       let rawSlug = name.toLowerCase()
         .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
         .replace(/^-|-$/g, '');
@@ -58,7 +58,7 @@ export default defineConfig({
   site: 'https://jjjghu.github.io',
 
   markdown: {
-    remarkPlugins: [remarkMath, remarkLeetCodeLink],
+    remarkPlugins: [remarkMath, remarkLink],
     rehypePlugins: [rehypeKatex],
     shikiConfig: {
       themes: {

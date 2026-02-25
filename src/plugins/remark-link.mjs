@@ -5,42 +5,46 @@ import { generateSlug } from "../utils/slug-generator.mjs";
 // 建立題目映射表: problem_id -> { slug, title }
 function createProblemMap() {
     const map = new Map();
-    const leetcodeDir = path.join(process.cwd(), "src/content/leetcode");
+    const contentDirs = ["leetcode", "zerojudge"];
 
-    if (!fs.existsSync(leetcodeDir)) return map;
+    contentDirs.forEach((dir) => {
+        const fullDir = path.join(process.cwd(), `src/content/${dir}`);
 
-    const files = fs.readdirSync(leetcodeDir);
+        if (!fs.existsSync(fullDir)) return;
 
-    for (const file of files) {
-        if (!file.endsWith(".md")) continue;
+        const files = fs.readdirSync(fullDir);
 
-        const content = fs.readFileSync(path.join(leetcodeDir, file), "utf-8");
+        for (const file of files) {
+            if (!file.endsWith(".md")) continue;
 
-        const idMatch = content.match(/problem_id:\s*["']?([^"'\n]+)["']?/);
-        const titleMatch = content.match(/title:\s*["']?([^"'\n]+)["']?/);
+            const content = fs.readFileSync(path.join(fullDir, file), "utf-8");
 
-        if (!idMatch) continue;
+            const idMatch = content.match(/problem_id:\s*["']?([^"'\n]+)["']?/);
+            const titleMatch = content.match(/title:\s*["']?([^"'\n]+)["']?/);
 
-        const id = idMatch[1].trim();
-        const title = titleMatch ? titleMatch[1].trim() : id;
+            if (!idMatch) continue;
 
-        // 1) 先用檔名算出 raw slug
-        const rawSlug = file
-            .replace(/\.md$/, "")
-            .toLowerCase()
-            .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
-            .replace(/^-+|-+$/g, "");
+            const id = idMatch[1].trim();
+            const title = titleMatch ? titleMatch[1].trim() : id;
 
-        // 2) 使用統一的 Slug 生成邏輯
-        const slug = generateSlug(rawSlug, id);
+            // 1) 先用檔名算出 raw slug
+            const rawSlug = file
+                .replace(/\.md$/, "")
+                .toLowerCase()
+                .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
+                .replace(/^-+|-+$/g, "");
 
-        map.set(id, { slug, title });
-    }
+            // 2) 使用統一的 Slug 生成邏輯
+            const slug = generateSlug(rawSlug, id);
+
+            map.set(id, { slug, title });
+        }
+    });
 
     return map;
 }
 
-export default function remarkLeetCodeLink() {
+export default function remarkLink() {
     const problemMap = createProblemMap();
 
     return (tree) => {
@@ -51,7 +55,8 @@ export default function remarkLeetCodeLink() {
 
             for (const child of node.children) {
                 if (child.type === "text") {
-                    const regex = /\[\[(\d+)\]\]/g;
+                    // 改用 \S+ 去匹配包含字母跟數字的 problem id，但需避開中括號
+                    const regex = /\[\[([a-zA-Z0-9_-]+)\]\]/g;
                     let lastIndex = 0;
                     let match;
                     let hasMatch = false;

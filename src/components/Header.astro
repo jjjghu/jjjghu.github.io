@@ -36,6 +36,15 @@ const { activeCategory } = Astro.props;
           </li>
           <li>
             <a
+              href="/roadmap"
+              class="nav-link"
+              data-category="roadmap"
+              data-cn={UI_TEXT.nav_roadmap.cn}
+              data-en={UI_TEXT.nav_roadmap.en}>{UI_TEXT.nav_roadmap.cn}</a
+            >
+          </li>
+          <li>
+            <a
               href="/?category=zerojudge"
               class="nav-link"
               data-category="zerojudge"
@@ -52,14 +61,35 @@ const { activeCategory } = Astro.props;
             >
           </li>
         </ul>
-
         <script is:inline>
           (function () {
+            const pathname = window.location.pathname;
             const params = new URLSearchParams(window.location.search);
-            const category = params.get("category") || "leetcode";
+            const categoryParam = params.get("category");
+
+            // 判斷當前應該 active 的分類
+            let currentCategory = "";
+
+            // 判斷是否在 roadmap 頁面 (相容結尾有沒有斜線)
+            if (pathname.includes("/roadmap")) {
+              currentCategory = "roadmap";
+            }
+            // 判斷是否在首頁且參數為 zerojudge
+            else if (categoryParam === "zerojudge") {
+              currentCategory = "zerojudge";
+            }
+            // 判斷是否在首頁且沒有其他參數
+            else if (pathname === "/" || pathname === "") {
+              currentCategory = "leetcode";
+            }
+
             const links = document.querySelectorAll(".nav-link");
             links.forEach((link) => {
-              if (link.dataset.category === category) {
+              // 若該按鈕的 dataset.category 吻合當前狀態，則加上 active
+              if (
+                link.dataset.category &&
+                link.dataset.category === currentCategory
+              ) {
                 link.classList.add("active");
               } else {
                 link.classList.remove("active");

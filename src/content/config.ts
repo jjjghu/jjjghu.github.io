@@ -1,6 +1,6 @@
 // src/content/config.ts
 import { z, defineCollection } from 'astro:content';
-import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from '../constants';
+import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION, ROADMAP_COLLECTION } from '../constants';
 const postsCollection = defineCollection({
     type: 'content',
     schema: z.object({
@@ -15,7 +15,17 @@ const postsCollection = defineCollection({
         en_link: z.string().optional()
     }),
 });
+
+const roadmapCollection = defineCollection({
+    type: 'content',
+    schema: z.object({
+        title: z.string(),
+        description: z.string().optional(),
+    }),
+});
+
 export const collections = {
     [LEETCODE_COLLECTION]: postsCollection,
     [ZEROJUDGE_COLLECTION]: postsCollection,
+    [ROADMAP_COLLECTION]: roadmapCollection,
 };
