@@ -54,6 +54,15 @@ const { activeCategory } = Astro.props;
           </li>
           <li>
             <a
+              href="/guide"
+              class="nav-link"
+              data-category="guide"
+              data-cn={UI_TEXT.nav_guide.cn}
+              data-en={UI_TEXT.nav_guide.en}>{UI_TEXT.nav_guide.cn}</a
+            >
+          </li>
+          <li>
+            <a
               href="https://gjplieqszy7.sg.larksuite.com/wiki/KJC1wRJAqidzAqkpCEClyp2YgUf?from=from_copylink"
               class="nav-link"
               data-cn={UI_TEXT.nav_note.cn}
@@ -73,6 +82,10 @@ const { activeCategory } = Astro.props;
             // 判斷是否在 roadmap 頁面 (相容結尾有沒有斜線)
             if (pathname.includes("/roadmap")) {
               currentCategory = "roadmap";
+            }
+            // 判斷是否在 guide 頁面
+            else if (pathname.includes("/guide")) {
+              currentCategory = "guide";
             }
             // 判斷是否在首頁且參數為 zerojudge
             else if (categoryParam === "zerojudge") {

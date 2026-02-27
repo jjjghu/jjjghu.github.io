@@ -7,6 +7,7 @@ export const UI_TEXT = {
     nav_leetcode: { cn: 'LeetCode', en: 'LeetCode' },
     nav_zerojudge: { cn: '其他', en: 'Other' },
     nav_roadmap: { cn: '題單', en: 'Roadmap' },
+    nav_guide: { cn: '腳本安裝', en: 'Script Guide' },
     nav_note: { cn: '演算法筆記', en: 'Notes' },
     search_placeholder: { cn: '搜尋文章...', en: 'Search posts...' },
 
