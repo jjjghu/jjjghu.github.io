@@ -2,24 +2,33 @@
 title: "安裝 ScriptCat (腳本貓) 與同步腳本"
 ---
 
-這份教學將引導您如何在瀏覽器中安裝 ScriptCat 以及本站專用的自動同步腳本。
+這份教學將引導你在瀏覽器中安裝 ScriptCat 以及本網站專用的自動同步腳本。
 
 ## 1. 安裝 ScriptCat 擴充功能
 
-**ScriptCat (腳本貓)** 是一個強大且開源的瀏覽器擴充功能，用來執行使用者腳本(UserScript)。支持 Chrome, Edge, Firefox 等主流瀏覽器。
+**ScriptCat (腳本貓)** 是一個開源的瀏覽器擴充功能，\
+用來執行使用者腳本(UserScript)。支持 Chrome, Edge, Firefox 等主流瀏覽器。
 
 - [Chrome / Edge 安裝連結](https://chrome.google.com/webstore/detail/scriptcat/aefkmifgmaafnojlojpnekndnbfjfhd)
 - [Firefox 安裝連結](https://addons.mozilla.org/zh-TW/firefox/addon/scriptcat/)
 - [ScriptCat 官方文件](https://docs.scriptcat.org/)
 
 ## 2. 建立新腳本
-
-擴充功能安裝完畢後，請點擊瀏覽器右上角的 ScriptCat 圖示，然後點選 **添加腳本** (或進入後台首頁點擊右上角的加號新建腳本)。
+擴充功能安裝完畢後，點擊瀏覽器右上角的 ScriptCat 圖示，\
+然後點選 **添加腳本** (或進入後台點右上角的加號新建腳本)。
 
 ## 3. 貼上同步腳本程式碼
+複製下面的程式碼，貼到 ScriptCat 中，存檔。\
+當腳本執行後，首先得在 LeetCode 登入自己的帳號，腳本會自動監聽您在 LeetCode 的解題進度，\
+隨後回到這裡的首頁刷新網頁，題單上面就會把解過的題打勾了。
 
-將下方的原始碼完全複製，並覆蓋貼到 ScriptCat 的編輯器中，最後按下 `Ctrl + S` 或點擊儲存圖示即可安裝完畢。
-當腳本執行後，會自動監聽您在 LeetCode 的解題進度，並且為您在個人網頁的題單上面打勾！
+這個網站不只有 LeetCode 的題目，因此不會自動同步其他網站的解題狀態，
+而是得自己打勾。
+
+如果想自己修改功能，就改這份檔案就好了。
+
+本檔案修改自[LeetCodeRating｜显示力扣周赛难度分](https://scriptcat.org/zh-CN/script-show-page/2778)\
+同樣在這裡推薦使用。
 ```javascript
 // ==UserScript==
 // @name         LeetCode - jjjghu Sync (Full Icon Replace + Manual Toggle)
