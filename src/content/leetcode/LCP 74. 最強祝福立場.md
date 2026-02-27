@@ -4,7 +4,7 @@ category: "leetcode"
 title: "LCP 74 最強祝福立場"   
 en_title: "LCP 74 最強祝福立場"
 
-problem_id: "74"
+problem_id: "74.1"
 difficulty: "medium"
 tags: ["prefix sum", "binary search"]
 
