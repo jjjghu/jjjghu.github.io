@@ -43,5 +43,6 @@
     "backtracking": "回溯",
     "binary search tree": "二叉搜索樹",
     "topological sort": "拓撲排序",
-    "merge sort": "歸併排序"
+    "merge sort": "歸併排序",
+    "mst": "最小生成樹"
 }
