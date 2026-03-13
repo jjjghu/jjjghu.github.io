@@ -12,7 +12,7 @@ link: "https://leetcode.cn/problems/xepqZ5/"
 en_link: "https://leetcode.cn/problems/xepqZ5/"
 date: "2026-01-31"
 ---
-推薦事前閱讀：[二維差分數組介紹](https://gjplieqszy7.sg.larksuite.com/wiki/KJC1wRJAqidzAqkpCEClyp2YgUf#share-COLfdm7lIoAM3Lxw8JMlaIJhg3b)
+推薦事前閱讀：[二維差分數組](/2ddifference)
 ## 思路
 如果單看題目，這跟模板練習題的做法是差不多的，\
 問題在於，資料範圍的大小來到了 $10^9$ ，\

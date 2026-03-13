@@ -1,0 +1,36 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { ARTICLES_COLLECTION } from "../constants.ts";
+
+// 1. 生成靜態路徑 (抓取 articles 標籤內的所有 .md)
+export async function getStaticPaths() {
+    const allArticles = await getCollection(ARTICLES_COLLECTION);
+    return allArticles.map((entry) => ({
+        params: { article: entry.slug },
+        props: { entry },
+    }));
+}
+
+// 2. 獲取資料
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<Layout
+    title={entry.data.title}
+    headings={headings}
+    activeCategory={entry.slug}
+>
+    <div class="post-card">
+        <div class="post-header-row">
+            <h1 id="post-title">
+                {entry.data.title}
+            </h1>
+        </div>
+
+        <article class="article-body">
+            <Content />
+        </article>
+    </div>
+</Layout>
