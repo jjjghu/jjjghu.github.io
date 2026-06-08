@@ -16,17 +16,21 @@
     - 負責渲染 Markdown 內容、目錄 (TOC) 以及切換該篇文章的中英文標題/連結。
 
 ### 2. 核心邏輯 (Logic & Utils)
-- **`src/scripts/postFilter.ts`**: **首頁篩選的核心**。
-    - 是一個 TypeScript Class (`PostFilterManager`)。
-    - 負責監聽所有篩選器的事件 (`tag-filter-change`, `difficulty-change`, `sort-change`)。
-    - 負責處理 URL 參數 (`?category=...`, `?q=...`)。
-    - 執行實際的 DOM 隱藏/顯示操作來過濾文章。
-    - 自動處理語言切換時的文字更新。
+
+**📖 詳細設計見 [ARCHITECTURE.md](./ARCHITECTURE.md)**
+
+- **`src/scripts/filterEngine.ts`**: 篩選邏輯引擎
+    - 純邏輯層，支援分類、難度、標籤（AND/OR）、文本搜尋篩選
+    - 獨立可測試，無 DOM 依賴
+- **`src/scripts/sortEngine.ts`**: 排序邏輯引擎
+    - 支援 ID 排序（純數字和混合型）、日期排序
+    - 獨立可測試，無副作用
+- **`src/scripts/postFilter.ts`**: PostFilterManager 編排層
+    - 監聽篩選器事件，管理狀態
+    - 調用 FilterEngine/SortEngine 進行計算
+    - 更新 DOM、處理語言切換
 - **`src/i18n/ui.ts`**: **UI 文字中心**。
     - 集中管理所有介面上的文字 (如 "所有文章", "篩選標籤", "題號" 等) 及其對應的中英文翻譯。
-- **`src/utils/postHelper.ts`**: 文章處理工具。
-    - 包含排序邏輯 (`sortPostsById` - 支援純數字與英數混合 ID)。
-    - 標籤處理 (`getAllUniqueTags`, `getTagCN`, `getTagEN`)，依賴 `data/tag_mapping.json` 進行中英轉換。
 - **`src/utils/dateHelper.ts`**: 日期格式化工具。
 
 ### 3. 元件交互 (Components Interaction)
@@ -65,3 +69,14 @@ date: "2023-01-01"
 
 - `npm run dev`: 啟動本地開發伺服器。
 - `npm run build`: 建置靜態網站。
+- `npm test`: 以監聽模式執行單元測試。
+- `npm run test:run`: 執行一次單元測試並結束。
+
+## 單元測試
+
+本專案包含 **24 個單元測試**，覆蓋篩選和排序邏輯：
+- **FilterEngine** (14 個測試)：分類、難度、標籤（AND/OR）、搜尋、組合篩選
+- **SortEngine** (10 個測試)：ID 排序、日期排序、邊界情況
+
+測試框架：[Vitest](https://vitest.dev/)  
+測試文件：`src/scripts/*.test.ts`
