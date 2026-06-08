@@ -18,8 +18,8 @@ export interface Post {
   difficulty: string;                  // "easy" | "medium" | "hard"
   date: number;                        // 時間戳（毫秒）
 
-  // 搜索用
-  searchContent: string;               // 可搜索的文本
+  // 搜尋用
+  searchContent: string;               // 可搜尋的文本
 }
 
 export interface FilterCriteria {

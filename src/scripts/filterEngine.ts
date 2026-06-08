@@ -33,7 +33,7 @@ export class FilterEngine {
         }
       }
 
-      // 4. 文本搜索
+      // 4. 文本搜尋
       if (criteria.searchTerm) {
         const term = criteria.searchTerm.toLowerCase();
         if (!post.searchContent.toLowerCase().includes(term)) {

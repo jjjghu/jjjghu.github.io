@@ -7,7 +7,7 @@ title: "安裝 ScriptCat (腳本貓) 與同步腳本"
 ## 1. 安裝 ScriptCat 擴充功能
 
 **ScriptCat (腳本貓)** 是一個開源的瀏覽器擴充功能，\
-用來執行使用者腳本(UserScript)。支持 Chrome, Edge, Firefox 等主流瀏覽器。
+用來執行使用者腳本(UserScript)。支援 Chrome, Edge, Firefox 等主流瀏覽器。
 
 - [Chrome / Edge 安裝連結](https://chrome.google.com/webstore/detail/scriptcat/aefkmifgmaafnojlojpnekndnbfjfhd)
 - [Firefox 安裝連結](https://addons.mozilla.org/zh-TW/firefox/addon/scriptcat/)
