@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS 重構 Demo</title>
+  <style>
+    /* 模擬全域變數 */
+    :root {
+      --color-canvas-default: rgb(13, 17, 23);
+      --color-canvas-subtle: rgb(22, 27, 34);
+      --color-canvas-overlay: rgb(33, 38, 45);
+      --color-border-default: rgb(48, 54, 61);
+      --color-border-muted: rgb(33, 38, 45);
+      --color-fg-default: rgb(201, 209, 217);
+      --color-fg-muted: rgb(139, 148, 158);
+      --color-accent-fg: rgb(112, 160, 255);
+      --color-card-bg: rgb(22, 27, 34);
+      --bg-overlay-alpha: 40%;
+
+      --diff-gray: #9ca3af;
+      --diff-red: #f87171;
+      --diff-orange: #fb923c;
+      --diff-yellow: #facc15;
+      --diff-green: #4ade80;
+      --diff-blue: #60a5fa;
+      --diff-purple: #c084fc;
+
+      --leetcode-easy: #00B8A3;
+      --leetcode-medium: #FFC01E;
+      --leetcode-hard: #FF375F;
+
+      --interactive-py: 6px;
+      --interactive-px: 12px;
+      --interactive-radius: 8px;
+      --interactive-bg: var(--color-canvas-subtle);
+      --interactive-fg: var(--color-fg-default);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--color-canvas-default);
+      color: var(--color-fg-default);
+      padding: 2rem;
+      margin: 0;
+    }
+
+    h1, h2 {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+  </style>
+
+  <!-- Import refactored CSS -->
+  <link rel="stylesheet" href="styles/utilities.css">
+  <link rel="stylesheet" href="styles/component-base.css">
+  <link rel="stylesheet" href="styles/badges-refactored.css">
+  <link rel="stylesheet" href="styles/dropdown-refactored.css">
+  <link rel="stylesheet" href="styles/post-list-refactored.css">
+</head>
+<body>
+
+<h1>🎨 CSS 重構 Demo</h1>
+
+<!-- ============= Section 1: Utilities Demo ============= -->
+<section>
+  <h2>Utilities 示範</h2>
+
+  <h3>Flex 工具類</h3>
+  <div class="flex-center" style="gap: 12px; padding: 1rem; background: var(--color-canvas-subtle); border-radius: 8px;">
+    <span>✓ flex-center</span>
+    <span>✓ 左右對齐</span>
+  </div>
+
+  <h3>Spacing 工具類</h3>
+  <div style="padding: 1rem; background: var(--color-canvas-subtle); border-radius: 8px; margin-top: 1rem;">
+    <div class="flex-center gap-xs" style="margin-bottom: 0.5rem;">
+      <span style="display: inline-block; width: 20px; height: 20px; background: var(--color-accent-fg); border-radius: 4px;"></span>
+      <span>gap-xs (6px)</span>
+    </div>
+    <div class="flex-center gap-sm" style="margin-bottom: 0.5rem;">
+      <span style="display: inline-block; width: 20px; height: 20px; background: var(--color-accent-fg); border-radius: 4px;"></span>
+      <span>gap-sm (12px)</span>
+    </div>
+    <div class="flex-center gap-md">
+      <span style="display: inline-block; width: 20px; height: 20px; background: var(--color-accent-fg); border-radius: 4px;"></span>
+      <span>gap-md (16px)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============= Section 2: Component-Base + Badges Demo ============= -->
+<section>
+  <h2>Badge 組件示範（使用 component-base）</h2>
+
+  <div style="padding: 1rem; background: var(--color-canvas-subtle); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 12px;">
+    <!-- 正確用法：組合 interactive-container + sm + rounded + difficulty-badge + diff-{level} -->
+    <span class="interactive-container sm rounded difficulty-badge diff-easy">Easy</span>
+    <span class="interactive-container sm rounded difficulty-badge diff-medium">Medium</span>
+    <span class="interactive-container sm rounded difficulty-badge diff-hard">Hard</span>
+    <span class="interactive-container sm rounded difficulty-badge diff-0">Luogu 灰</span>
+    <span class="interactive-container sm rounded difficulty-badge diff-4">Luogu 綠</span>
+    <span class="interactive-container sm rounded difficulty-badge diff-6">Luogu 紫</span>
+  </div>
+
+  <p style="font-size: 0.9rem; color: var(--color-fg-muted); margin-top: 0.5rem;">
+    💡 Badge 繼承 component-base，但有自己的 color-mix 邏輯和 hover 效果
+  </p>
+</section>
+
+<!-- ============= Section 3: Component-Base + Dropdown Demo ============= -->
+<section>
+  <h2>Dropdown 組件示範（使用 component-base）</h2>
+
+  <div class="dropdown-container" style="display: inline-block;">
+    <!-- 正確用法：組合 interactive-container + md + dropdown-btn -->
+    <button class="interactive-container md dropdown-btn">
+      排序方式 ▼
+    </button>
+    <div class="dropdown-menu show" style="position: relative; top: auto;">
+      <div class="dropdown-option active">按 ID 升序</div>
+      <div class="dropdown-option">按 ID 降序</div>
+      <div class="dropdown-option">按日期升序</div>
+      <div class="dropdown-option">按日期降序</div>
+    </div>
+  </div>
+
+  <p style="font-size: 0.9rem; color: var(--color-fg-muted); margin-top: 1rem;">
+    💡 Dropdown Button 繼承 component-base，有自己的 hover 和 active 狀態
+  </p>
+</section>
+
+<!-- ============= Section 4: Post-List Demo ============= -->
+<section>
+  <h2>Post-List 組件示範（使用 utilities）</h2>
+
+  <div class="file-list-container" style="margin-top: 1rem;">
+    <div class="post-list-grid file-list-header">
+      <div class="col-title">題目</div>
+      <div class="col-difficulty">難度</div>
+      <div class="col-tags">標籤</div>
+      <div class="col-date">日期</div>
+    </div>
+
+    <div class="file-row post-list-grid">
+      <div class="col-title">
+        <div class="title-container flex-center gap-sm">
+          <span style="font-size: 1.2rem;">📄</span>
+          <a class="post-link" href="#">
+            <span class="title-text">1. 兩數之和</span>
+          </a>
+        </div>
+      </div>
+      <div class="col-difficulty">
+        <span class="interactive-container sm rounded difficulty-badge diff-easy">Easy</span>
+      </div>
+      <div class="col-tags">
+        <div class="tags-wrapper flex-center gap-xs">
+          <span class="interactive-container sm rounded difficulty-badge diff-0">陣列</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-0">雜湊表</span>
+        </div>
+      </div>
+      <div class="col-date">2024-01-15</div>
+    </div>
+
+    <div class="file-row post-list-grid">
+      <div class="col-title">
+        <div class="title-container flex-center gap-sm">
+          <span style="font-size: 1.2rem;">📄</span>
+          <a class="post-link" href="#">
+            <span class="title-text">2. 兩數相加</span>
+          </a>
+        </div>
+      </div>
+      <div class="col-difficulty">
+        <span class="interactive-container sm rounded difficulty-badge diff-medium">Medium</span>
+      </div>
+      <div class="col-tags">
+        <div class="tags-wrapper flex-center gap-xs">
+          <span class="interactive-container sm rounded difficulty-badge diff-0">鏈表</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-0">數學</span>
+        </div>
+      </div>
+      <div class="col-date">2024-01-16</div>
+    </div>
+
+    <div class="file-row post-list-grid">
+      <div class="col-title">
+        <div class="title-container flex-center gap-sm">
+          <span style="font-size: 1.2rem;">📄</span>
+          <a class="post-link" href="#">
+            <span class="title-text">3. 尋找兩個排序陣列的中位數</span>
+          </a>
+        </div>
+      </div>
+      <div class="col-difficulty">
+        <span class="interactive-container sm rounded difficulty-badge diff-hard">Hard</span>
+      </div>
+      <div class="col-tags">
+        <div class="tags-wrapper flex-center gap-xs">
+          <span class="interactive-container sm rounded difficulty-badge diff-0">陣列</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-0">分治</span>
+        </div>
+      </div>
+      <div class="col-date">2024-01-17</div>
+    </div>
+  </div>
+
+  <p style="font-size: 0.9rem; color: var(--color-fg-muted); margin-top: 1rem;">
+    💡 Post-List 使用 utilities 的 .flex-center、.gap-xs 等，減少重複的 flex 定義
+  </p>
+</section>
+
+<!-- ============= Summary ============= -->
+<section style="background: color-mix(in srgb, var(--color-accent-fg) 10%, transparent); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--color-accent-fg);">
+  <h2>🎯 重構成果</h2>
+  <ul>
+    <li><strong>utilities.css</strong> - 可組合的工具類（flex、spacing、transition）</li>
+    <li><strong>component-base.css</strong> - 互動容器的基礎樣式（padding、border、border-radius）</li>
+    <li><strong>badges-refactored.css</strong> - Badge 的顏色邏輯 + 自己的 hover</li>
+    <li><strong>dropdown-refactored.css</strong> - Dropdown 的邏輯 + 自己的互動</li>
+    <li><strong>post-list-refactored.css</strong> - Post-list 的 grid 邏輯</li>
+  </ul>
+  <p>✅ 共用的部分統一，各模塊保留變化空間</p>
+</section>
+
+</body>
+</html>

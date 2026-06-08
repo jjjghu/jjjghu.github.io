@@ -1,0 +1,65 @@
+/* ============================================
+   COMPONENT-BASE.CSS - 互動容器基礎樣式
+   ============================================
+
+   職責：定義所有互動元件的共同「靜態」部分
+   - padding、border、border-radius
+   - 基礎背景和邊框顏色
+   - 基礎 flex 佈局
+
+   不包含：
+   - Hover 行為（各元件自己定義）
+   - Color-mix 邏輯（各元件自己定義）
+   - 大小變化或動畫（各元件自己定義）
+*/
+
+/* --- 互動容器基礎 --- */
+.interactive-container {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  /* Padding */
+  padding: var(--interactive-py, 6px) var(--interactive-px, 12px);
+
+  /* Border & Radius */
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--interactive-radius, 8px);
+
+  /* Color */
+  background-color: var(--interactive-bg, var(--color-canvas-subtle));
+  color: var(--interactive-fg, var(--color-fg-default));
+
+  /* Transition base (但不包含具體行為) */
+  transition: border-color 0.2s ease;
+
+  /* Prevent text selection for interactive elements */
+  user-select: none;
+}
+
+/* --- 圓形容器變體 (Badge 用) --- */
+.interactive-container.rounded {
+  border-radius: 999px;
+}
+
+/* --- 小型容器 --- */
+.interactive-container.sm {
+  --interactive-py: 2px;
+  --interactive-px: 8px;
+  font-size: 0.75rem;
+}
+
+/* --- 中型容器 --- */
+.interactive-container.md {
+  --interactive-py: 6px;
+  --interactive-px: 12px;
+  font-size: 0.9rem;
+}
+
+/* --- 大型容器 --- */
+.interactive-container.lg {
+  --interactive-py: 10px;
+  --interactive-px: 16px;
+  font-size: 1rem;
+}

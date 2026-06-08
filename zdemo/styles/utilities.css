@@ -1,0 +1,77 @@
+/* ============================================
+   UTILITIES.CSS - 可組合的工具類
+   ============================================ */
+
+/* --- Flexbox 工具類 --- */
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+
+.flex-center-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-start {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* --- Spacing/Gap 工具類 --- */
+.gap-xs {
+  gap: 6px;
+}
+
+.gap-sm {
+  gap: 12px;
+}
+
+.gap-md {
+  gap: 16px;
+}
+
+/* --- Transition 工具類 --- */
+.transition-fast {
+  transition: all 0.2s ease;
+}
+
+.transition-colors {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.transition-smooth {
+  transition: all 0.3s ease;
+}
+
+/* --- Text 工具類 --- */
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-wrap {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* --- Cursor 工具類 --- */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+/* --- User Select --- */
+.no-select {
+  user-select: none;
+}
+
+.select-text {
+  user-select: text;
+}

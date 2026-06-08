@@ -22,7 +22,7 @@ const dateCN = formatDateCN(new Date(post.date).toISOString().split('T')[0]);
 >
     <!-- Title -->
     <div class="col-title">
-        <div class="title-container">
+        <div class="title-container flex-center gap-sm">
             <svg
                 class="file-icon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +62,7 @@ const dateCN = formatDateCN(new Date(post.date).toISOString().split('T')[0]);
 
     <!-- Tags -->
     <div class="col-tags">
-        <div class="tags-wrapper">
+        <div class="tags-wrapper flex-center gap-xs">
             {post.tagEN.map((tag: string) => <TagBadge tag={tag} />)}
         </div>
     </div>
