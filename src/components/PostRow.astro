@@ -1,39 +1,24 @@
 ---
 import DifficultyBadge from "./DifficultyBadge.astro";
 import TagBadge from "./TagBadge.astro";
-import { getTagCN, getTagEN } from "../utils/postHelper";
 import { formatDateEN, formatDateCN } from "../utils/dateHelper";
-import type { PostEntry } from "../types";
+import type { Post } from "../types";
 
 interface Props {
-    post: PostEntry;
+    post: Post;
 }
 
 const { post } = Astro.props;
 
-const cnTitle = post.data.title;
-const enTitle = post.data.en_title || cnTitle;
-const rawTags = post.data.tags || [];
 
-const cnTags = rawTags.map(getTagCN);
-const enTags = rawTags.map(getTagEN);
-const difficulty = post.data.difficulty;
-
-const searchContent =
-    `${cnTitle} ${enTitle} ${cnTags.join(" ")} ${enTags.join(" ")}`.toLowerCase();
-
-const dateEN = formatDateEN(post.data.date);
-const dateCN = formatDateCN(post.data.date);
+const dateEN = formatDateEN(new Date(post.date).toISOString().split('T')[0]);
+const dateCN = formatDateCN(new Date(post.date).toISOString().split('T')[0]);
 ---
 
 <div
     class="file-row post-list-grid"
-    data-search={searchContent}
-    data-tags-cn={cnTags.join(",")}
-    data-category={post.collection}
-    data-date={new Date(post.data.date).valueOf()}
-    data-id={Number(post.data.problem_id) || 0}
-    data-difficulty={difficulty ? difficulty.toLowerCase() : "none"}
+    data-post-id={post.id}
+    data-en-title={post.enTitle}
 >
     <!-- Title -->
     <div class="col-title">
@@ -58,43 +43,27 @@ const dateCN = formatDateCN(post.data.date);
                 <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
 
-            <!-- <a class="post-link" href={`/${post.slug}`}>
-                <span class="title-text" data-cn={cnTitle} data-en={enTitle}>
-                    {cnTitle}
+            <a class="post-link" href={`/${post.slug}`}>
+                <span
+                    class="title-text"
+                    data-cn={post.title}
+                    data-en={post.enTitle}
+                >
+                    {post.title}
                 </span>
-            </a> -->
-            {
-                (() => {
-                    let finalSlug = post.slug;
-                    const problemId = post.data.problem_id;
-                    if (problemId && finalSlug.startsWith(problemId + "-")) {
-                        finalSlug = finalSlug.replace(problemId + "-", "");
-                    }
-                    return (
-                        <a class="post-link" href={`/${finalSlug}`}>
-                            <span
-                                class="title-text"
-                                data-cn={cnTitle}
-                                data-en={enTitle}
-                            >
-                                {cnTitle}
-                            </span>
-                        </a>
-                    );
-                })()
-            }
+            </a>
         </div>
     </div>
 
     <!-- Difficulty -->
     <div class="col-difficulty">
-        <DifficultyBadge difficulty={difficulty} />
+        <DifficultyBadge difficulty={post.difficulty} />
     </div>
 
     <!-- Tags -->
     <div class="col-tags">
         <div class="tags-wrapper">
-            {enTags.map((tag: string) => <TagBadge tag={tag} />)}
+            {post.tagEN.map((tag: string) => <TagBadge tag={tag} />)}
         </div>
     </div>
 
@@ -103,3 +72,4 @@ const dateCN = formatDateCN(post.data.date);
         {dateCN}
     </div>
 </div>
+

@@ -9,10 +9,15 @@ import {
   getAllUniqueTags,
   isPublicPost,
   getAllUniqueDifficulties,
+  getTagCN,
+  getTagEN,
 } from "../utils/postHelper.ts";
 import { getCollection } from "astro:content";
 import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
 import { UI_TEXT } from "../i18n/ui";
+import type { Post, PostEntry } from "../types";
+import { PostFilterManager } from "../scripts/postFilter";
+import { generateSlug } from "../utils/slug-generator.mjs";
 
 import "../styles/post-list.css";
 
@@ -26,6 +31,29 @@ const uniqueTags = Array.from(allTagsCN).sort();
 
 const uniqueDifficultiesLeetcode = getAllUniqueDifficulties(leetcodePosts);
 const uniqueDifficultiesZerojudge = getAllUniqueDifficulties(zerojudgePosts);
+
+// 轉換 posts 為 FilterEngine 所需的數據格式
+const posts: Post[] = sortedPosts.map((post) => {
+  const category = (post.data.category === "zerojudge" ? "zerojudge" : "leetcode") as "leetcode" | "zerojudge";
+  // 如果 problem_id 為空，使用 slug 作為 id
+  const id = post.data.problem_id || post.slug;
+  // 使用 generateSlug 來生成正確的 URL slug（與 [...slug].astro 一致）
+  const finalSlug = generateSlug(post.slug, post.data.problem_id);
+  return {
+    id: id,
+    slug: finalSlug,
+    category: category,
+    title: post.data.title,
+    enTitle: post.data.en_title,
+    tagsCN: post.data.tags.map(tag => getTagCN(tag)),
+    tagEN: post.data.tags,
+    difficulty: post.data.difficulty,
+    date: new Date(post.data.date).getTime(),
+    searchContent: `${post.data.problem_id} ${post.data.title} ${post.data.en_title} ${post.data.tags.join(' ')}`.toLowerCase(),
+  };
+});
+
+const postsJson = JSON.stringify(posts);
 ---
 
 <Layout title={UI_TEXT.header_title.cn}>
@@ -97,7 +125,7 @@ const uniqueDifficultiesZerojudge = getAllUniqueDifficulties(zerojudgePosts);
       </div>
 
       <div id="post-list" class="fouc-loading">
-        {sortedPosts.map((post) => <PostRow post={post} />)}
+        {posts.map((post) => <PostRow post={post} />)}
       </div>
     </div>
 
@@ -110,9 +138,175 @@ const uniqueDifficultiesZerojudge = getAllUniqueDifficulties(zerojudgePosts);
   </div>
 </Layout>
 
-<script>
-  import { initFilterSystem } from "../scripts/postFilter";
-  initFilterSystem();
+<script is:inline define:vars={{ postsJson }}>
+  // 直接內聯初始化，避免路由衝突
+  const posts = JSON.parse(postsJson);
+
+  // 簡單的過濾和排序邏輯，直接內聯以避免導入問題
+  const filterEngine = {
+    filter: function(posts, criteria) {
+      const filtered = posts.filter(post => {
+        if (criteria.category !== null && post.category !== criteria.category) {
+          return false;
+        }
+        if (criteria.difficulty !== "all") {
+          const currentDiff = (criteria.difficulty || "").toLowerCase();
+          const postDiff = (post.difficulty || "").toLowerCase();
+          if (postDiff !== currentDiff) return false;
+        }
+        if (criteria.tags.size > 0) {
+          if (criteria.tagFilterLogic === "OR") {
+            const hasAnyTag = Array.from(criteria.tags).some(tag => post.tagsCN.includes(tag));
+            if (!hasAnyTag) return false;
+          } else {
+            const hasAllTags = Array.from(criteria.tags).every(tag => post.tagsCN.includes(tag));
+            if (!hasAllTags) return false;
+          }
+        }
+        if (criteria.searchTerm) {
+          const term = criteria.searchTerm.toLowerCase();
+          if (!post.searchContent.includes(term)) return false;
+        }
+        return true;
+      });
+      return { posts: filtered, count: filtered.length };
+    }
+  };
+
+  const sortEngine = {
+    sort: function(posts, config) {
+      const sorted = [...posts];
+      sorted.sort((a, b) => {
+        if (config.field === "id") {
+          const numA = Number(a.id);
+          const numB = Number(b.id);
+          const isNumA = !isNaN(numA);
+          const isNumB = !isNaN(numB);
+          if (isNumA && isNumB) {
+            return config.order === "asc" ? numA - numB : numB - numA;
+          }
+          const result = a.id.localeCompare(b.id);
+          return config.order === "asc" ? result : -result;
+        } else if (config.field === "date") {
+          return config.order === "asc" ? a.date - b.date : b.date - a.date;
+        }
+        return 0;
+      });
+      return sorted;
+    }
+  };
+
+  // 初始化過濾系統
+  function initFilterSystem(posts) {
+
+    const textSearch = document.getElementById("text-search");
+    const postList = document.getElementById("post-list");
+    const rows = postList?.querySelectorAll(".file-row");
+    const noResults = document.getElementById("no-results");
+    const resultCount = document.getElementById("result-count");
+
+
+    // 從 URL 參數讀取分類，默認為 "leetcode"
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get("category");
+
+    let selectedTags = new Set();
+    let filterLogic = "AND";
+    let currentSortField = "id";
+    let currentSortOrder = "asc";
+    let currentDifficulty = "all";
+    let currentCategory = categoryParam || "leetcode";  // 默認顯示 LeetCode
+    let isEnglish = localStorage.getItem("isEnglish") === "true";
+
+    function updateFilter() {
+      if (!rows || !postList) return;
+
+      const criteria = {
+        tags: selectedTags,
+        tagFilterLogic: filterLogic,
+        difficulty: currentDifficulty,
+        category: currentCategory,
+        searchTerm: textSearch?.value.toLowerCase() || ""
+      };
+
+      const filterResult = filterEngine.filter(posts, criteria);
+      const sortedPosts = sortEngine.sort(filterResult.posts, {
+        field: currentSortField,
+        order: currentSortOrder
+      });
+
+      const visibleIds = new Set(sortedPosts.map(p => p.id));
+
+      rows.forEach((row) => {
+        const id = row.dataset.postId;
+        if (visibleIds.has(id)) {
+          row.style.display = "grid";
+        } else {
+          row.style.display = "none";
+        }
+      });
+
+      sortedPosts.forEach((post) => {
+        const row = Array.from(rows).find(r => r.dataset.postId === post.id);
+        if (row && postList) {
+          postList.appendChild(row);
+        }
+      });
+
+      if (noResults && resultCount) {
+        noResults.style.display = filterResult.count === 0 ? "block" : "none";
+        resultCount.textContent = isEnglish
+          ? `Total ${filterResult.count} posts`
+          : `共 ${filterResult.count} 篇`;
+      }
+
+    }
+
+    // 事件監聽器
+    textSearch?.addEventListener("input", updateFilter);
+
+    document.addEventListener("tag-filter-change", (e) => {
+      selectedTags = new Set(e.detail.selectedTags);
+      if (e.detail.logic) filterLogic = e.detail.logic;
+      updateFilter();
+    });
+
+    document.addEventListener("difficulty-change", (e) => {
+      currentDifficulty = e.detail.value;
+      updateFilter();
+    });
+
+    document.addEventListener("sort-change", (e) => {
+      currentSortField = e.detail.field;
+      currentSortOrder = e.detail.order;
+      updateFilter();
+    });
+
+    document.addEventListener("language-change", (e) => {
+      isEnglish = e.detail.isEnglish;
+      updateFilter();
+    });
+
+    // 初始運行
+    updateFilter();
+
+    // 移除 FOUC 隱藏類，顯示內容
+    const postListEl = document.getElementById("post-list");
+    const filterBarEl = document.querySelector(".filter-bar");
+    if (postListEl) {
+      postListEl.classList.remove("fouc-loading");
+    }
+    if (filterBarEl) {
+      filterBarEl.classList.remove("fouc-loading");
+    }
+  }
+
+  // 確保 DOM 已加載再初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initFilterSystem(posts));
+  } else {
+    initFilterSystem(posts);
+  }
 </script>
 
 <style>

@@ -1,11 +1,15 @@
 import { FOUCManager } from "../utils/loading";
+import { FilterEngine } from "./filterEngine";
+import { SortEngine } from "./sortEngine";
+import type { Post, FilterCriteria, SortConfig } from "../types";
 
 export class PostFilterManager {
+    private posts: Post[];
     private isEnglish: boolean = false;
     private selectedTags: Set<string> = new Set();
     private filterLogic: "AND" | "OR" = "AND";
-    private currentSortField: string = "id";
-    private currentSortOrder: string = "asc";
+    private currentSortField: "id" | "date" = "id";
+    private currentSortOrder: "asc" | "desc" = "asc";
     private currentDifficulty: string = "all";
     private categoryParam: string | null = null;
 
@@ -15,41 +19,40 @@ export class PostFilterManager {
     private noResults: HTMLElement | null;
     private resultCount: HTMLElement | null;
 
-    constructor() {
+    private filterEngine = new FilterEngine();
+    private sortEngine = new SortEngine();
+
+    constructor(posts: Post[]) {
+        this.posts = posts;
+        console.log(`[PostFilterManager] Initialized with ${posts.length} posts`);
+
         this.textSearch = document.getElementById("text-search") as HTMLInputElement;
         this.postList = document.getElementById("post-list");
         this.rows = this.postList?.querySelectorAll(".file-row") as NodeListOf<HTMLElement>;
         this.noResults = document.getElementById("no-results");
         this.resultCount = document.getElementById("result-count");
 
+        console.log(`[PostFilterManager] Found ${this.rows?.length} rows in DOM`);
+
         // URL Params
         const urlParams = new URLSearchParams(window.location.search);
         this.categoryParam = urlParams.get("category");
         const q = urlParams.get("q");
 
-        // --- Category Reset Logic ---
-        // We do this BEFORE init so init reads the reset (default) values
+        // Category Reset Logic
         const currentCategory = this.categoryParam || 'default';
         const lastCategory = localStorage.getItem('lastCategory');
 
         if (lastCategory && lastCategory !== currentCategory) {
-            // Category changed, reset persistent filters
             localStorage.removeItem('tagPreference');
             localStorage.setItem('difficultyPreference', 'all');
-            // We don't strictly need to reset sort, but usually keeping sort is fine.
-            // Resetting search (q) is handled by the fact that URL is new, but if we had persisted search, we'd reset it too.
-
-            // Note: SettingsManager might have cached values if it was initialized earlier, 
-            // but since we page reloaded, it should be fresh.
         }
         localStorage.setItem('lastCategory', currentCategory);
-        // -----------------------------
 
         if (q && this.textSearch) {
             this.textSearch.value = q;
         }
 
-        // Fallback: Ensure loading state is removed eventually even if something fails
         FOUCManager.createSafetyNet('#post-list, .filter-bar');
 
         this.init();
@@ -102,6 +105,7 @@ export class PostFilterManager {
         // Listeners
         document.addEventListener("language-change", (e: any) => {
             this.isEnglish = e.detail.isEnglish;
+            this.updateLanguage();
             this.updateFilter();
         });
         this.textSearch?.addEventListener("input", () => this.updateFilter());
@@ -121,7 +125,7 @@ export class PostFilterManager {
         document.addEventListener("sort-change", (e: any) => {
             this.currentSortField = e.detail.field;
             this.currentSortOrder = e.detail.order;
-            this.updateSort();
+            this.updateFilter();
         });
 
         // Dropdown Mutex (Global click)
@@ -161,120 +165,91 @@ export class PostFilterManager {
 
 
     private updateFilter() {
-        if (!this.rows) return;
-        const term = this.textSearch?.value.toLowerCase() || "";
-        let visibleCount = 0;
+        if (!this.rows || !this.postList) {
+            console.warn("[PostFilterManager] updateFilter: rows or postList is null");
+            return;
+        }
 
+        const criteria: FilterCriteria = {
+            tags: this.selectedTags,
+            tagFilterLogic: this.filterLogic,
+            difficulty: this.currentDifficulty,
+            category: this.categoryParam,
+            searchTerm: this.textSearch?.value.toLowerCase() || "",
+        };
+
+        const filterResult = this.filterEngine.filter(this.posts, criteria);
+        const sortedPosts = this.sortEngine.sort(filterResult.posts, {
+            field: this.currentSortField,
+            order: this.currentSortOrder,
+        });
+
+        this.renderResults(sortedPosts, filterResult.count);
+
+        FOUCManager.reveal("#post-list");
+        FOUCManager.reveal(".filter-bar");
+    }
+
+    private updateLanguage() {
+        // 更新所有標題文字
         this.rows.forEach((row) => {
-            const rowTags = (row.dataset.tagsCn || "").split(",");
-            const searchContent = row.dataset.search || "";
-            const rowDifficulty = row.dataset.difficulty;
-            const rowCategory = row.dataset.category;
-
-            // 0. Category
-            let targetCategory = this.categoryParam;
-            if (!targetCategory) {
-                targetCategory = "leetcode"; // Default to LeetCode
-            }
-            let matchCategory = rowCategory === targetCategory;
-
-            // 1. Difficulty
-            let matchDifficulty = true;
-            if (this.currentDifficulty !== "all") {
-                // Ensure robustness against casing (e.g. Easy vs easy)
-                const currentDiff = (this.currentDifficulty || "").toLowerCase();
-                const currentRowDiff = (rowDifficulty || "").toLowerCase();
-                matchDifficulty = currentRowDiff === currentDiff;
-            }
-
-            // 2. Tags
-            let matchTags = true;
-            if (this.selectedTags.size > 0) {
-                if (this.filterLogic === "OR") {
-                    matchTags = Array.from(this.selectedTags).some((t) => rowTags.includes(t));
-                } else {
-                    matchTags = Array.from(this.selectedTags).every((t) => rowTags.includes(t));
+            const titleSpan = row.querySelector('.title-text');
+            if (titleSpan) {
+                const cnText = titleSpan.getAttribute('data-cn');
+                const enText = titleSpan.getAttribute('data-en');
+                if (cnText && enText) {
+                    titleSpan.textContent = this.isEnglish ? enText : cnText;
                 }
             }
+        });
 
-            // 3. Text
-            const matchText = searchContent.includes(term);
+        // 更新日期文字
+        this.rows.forEach((row) => {
+            const dateDiv = row.querySelector('.col-date');
+            if (dateDiv) {
+                const cnDate = dateDiv.getAttribute('data-cn');
+                const enDate = dateDiv.getAttribute('data-en');
+                if (cnDate && enDate) {
+                    dateDiv.textContent = this.isEnglish ? enDate : cnDate;
+                }
+            }
+        });
+    }
 
-            if (matchTags && matchText && matchDifficulty && matchCategory) {
+    private renderResults(filteredPosts: Post[], totalCount: number) {
+        const visibleIds = new Set(filteredPosts.map(p => p.id));
+
+        // 更新 DOM：顯示/隱藏和排序
+        const visibleRows: HTMLElement[] = [];
+
+        this.rows.forEach((row) => {
+            const id = row.dataset.postId;
+            if (visibleIds.has(id)) {
                 row.style.display = "grid";
-                visibleCount++;
+                visibleRows.push(row);
             } else {
                 row.style.display = "none";
             }
         });
 
-        if (this.noResults && this.resultCount) {
-            this.noResults.style.display = visibleCount === 0 ? "block" : "none";
-            // Check current lang for "Total X posts" format? 
-            // Better to use data-cn/data-en on the separate parts of the string in HTML if possible.
-            // Or just keep simple for now. 
-            // "共 X 篇" -> "Total X posts"
-            // The HTML structure is `共 {sortedPosts.length} 篇`. It's mixed text/variable.
-            // Let's rely on setLanguage() to swap the static parts if we split them?
-            // But here we set textContent directly.
-            // Simple fix: check isEnglish here.
-            this.resultCount.textContent = this.isEnglish
-                ? `Total ${visibleCount} posts`
-                : `共 ${visibleCount} 篇`;
-        }
-
-        this.updateSort();
-
-        // Remove loading state after first update
-        FOUCManager.reveal("#post-list");
-        FOUCManager.reveal(".filter-bar");
-    }
-
-    private updateSort() {
-        if (!this.postList) return;
-
-        const visibleRows = Array.from(this.rows).filter(
-            (row) => row.style.display !== "none"
-        );
-
-        visibleRows.sort((a, b) => {
-            let aVal: string | number | undefined = a.dataset[this.currentSortField];
-            let bVal: string | number | undefined = b.dataset[this.currentSortField];
-
-            // If sorting by ID (which can be alphabetic), handle correctly
-            if (this.currentSortField === 'id') {
-                const numA = Number(aVal);
-                const numB = Number(bVal);
-                const isNumA = !isNaN(numA);
-                const isNumB = !isNaN(numB);
-
-                if (isNumA && isNumB) {
-                    // numeric compare
-                    return this.currentSortOrder === "asc" ? numA - numB : numB - numA;
-                }
-                // string compare
-                if (!aVal) aVal = "";
-                if (!bVal) bVal = "";
-                return this.currentSortOrder === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-            }
-
-            // Default numeric sort (date)
-            // data-date is stored as a timestamp number (valueOf())
-            const timeA = Number(aVal);
-            const timeB = Number(bVal);
-            console.log(timeA, timeB);
-
-            if (this.currentSortOrder === "asc") {
-                return timeA - timeB;
-            } else {
-                return timeB - timeA;
+        // 按篩選結果順序重新排列可見的行
+        filteredPosts.forEach((post) => {
+            const row = Array.from(this.rows).find(r => r.dataset.postId === post.id);
+            if (row && this.postList) {
+                this.postList.appendChild(row);
             }
         });
 
-        visibleRows.forEach((row) => this.postList?.appendChild(row));
+        // 更新結果計數
+        if (this.noResults && this.resultCount) {
+            this.noResults.style.display = totalCount === 0 ? "block" : "none";
+            this.resultCount.textContent = this.isEnglish
+                ? `Total ${totalCount} posts`
+                : `共 ${totalCount} 篇`;
+        }
     }
 }
 
-export function initFilterSystem() {
-    new PostFilterManager();
+export function initFilterSystem(posts: Post[]) {
+    new PostFilterManager(posts);
 }
