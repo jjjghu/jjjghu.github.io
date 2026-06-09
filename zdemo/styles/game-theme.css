@@ -1,0 +1,424 @@
+/* ============================================
+   GAME-THEME.CSS — 「貨幣戰爭」風格皮膚
+   ============================================
+   套用截圖中的遊戲 UI 風格：
+   - 深靛藍放射狀背景
+   - 極淺 halftone 點陣 + 低多邊形幾何網格
+   - 金 / 青 雙重點綴色
+   - 斜切倒角的科幻面板
+   載入順序最後，覆蓋各模組基礎樣式。
+============================================ */
+
+/* ---------- 主題變數覆寫 ---------- */
+:root {
+  /* 畫布 */
+  --color-canvas-default: #131a40;
+  --color-canvas-subtle: rgba(40, 54, 122, 0.55);
+  --color-canvas-overlay: #1b2456;
+  --color-card-bg: #1a2256;
+  --bg-overlay-alpha: 70%;
+
+  /* 邊框 */
+  --color-border-default: rgba(150, 178, 255, 0.28);
+  --color-border-muted: rgba(150, 178, 255, 0.14);
+
+  /* 文字 */
+  --color-fg-default: #e7ecff;
+  --color-fg-muted: #97a3d8;
+  --color-accent-fg: #7d97ff;
+
+  /* 遊戲點綴色 */
+  --g-gold: #f4c84a;
+  --g-gold-soft: #ffe39a;
+  --g-cyan: #5fd6ea;
+  --g-cyan-soft: #a7ecf6;
+  --g-blue-bright: #6d8bff;
+  --g-panel-top: #2a3686;
+  --g-panel-bottom: #161d49;
+  --g-selected-1: #eef2ff;
+  --g-selected-2: #b9c8f4;
+
+  /* 倒角尺寸 */
+  --chamfer: 10px;
+  --chamfer-sm: 6px;
+
+  /* 斜切描邊（bevel ring）——當作元素底色，::before 內縮 1px 露出此色作為邊框 */
+  --g-ring: linear-gradient(160deg, rgba(190,208,255,0.78), rgba(120,150,255,0.20));
+  --g-ring-gold: linear-gradient(160deg, rgba(255,227,154,0.95), rgba(244,200,74,0.30));
+}
+
+/* ---------- 背景：放射底色 + halftone + 幾何網格 ---------- */
+html {
+  background: radial-gradient(ellipse 120% 90% at 50% 18%,
+              #34439a 0%, #28327e 34%, #1a2056 64%, #121739 100%);
+}
+
+body {
+  position: relative;
+  background: transparent;
+  color: var(--color-fg-default);
+  font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* halftone 點陣（極淺） */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(circle, rgba(190, 208, 255, 0.07) 1px, transparent 1.4px);
+  background-size: 13px 13px;
+  mask-image: radial-gradient(ellipse 100% 80% at 50% 25%, #000 35%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 25%, #000 35%, transparent 85%);
+}
+
+/* 低多邊形幾何網格線（細、淺） */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(115deg, transparent 0%, transparent 49.7%, rgba(150,178,255,0.10) 49.85%, rgba(150,178,255,0.10) 50.1%, transparent 50.25%),
+    linear-gradient(28deg,  transparent 0%, transparent 49.7%, rgba(150,178,255,0.08) 49.85%, rgba(150,178,255,0.08) 50.1%, transparent 50.25%),
+    linear-gradient(72deg,  transparent 0%, transparent 49.8%, rgba(140,180,255,0.07) 49.9%, rgba(140,180,255,0.07) 50.05%, transparent 50.2%),
+    linear-gradient(160deg, transparent 0%, transparent 49.8%, rgba(140,180,255,0.06) 49.9%, rgba(140,180,255,0.06) 50.05%, transparent 50.2%);
+  background-size: 340px 340px, 270px 270px, 200px 480px, 520px 230px;
+  mask-image: radial-gradient(ellipse 110% 95% at 50% 30%, #000 20%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 110% 95% at 50% 30%, #000 20%, transparent 90%);
+}
+
+/* ---------- 版心 ---------- */
+.page-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+/* ---------- 主標題 ---------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.app-header .diamond-mark {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  background: linear-gradient(160deg, var(--g-cyan-soft), var(--g-blue-bright));
+  clip-path: polygon(50% 0, 100% 38%, 50% 100%, 0 38%);
+  box-shadow: 0 0 14px rgba(95, 214, 234, 0.5);
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin: 0;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(120, 150, 255, 0.45);
+}
+
+.app-sub {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 40px;
+  padding-left: 46px;
+  color: var(--g-gold-soft);
+  font-size: 0.85rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ---------- 區段標題 ---------- */
+section { margin-bottom: 40px; position: relative; z-index: 1; }
+
+h2 {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 8px 26px 8px 18px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #fff;
+  background: linear-gradient(100deg, rgba(96,126,230,0.55), rgba(40,54,122,0.12));
+  border-left: 3px solid var(--g-cyan);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%);
+}
+
+h2::before {
+  content: "";
+  width: 9px; height: 9px;
+  background: var(--g-gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px rgba(244, 200, 74, 0.7);
+}
+
+h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--g-cyan-soft);
+  letter-spacing: 0.04em;
+  margin: 18px 0 10px;
+}
+
+/* ---------- 通用面板倒角外觀 ---------- */
+.panel,
+section > div[style*="background"],
+.file-list-container {
+  position: relative;
+}
+
+/* 把示範區塊裡的內聯背景盒子轉成倒角面板（雙層描邊） */
+section > div[style*="background"] {
+  position: relative;
+  isolation: isolate;
+  background: var(--g-ring) !important;        /* 1px 斜切描邊 */
+  border: 0 !important;
+  border-radius: 0 !important;
+  clip-path: polygon(0 var(--chamfer), var(--chamfer) 0, 100% 0,
+                     100% calc(100% - var(--chamfer)), calc(100% - var(--chamfer)) 100%, 0 100%);
+}
+section > div[style*="background"]::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: inherit;                          /* 與外層同一個多邊形 */
+  background: linear-gradient(165deg, rgba(42,54,134,0.92), rgba(22,29,73,0.95));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* flex-center 內聯示範色塊改用青色漸層 */
+.flex-center span[style*="background: var(--color-accent-fg)"],
+.flex-center span[style*="background:var(--color-accent-fg)"] {
+  background: linear-gradient(160deg, var(--g-cyan), var(--g-blue-bright)) !important;
+  border-radius: 2px !important;
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px rgba(95,214,234,0.5);
+}
+
+/* ---------- Badge：斜切晶片（雙層描邊） ---------- */
+.interactive-container {
+  position: relative;
+  isolation: isolate;
+  border-radius: 0;
+  border: 0 !important;
+  background: var(--ic-ring, var(--color-border-default));   /* 斜切描邊色 */
+  clip-path: polygon(var(--chamfer-sm) 0, 100% 0, 100% calc(100% - var(--chamfer-sm)),
+                     calc(100% - var(--chamfer-sm)) 100%, 0 100%, 0 var(--chamfer-sm));
+  transition: all 0.18s ease;
+}
+.interactive-container::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: inherit;
+  background: var(--ic-fill, var(--interactive-bg, var(--color-canvas-subtle)));
+  transition: background 0.18s ease;
+}
+
+.interactive-container.rounded { border-radius: 0; }
+
+.difficulty-badge {
+  --ic-fill: color-mix(in srgb, var(--badge-color) 18%, rgba(20,26,64,0.85));
+  --ic-ring: color-mix(in srgb, var(--badge-color) 60%, transparent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--badge-color) 40%, transparent);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.difficulty-badge:hover {
+  --ic-fill: color-mix(in srgb, var(--badge-color) 30%, rgba(20,26,64,0.85));
+  --ic-ring: color-mix(in srgb, var(--badge-color) 90%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--badge-color) 35%, transparent);
+}
+
+/* 中性灰標籤改成藍系，融入主題 */
+.diff-0 { --badge-color: #9fb2ee; }
+
+/* ---------- Dropdown ---------- */
+.dropdown-btn {
+  --ic-ring: var(--g-ring);
+  --ic-fill: linear-gradient(165deg, rgba(58,74,160,0.95), rgba(28,36,92,0.97));
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.dropdown-btn:hover {
+  --ic-ring: linear-gradient(160deg, var(--g-cyan), rgba(95,214,234,0.4));
+  --ic-fill: linear-gradient(165deg, rgba(78,98,200,0.97), rgba(38,48,120,0.98));
+}
+
+.dropdown-menu {
+  position: relative;
+  isolation: isolate;
+  background: var(--g-ring);
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(0 var(--chamfer-sm), var(--chamfer-sm) 0, 100% 0,
+                     100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%, 0 100%);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.45);
+}
+.dropdown-menu::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: inherit;
+  background: linear-gradient(165deg, #1e2860, #141a44);
+}
+
+.dropdown-option {
+  background-color: transparent;
+  color: var(--color-fg-default);
+  border-left: 2px solid transparent;
+}
+.dropdown-option:hover {
+  background-color: rgba(109,139,255,0.18);
+  border-left-color: var(--g-cyan);
+}
+.dropdown-option.active {
+  background: linear-gradient(90deg, rgba(244,200,74,0.22), transparent);
+  border-left-color: var(--g-gold);
+  color: var(--g-gold-soft);
+}
+
+/* ---------- Post-list ---------- */
+.file-list-container {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  border-radius: 0;
+  background: var(--g-ring);
+  clip-path: polygon(0 var(--chamfer), var(--chamfer) 0, 100% 0,
+                     100% calc(100% - var(--chamfer)), calc(100% - var(--chamfer)) 100%, 0 100%);
+}
+.file-list-container::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: inherit;
+  background: linear-gradient(165deg, rgba(26,34,84,0.97), rgba(18,24,60,0.98));
+}
+
+.file-list-header {
+  background: linear-gradient(100deg, rgba(96,126,230,0.45), rgba(40,54,122,0.25));
+  border-bottom: 1px solid var(--color-border-default);
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.file-row { border-top: 1px solid var(--color-border-muted); }
+.file-row:hover {
+  background: linear-gradient(90deg, rgba(109,139,255,0.16), rgba(109,139,255,0.04));
+}
+
+.post-link:hover { color: var(--g-cyan); }
+.title-text { letter-spacing: 0.02em; }
+
+/* 行首高亮指示條（青色 → 金色漸層） */
+.file-row { position: relative; }
+.file-row::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  width: 3px; height: 0;
+  transform: translateY(-50%);
+  background: linear-gradient(var(--g-cyan), var(--g-gold));
+  box-shadow: 0 0 10px rgba(95,214,234,0.6);
+  transition: height 0.2s ease;
+}
+.file-row:hover::before { height: 70%; }
+
+/* ---------- 列表中的檔案 emoji 換成幾何標記 ---------- */
+.title-container > span[style*="font-size: 1.2rem"] {
+  font-size: 0 !important;
+}
+.title-container > span[style*="font-size: 1.2rem"]::before {
+  content: "";
+  display: inline-block;
+  width: 14px; height: 14px;
+  background: linear-gradient(160deg, var(--g-cyan-soft), var(--g-blue-bright));
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  box-shadow: 0 0 8px rgba(95,214,234,0.45);
+}
+
+/* ---------- 提示文字 ---------- */
+p { color: var(--color-fg-muted); line-height: 1.6; }
+p strong, li strong { color: var(--g-cyan-soft); }
+
+/* ---------- 成果總結面板 ---------- */
+.summary-panel {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+  padding: 26px 30px !important;
+  background: var(--g-ring-gold) !important;     /* 金色斜切描邊 */
+  border: 0 !important;
+  border-radius: 0 !important;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+}
+.summary-panel::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: inherit;
+  background: linear-gradient(160deg, rgba(46,60,140,0.95), rgba(20,27,68,0.97));
+}
+.summary-panel::after {
+  content: "";
+  position: absolute;
+  left: 1px; top: 1px; bottom: 1px;
+  width: 3px;
+  z-index: -1;
+  background: var(--g-gold);
+  box-shadow: 0 0 10px rgba(244,200,74,0.5);
+}
+.summary-panel h2 { background: none; clip-path: none; padding-left: 0; border: none; }
+.summary-panel ul { margin: 12px 0; padding-left: 20px; }
+.summary-panel li { margin: 8px 0; color: var(--color-fg-default); }
+.summary-panel li::marker { color: var(--g-cyan); }
+
+/* ---------- 等級徽章式裝飾數字（標題旁可選） ---------- */
+.tier-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #0e1535;
+  background: linear-gradient(160deg, var(--g-selected-1), var(--g-selected-2));
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+@media (max-width: 768px) {
+  .page-shell { padding: 28px 18px 60px; }
+  h1 { font-size: 1.5rem; }
+}

@@ -1,0 +1,102 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ThemeManager from "../components/ThemeManager.astro";
+---
+
+<Layout title="主題定制 | 程式解題紀錄">
+  <div class="themes-page">
+    <header class="themes-header">
+      <h1>主題定制中心</h1>
+      <p class="subtitle">創建或安裝你喜歡的主題，隨時切換頁面風格</p>
+    </header>
+
+    <ThemeManager />
+
+    <footer class="themes-footer">
+      <div class="footer-content">
+        <h3>提示</h3>
+        <ul>
+          <li>
+            <strong>自訂主題：</strong>在「新增主題」區域貼入你的 CSS 代碼，為整個網站換膚
+          </li>
+          <li>
+            <strong>官方主題：</strong>點擊官方主題按鈕快速載入社區推薦的風格
+          </li>
+          <li>
+            <strong>排序優先級：</strong>拖曳主題來調整加載順序，後面的主題會覆蓋前面的
+          </li>
+          <li>
+            <strong>分享主題：</strong>複製你的 CSS 代碼分享給朋友，或提交 PR 到倉庫
+          </li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+</Layout>
+
+<style>
+  .themes-page {
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .themes-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .themes-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: var(--color-fg-default);
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--color-fg-muted);
+    margin: 0;
+  }
+
+  .themes-footer {
+    margin-top: 4rem;
+    padding: 2rem;
+    background: var(--color-canvas-subtle);
+    border-radius: 8px;
+    border-left: 4px solid var(--color-accent-fg);
+  }
+
+  .footer-content h3 {
+    margin-top: 0;
+    color: var(--color-fg-default);
+  }
+
+  .footer-content ul {
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  .footer-content li {
+    margin-bottom: 0.75rem;
+    color: var(--color-fg-muted);
+    line-height: 1.6;
+  }
+
+  .footer-content strong {
+    color: var(--color-fg-default);
+  }
+
+  @media (max-width: 768px) {
+    .themes-page {
+      padding: 1rem;
+    }
+
+    .themes-header h1 {
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+    }
+  }
+</style>

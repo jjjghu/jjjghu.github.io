@@ -1,0 +1,13 @@
+/* Dark Theme (預設) */
+:root {
+  --color-canvas-default: rgb(13, 17, 23);
+  --color-canvas-subtle: rgb(22, 27, 34);
+  --color-canvas-overlay: rgb(33, 38, 45);
+  --color-border-default: rgb(48, 54, 61);
+  --color-border-muted: rgb(33, 38, 45);
+  --color-fg-default: rgb(201, 209, 217);
+  --color-fg-muted: rgb(139, 148, 158);
+  --color-accent-fg: rgb(112, 160, 255);
+  --color-page-bg: rgb(13, 17, 23);
+  --color-card-bg: rgb(22, 27, 34);
+}

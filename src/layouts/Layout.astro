@@ -8,7 +8,6 @@ import "../styles/dropdown.css";
 import "../styles/post-list.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
 import LanguageToggle from "../components/LanguageToggle.astro";
 import SettingIcon from "../components/SettingIcon.astro";
 import BackgroundEffect from "../components/BackgroundEffect.astro";
@@ -70,24 +69,6 @@ const showTOC = headings && headings.length > 0;
       rel="stylesheet"
     />
     <script is:inline>
-      const theme = (() => {
-        if (
-          typeof localStorage !== "undefined" &&
-          localStorage.getItem("theme")
-        ) {
-          return localStorage.getItem("theme");
-        }
-        if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-          return "light";
-        }
-        return "dark";
-      })();
-      if (theme === "light") {
-        document.documentElement.classList.add("light");
-      } else {
-        document.documentElement.classList.remove("light");
-      }
-
       // Blocking script to apply custom settings immediately (to prevent FOUC)
       (function () {
         if (typeof localStorage === "undefined") return;
@@ -101,29 +82,10 @@ const showTOC = headings && headings.length > 0;
         }
 
         // 2. Global Toggles
-        const toggles = [
-          "bgLinesEnabled",
-          "hoverGlowEnabled",
-          "spotlightEnabled",
-          "bgTransparencyEnabled",
-        ];
-        toggles.forEach((key) => {
-          const className = key.replace(/([A-Z])/g, "-$1").toLowerCase(); // bgLinesEnabled -> bg-lines-enabled
-
-          const stored = localStorage.getItem(key);
-
-          // Special case for transparency: boolean toggles CSS variable
-          if (key === "bgTransparencyEnabled") {
-            const isEnabled = stored === null ? true : stored === "true"; // Default true
-            root.style.setProperty(
-              "--bg-overlay-alpha",
-              isEnabled ? "40%" : "100%",
-            );
-          } else {
-            // Standard Class Toggles
-            if (stored === "true") {
-              root.classList.add(className);
-            }
+        ["hoverGlowEnabled", "spotlightEnabled"].forEach((key) => {
+          const className = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+          if (localStorage.getItem(key) === "true") {
+            root.classList.add(className);
           }
         });
       })();
@@ -160,7 +122,52 @@ const showTOC = headings && headings.length > 0;
     <Footer />
     <LanguageToggle />
     <SettingIcon />
-    <ThemeToggle />
+
+    <script is:inline>
+      // 在所有 CSS 載入後注入主題，確保優先級最高
+      (function applyActiveTheme() {
+        try {
+          const activeId = localStorage.getItem("activeThemeId") || "dark";
+
+          document.documentElement.classList.remove("light");
+          document.querySelectorAll("style[data-theme-id]").forEach((el) => el.remove());
+
+          if (activeId === "dark") return;
+
+          const officialPaths = {
+            light: "/styles/themes/light.css",
+            game:  "/styles/themes/game.css",
+          };
+
+          if (officialPaths[activeId]) {
+            fetch(officialPaths[activeId])
+              .then((r) => r.text())
+              .then((css) => {
+                const el = document.createElement("style");
+                el.textContent = css;
+                el.dataset.themeId = activeId;
+                document.head.appendChild(el);
+                if (activeId === "light") {
+                  document.documentElement.classList.add("light");
+                }
+              });
+            return;
+          }
+
+          // 自訂主題
+          const customThemes = JSON.parse(localStorage.getItem("customThemes") || "[]");
+          const custom = customThemes.find((t) => t.id === activeId);
+          if (custom) {
+            const el = document.createElement("style");
+            el.textContent = custom.css;
+            el.dataset.themeId = activeId;
+            document.head.appendChild(el);
+          }
+        } catch (err) {
+          console.warn("Failed to apply theme:", err);
+        }
+      })();
+    </script>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {

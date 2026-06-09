@@ -50,30 +50,7 @@ import { UI_TEXT } from "../i18n/ui";
     </button>
   </div>
 
-  <!-- 選項 1: 背景線條 -->
-  <div class="toggle-row">
-    <div>
-      <div
-        class="toggle-label"
-        data-cn={UI_TEXT.settings_bg_lines.cn}
-        data-en={UI_TEXT.settings_bg_lines.en}
-      >
-        {UI_TEXT.settings_bg_lines.cn}
-      </div>
-      <span
-        class="toggle-desc"
-        data-cn={UI_TEXT.settings_bg_lines_desc.cn}
-        data-en={UI_TEXT.settings_bg_lines_desc.en}
-        >{UI_TEXT.settings_bg_lines_desc.cn}</span
-      >
-    </div>
-    <label class="switch">
-      <input type="checkbox" id="bg-lines-toggle" />
-      <span class="slider"></span>
-    </label>
-  </div>
-
-  <!-- 選項 2: Hover 特效 -->
+  <!-- 選項 1: Hover 特效 -->
   <div class="toggle-row">
     <div>
       <div
@@ -119,30 +96,7 @@ import { UI_TEXT } from "../i18n/ui";
     </label>
   </div>
 
-  <!-- 選項 4: 透明度開關 -->
-  <div class="toggle-row">
-    <div>
-      <div
-        class="toggle-label"
-        data-cn={UI_TEXT.settings_transparency.cn}
-        data-en={UI_TEXT.settings_transparency.en}
-      >
-        {UI_TEXT.settings_transparency.cn}
-      </div>
-      <span
-        class="toggle-desc"
-        data-cn={UI_TEXT.settings_transparency_desc.cn}
-        data-en={UI_TEXT.settings_transparency_desc.en}
-        >{UI_TEXT.settings_transparency_desc.cn}</span
-      >
-    </div>
-    <label class="switch">
-      <input type="checkbox" id="transparency-toggle" />
-      <span class="slider"></span>
-    </label>
-  </div>
-
-  <!-- 選項 5: 主題顏色 -->
+  <!-- 選項 3: 主題顏色 -->
   <div class="toggle-row">
     <div>
       <div
@@ -420,13 +374,6 @@ import { UI_TEXT } from "../i18n/ui";
 
   // 1. Register Settings
   settings.register({
-    key: "bgLinesEnabled",
-    type: "boolean",
-    defaultValue: false,
-    cssClass: "bg-lines-enabled",
-  });
-
-  settings.register({
     key: "hoverGlowEnabled",
     type: "boolean",
     defaultValue: true, // Based on previous user preference or default
@@ -438,21 +385,6 @@ import { UI_TEXT } from "../i18n/ui";
     type: "boolean",
     defaultValue: false,
     cssClass: "spotlight-enabled",
-  });
-
-  settings.register({
-    key: "bgTransparencyEnabled",
-    type: "boolean",
-    defaultValue: true,
-    cssClass: "transparent-enabled",
-    onApply: (value) => {
-      const root = document.documentElement;
-      if (value) {
-        root.style.setProperty("--bg-overlay-alpha", "40%");
-      } else {
-        root.style.setProperty("--bg-overlay-alpha", "100%");
-      }
-    },
   });
 
   settings.register({
@@ -476,10 +408,8 @@ import { UI_TEXT } from "../i18n/ui";
     }
   }
 
-  bindToggle("bg-lines-toggle", "bgLinesEnabled");
   bindToggle("hover-glow-toggle", "hoverGlowEnabled");
   bindToggle("spotlight-toggle", "spotlightEnabled");
-  bindToggle("transparency-toggle", "bgTransparencyEnabled");
 
   // 3. Bind Color Picker
   const colorPicker = document.getElementById("theme-color-picker");

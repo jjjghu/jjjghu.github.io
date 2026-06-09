@@ -1,0 +1,490 @@
+---
+import "../styles/dropdown.css";
+import "../styles/utilities.css";
+import "../styles/component-base.css";
+
+const OFFICIAL_THEMES = [
+  { id: 'dark',  name: '深色主題 (Dark)',  path: '/styles/themes/dark.css' },
+  { id: 'light', name: '淺色主題 (Light)', path: '/styles/themes/light.css' },
+  // { id: 'game',  name: '遊戲主題 (Game)',  path: '/styles/themes/game.css' },
+];
+---
+
+<div class="theme-manager-container">
+  <div class="theme-manager-content">
+
+    <!-- Section 1: 主題列表 -->
+    <section>
+      <h2>選擇主題</h2>
+      <p class="section-desc">點擊主題以套用，每次只能啟用一個主題</p>
+
+      <div id="all-themes-list" class="themes-grid">
+        <!-- 動態填充：官方 + 自訂 -->
+      </div>
+    </section>
+
+    <!-- Section 2: 新增自訂主題 -->
+    <section class="form-section">
+      <h2>新增自訂主題</h2>
+
+      <div class="form-group">
+        <label for="theme-name">主題名稱</label>
+        <input type="text" id="theme-name" placeholder="例：我的深色主題" class="input-field" />
+      </div>
+
+      <div class="form-group">
+        <label for="theme-tags">標籤（用逗號分隔，選填）</label>
+        <input type="text" id="theme-tags" placeholder="例：dark, cyberpunk, custom" class="input-field" />
+      </div>
+
+      <div class="form-group">
+        <div class="label-row">
+          <label for="theme-css">CSS 代碼</label>
+          <button id="load-template-btn" class="template-btn" type="button">套入變數模板</button>
+        </div>
+        <p class="field-desc">
+          覆寫下方 CSS 變數來改變整個網站的外觀。不需要全部填寫，只填想修改的部分即可。
+        </p>
+        <textarea id="theme-css" placeholder="貼入你的 CSS 代碼，或點擊「套入變數模板」開始編輯..." class="textarea-field" rows="14"></textarea>
+      </div>
+
+      <button id="add-theme-btn" class="interactive-container md btn-primary">
+        <i class="bx bx-plus"></i>
+        <span>新增主題</span>
+      </button>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  import { getSettingsManager } from '../scripts/settingsManager';
+
+  const settings = getSettingsManager();
+
+  const OFFICIAL_THEMES = [
+    { id: 'dark',  name: '深色主題 (Dark)',  path: '/styles/themes/dark.css',  source: 'official' },
+    { id: 'light', name: '淺色主題 (Light)', path: '/styles/themes/light.css', source: 'official' },
+    // { id: 'game',  name: '遊戲主題 (Game)',  path: '/styles/themes/game.css',  source: 'official' },
+  ];
+
+  settings.register({
+    key: 'customThemes',
+    type: 'text',
+    defaultValue: JSON.stringify([]),
+    onApply: () => renderAllThemes(),
+  });
+
+  settings.register({
+    key: 'activeThemeId',
+    type: 'text',
+    defaultValue: 'dark',
+    onApply: () => renderAllThemes(),
+  });
+
+  function getCustomThemes() {
+    return JSON.parse(settings.get('customThemes') as string || '[]');
+  }
+
+  function getActiveId() {
+    return (settings.get('activeThemeId') as string) || 'dark';
+  }
+
+  function renderAllThemes() {
+    const container = document.getElementById('all-themes-list')!;
+    const activeId = getActiveId();
+    const customThemes = getCustomThemes();
+
+    const allThemes = [
+      ...OFFICIAL_THEMES,
+      ...customThemes.map((t: any) => ({ ...t, source: 'custom' })),
+    ];
+
+    container.innerHTML = allThemes.map(theme => {
+      const isActive = activeId === theme.id;
+      return `
+        <div
+          class="theme-card ${isActive ? 'is-active' : ''}"
+          data-id="${theme.id}"
+          data-source="${theme.source}"
+          role="radio"
+          aria-checked="${isActive}"
+          tabindex="0"
+        >
+          <div class="radio-dot ${isActive ? 'is-checked' : ''}"></div>
+          <div class="theme-card-info">
+            <div class="theme-card-name">${theme.name}</div>
+            <div class="theme-card-badge">${theme.source === 'official' ? '官方' : '自訂'}</div>
+          </div>
+          ${theme.source === 'custom' ? `
+            <button class="theme-delete-btn" data-id="${theme.id}" title="刪除">
+              <i class="bx bx-trash"></i>
+            </button>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    // 點擊選取
+    container.querySelectorAll('.theme-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('.theme-delete-btn')) return;
+        const id = (card as HTMLElement).dataset.id!;
+        settings.set('activeThemeId', id);
+        applyTheme(id);
+      });
+    });
+
+    // 刪除自訂主題
+    container.querySelectorAll('.theme-delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = (btn as HTMLElement).dataset.id!;
+        if (!confirm('確定要刪除這個主題嗎？')) return;
+        const filtered = getCustomThemes().filter((t: any) => t.id !== id);
+        settings.set('customThemes', JSON.stringify(filtered));
+        // 若刪除的是當前主題，回到預設
+        if (getActiveId() === id) {
+          settings.set('activeThemeId', 'dark');
+          applyTheme('dark');
+        }
+      });
+    });
+  }
+
+  function applyTheme(id: string) {
+    // 移除舊的注入樣式
+    document.querySelectorAll('style[data-theme-id]').forEach(el => el.remove());
+
+    // 移除 html.light class
+    document.documentElement.classList.remove('light');
+
+    if (id === 'dark') return; // dark 是預設，不需注入
+
+    // 官方主題：fetch 後注入
+    const official = OFFICIAL_THEMES.find(t => t.id === id);
+    if (official) {
+      fetch(official.path)
+        .then(r => r.text())
+        .then(css => injectCSS(id, css, id === 'light'));
+      return;
+    }
+
+    // 自訂主題：從 localStorage 取 CSS
+    const custom = getCustomThemes().find((t: any) => t.id === id);
+    if (custom) {
+      injectCSS(id, custom.css, false);
+    }
+  }
+
+  function injectCSS(id: string, css: string, isLight: boolean) {
+    const styleEl = document.createElement('style');
+    styleEl.textContent = css;
+    styleEl.dataset.themeId = id;
+    document.head.appendChild(styleEl);
+    if (isLight) {
+      document.documentElement.classList.add('light');
+    }
+  }
+
+  // 套入變數模板
+  const CSS_TEMPLATE = `/* 主題名稱：修改這裡 */
+:root {
+  /* ── 背景 ─────────────────────────────── */
+  --color-canvas-default: rgb(13, 17, 23);   /* 頁面底色 */
+  --color-canvas-subtle:  rgb(22, 27, 34);   /* 卡片、輸入框背景 */
+  --color-canvas-overlay: rgb(33, 38, 45);   /* 下拉選單、彈窗背景 */
+  --color-card-bg:        rgb(22, 27, 34);   /* 文章卡片背景 */
+
+  /* ── 邊框 ─────────────────────────────── */
+  --color-border-default: rgb(48, 54, 61);   /* 一般邊框 */
+  --color-border-muted:   rgb(33, 38, 45);   /* 次要邊框、分隔線 */
+
+  /* ── 文字 ─────────────────────────────── */
+  --color-fg-default: rgb(201, 209, 217);    /* 主要文字 */
+  --color-fg-muted:   rgb(139, 148, 158);    /* 次要文字、說明 */
+  --color-accent-fg:  rgb(112, 160, 255);    /* 連結、強調色 */
+}`;
+
+  document.getElementById('load-template-btn')?.addEventListener('click', () => {
+    const textarea = document.getElementById('theme-css') as HTMLTextAreaElement;
+    if (textarea.value.trim() && !confirm('目前已有內容，確定要覆蓋嗎？')) return;
+    textarea.value = CSS_TEMPLATE;
+    textarea.focus();
+  });
+
+  // 新增自訂主題
+  document.getElementById('add-theme-btn')?.addEventListener('click', () => {
+    const name = (document.getElementById('theme-name') as HTMLInputElement).value.trim();
+    const tagsStr = (document.getElementById('theme-tags') as HTMLInputElement).value.trim();
+    const css = (document.getElementById('theme-css') as HTMLTextAreaElement).value.trim();
+
+    if (!name || !css) {
+      alert('請輸入主題名稱和 CSS 代碼');
+      return;
+    }
+
+    const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const themes = getCustomThemes();
+    themes.push({
+      id: `custom-${Date.now()}`,
+      name,
+      tags,
+      css,
+      source: 'custom',
+    });
+    settings.set('customThemes', JSON.stringify(themes));
+
+    (document.getElementById('theme-name') as HTMLInputElement).value = '';
+    (document.getElementById('theme-tags') as HTMLInputElement).value = '';
+    (document.getElementById('theme-css') as HTMLTextAreaElement).value = '';
+  });
+</script>
+
+<style>
+  .theme-manager-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .theme-manager-content {
+    display: grid;
+    gap: 3rem;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--color-fg-default);
+  }
+
+  .section-desc {
+    margin: 0;
+    color: var(--color-fg-muted);
+    font-size: 0.9rem;
+  }
+
+  /* 主題卡片（動態生成，需用 :global） */
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .themes-grid :global(.theme-card) {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem 1rem;
+    background: var(--color-canvas-overlay);
+    border: 1px solid var(--color-border-default);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    user-select: none;
+  }
+
+  .themes-grid :global(.theme-card:hover) {
+    border-color: var(--color-accent-fg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .themes-grid :global(.theme-card:focus-visible) {
+    outline: 2px solid var(--color-accent-fg);
+    outline-offset: 2px;
+  }
+
+  .themes-grid :global(.theme-card.is-active) {
+    border-color: var(--color-accent-fg);
+    background: color-mix(in srgb, var(--color-accent-fg) 15%, var(--color-canvas-overlay));
+    box-shadow: 0 0 0 1px var(--color-accent-fg);
+  }
+
+  /* Radio 指示點 */
+  .themes-grid :global(.radio-dot) {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--color-border-default);
+    flex-shrink: 0;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+
+  .themes-grid :global(.radio-dot.is-checked) {
+    border-color: var(--color-accent-fg);
+    background: var(--color-accent-fg);
+  }
+
+  .themes-grid :global(.radio-dot.is-checked::after) {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: white;
+  }
+
+  .themes-grid :global(.theme-card-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .themes-grid :global(.theme-card-name) {
+    font-weight: 600;
+    color: var(--color-fg-default);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .themes-grid :global(.theme-card-badge) {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    background: var(--color-border-muted);
+    color: var(--color-fg-muted);
+    border-radius: 20px;
+    font-size: 0.72rem;
+    width: fit-content;
+  }
+
+  .themes-grid :global(.is-active .theme-card-badge) {
+    background: color-mix(in srgb, var(--color-accent-fg) 20%, transparent);
+    color: var(--color-accent-fg);
+  }
+
+  .themes-grid :global(.theme-delete-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: 1px solid var(--color-border-muted);
+    border-radius: 4px;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .themes-grid :global(.theme-delete-btn:hover) {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: #ff4444;
+    color: #ff4444;
+  }
+
+  /* 標籤列 */
+  .label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .field-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+    line-height: 1.5;
+  }
+
+  .template-btn {
+    background: none;
+    border: 1px solid var(--color-border-default);
+    border-radius: 4px;
+    color: var(--color-fg-muted);
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .template-btn:hover {
+    border-color: var(--color-accent-fg);
+    color: var(--color-accent-fg);
+  }
+
+  /* 表單 */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: var(--color-fg-default);
+    font-size: 0.9rem;
+  }
+
+  .input-field,
+  .textarea-field {
+    padding: 0.75rem 1rem;
+    background: var(--color-canvas-subtle);
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    color: var(--color-fg-default);
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.2s, background 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .input-field:focus,
+  .textarea-field:focus {
+    outline: none;
+    border-color: var(--color-accent-fg);
+    background: var(--color-canvas-overlay);
+  }
+
+  .textarea-field {
+    font-family: "Monaco", "Menlo", monospace;
+    resize: vertical;
+  }
+
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-accent-fg);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    transition: all 0.2s;
+    width: fit-content;
+  }
+
+  .btn-primary:hover {
+    background: color-mix(in srgb, var(--color-accent-fg), white 10%);
+  }
+
+  .form-section {
+    background: var(--color-canvas-subtle);
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    padding: 1.75rem 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .theme-manager-container { padding: 1rem; }
+    .themes-grid { grid-template-columns: 1fr; }
+    .form-section { padding: 1.25rem; }
+  }
+</style>

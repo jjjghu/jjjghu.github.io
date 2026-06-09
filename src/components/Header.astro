@@ -63,6 +63,15 @@ const { activeCategory } = Astro.props;
           </li>
           <li>
             <a
+              href="/themes"
+              class="nav-link"
+              data-category="themes"
+              data-cn="主題"
+              data-en="Themes">主題</a
+            >
+          </li>
+          <li>
+            <a
               href="https://gjplieqszy7.sg.larksuite.com/wiki/KJC1wRJAqidzAqkpCEClyp2YgUf?from=from_copylink"
               class="nav-link"
               data-cn={UI_TEXT.nav_note.cn}
@@ -79,8 +88,12 @@ const { activeCategory } = Astro.props;
             // 判斷當前應該 active 的分類
             let currentCategory = "";
 
+            // 判斷是否在 themes 頁面
+            if (pathname.includes("/themes")) {
+              currentCategory = "themes";
+            }
             // 判斷是否在 roadmap 頁面 (相容結尾有沒有斜線)
-            if (pathname.includes("/roadmap")) {
+            else if (pathname.includes("/roadmap")) {
               currentCategory = "roadmap";
             }
             // 判斷是否在 guide 頁面
