@@ -13,6 +13,48 @@
    - diff-{level}: Badge 的顏色對應
 */
 
+/* --- Base Badge (TagBadge、FilterChip 等非難度徽章) --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1.5;
+  padding: var(--badge-py, 2px) var(--badge-px, 10px);
+  font-size: var(--badge-fs, 12px);
+  border-radius: var(--badge-radius, 999px);
+  background-color: var(--badge-bg, transparent);
+  border: 1px solid var(--badge-border, transparent);
+  color: var(--badge-fg, inherit);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.badge:hover {
+  background-color: var(--badge-bg-hover, var(--badge-bg));
+  border-color: var(--badge-border-hover, var(--badge-border));
+}
+
+/* Tag badge 預設外觀（game-theme.css 會覆寫成斜切） */
+.badge[data-variant="tag"] {
+  --badge-bg: #2d333b;
+  --badge-border: rgba(240, 246, 252, 0.1);
+  --badge-fg: #c9d1d9;
+  --badge-bg-hover: #373e47;
+  --badge-border-hover: #8b949e;
+}
+
+/* Filter chip 預設外觀 */
+.badge[data-variant="filter-chip"] {
+  --badge-bg: transparent;
+  --badge-border: var(--color-border-default);
+  --badge-fg: var(--color-fg-muted);
+  cursor: pointer;
+}
+.badge[data-variant="filter-chip"]:hover {
+  --badge-bg: var(--color-canvas-subtle);
+  --badge-fg: var(--color-fg-default);
+}
+
 /* Badge 特有的樣式：顏色邏輯 + hover 效果 */
 .difficulty-badge {
   /* 設定顏色變數 */

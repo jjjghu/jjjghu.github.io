@@ -12,6 +12,12 @@ import LanguageToggle from "../components/LanguageToggle.astro";
 import SettingIcon from "../components/SettingIcon.astro";
 import BackgroundEffect from "../components/BackgroundEffect.astro";
 import type { MarkdownHeading } from "astro";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+// 在 build time 讀取官方主題 CSS，嵌入 head 腳本避免 FOUC
+const lightCSS = readFileSync(join(process.cwd(), "public/styles/themes/light.css"), "utf-8");
+const gameCSS  = readFileSync(join(process.cwd(), "public/styles/themes/game.css"),  "utf-8");
 
 interface Props {
   title: string;
@@ -68,20 +74,42 @@ const showTOC = headings && headings.length > 0;
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
-    <script is:inline>
-      // Blocking script to apply custom settings immediately (to prevent FOUC)
+    <script is:inline define:vars={{ lightCSS, gameCSS }}>
+      // 同步執行，在任何內容渲染前套用主題與設定，避免 FOUC
       (function () {
         if (typeof localStorage === "undefined") return;
 
         const root = document.documentElement;
 
-        // 1. Accent Color
+        // 1. 主題（官方主題 CSS 已在 build time 嵌入，不需要 fetch）
+        const activeId = localStorage.getItem("activeThemeId") || "dark";
+        root.classList.remove("light");
+
+        if (activeId !== "dark") {
+          const officialCSS = { light: lightCSS, game: gameCSS }[activeId];
+          const css = officialCSS ?? (() => {
+            try {
+              const customs = JSON.parse(localStorage.getItem("customThemes") || "[]");
+              return (customs.find((t) => t.id === activeId) || {}).css || null;
+            } catch { return null; }
+          })();
+
+          if (css) {
+            const el = document.createElement("style");
+            el.textContent = css;
+            el.dataset.themeId = activeId;
+            document.head.appendChild(el);
+          }
+          if (activeId === "light") root.classList.add("light");
+        }
+
+        // 2. Accent Color
         const savedColor = localStorage.getItem("customAccentColor");
         if (savedColor) {
           root.style.setProperty("--color-accent-fg", savedColor);
         }
 
-        // 2. Global Toggles
+        // 3. Global Toggles
         ["hoverGlowEnabled", "spotlightEnabled"].forEach((key) => {
           const className = key.replace(/([A-Z])/g, "-$1").toLowerCase();
           if (localStorage.getItem(key) === "true") {
@@ -123,51 +151,6 @@ const showTOC = headings && headings.length > 0;
     <LanguageToggle />
     <SettingIcon />
 
-    <script is:inline>
-      // 在所有 CSS 載入後注入主題，確保優先級最高
-      (function applyActiveTheme() {
-        try {
-          const activeId = localStorage.getItem("activeThemeId") || "dark";
-
-          document.documentElement.classList.remove("light");
-          document.querySelectorAll("style[data-theme-id]").forEach((el) => el.remove());
-
-          if (activeId === "dark") return;
-
-          const officialPaths = {
-            light: "/styles/themes/light.css",
-            game:  "/styles/themes/game.css",
-          };
-
-          if (officialPaths[activeId]) {
-            fetch(officialPaths[activeId])
-              .then((r) => r.text())
-              .then((css) => {
-                const el = document.createElement("style");
-                el.textContent = css;
-                el.dataset.themeId = activeId;
-                document.head.appendChild(el);
-                if (activeId === "light") {
-                  document.documentElement.classList.add("light");
-                }
-              });
-            return;
-          }
-
-          // 自訂主題
-          const customThemes = JSON.parse(localStorage.getItem("customThemes") || "[]");
-          const custom = customThemes.find((t) => t.id === activeId);
-          if (custom) {
-            const el = document.createElement("style");
-            el.textContent = custom.css;
-            el.dataset.themeId = activeId;
-            document.head.appendChild(el);
-          }
-        } catch (err) {
-          console.warn("Failed to apply theme:", err);
-        }
-      })();
-    </script>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {

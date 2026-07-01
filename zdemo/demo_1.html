@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSS 重構 Demo · 貨幣戰爭風格</title>
+  <title>Game Theme Demo — 貨幣戰爭風格</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
   <style>
-    /* 模擬全域變數（基礎值；遊戲主題會覆寫） */
+    /* 基礎全域變數（game-theme.css 會覆寫主要部分） */
     :root {
       --color-canvas-default: rgb(13, 17, 23);
       --color-canvas-subtle: rgb(22, 27, 34);
@@ -30,6 +31,7 @@
       --diff-green: #4ade80;
       --diff-blue: #60a5fa;
       --diff-purple: #c084fc;
+      --diff-black: #e2e8f0;
 
       --leetcode-easy: #00B8A3;
       --leetcode-medium: #FFC01E;
@@ -41,6 +43,119 @@
       --interactive-bg: var(--color-canvas-subtle);
       --interactive-fg: var(--color-fg-default);
     }
+
+    /* Filter bar 佈局（layout-level，放在頁面層級） */
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+      max-width: 480px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-fg-muted);
+      pointer-events: none;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px 8px 34px;
+      background-color: var(--color-canvas-subtle);
+      border: 1px solid var(--color-border-default);
+      color: var(--color-fg-default);
+      outline: none;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      font-family: inherit;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    .diff-btn {
+      min-width: 120px;
+      justify-content: space-between;
+    }
+
+    .result-count {
+      font-size: 0.85rem;
+      color: var(--color-fg-muted);
+      white-space: nowrap;
+    }
+
+    /* Badge gallery layout */
+    .badge-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .badge-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .badge-group-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-fg-muted);
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* Dropdown preview (static, non-floating) */
+    .dropdown-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .dropdown-preview-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dropdown-preview-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-fg-muted);
+      margin-bottom: 8px;
+    }
   </style>
 
   <!-- 模組化 CSS（基礎邏輯） -->
@@ -49,91 +164,80 @@
   <link rel="stylesheet" href="styles/badges-refactored.css">
   <link rel="stylesheet" href="styles/dropdown-refactored.css">
   <link rel="stylesheet" href="styles/post-list-refactored.css">
-  <!-- 遊戲風格皮膚（最後載入，覆蓋外觀） -->
+  <!-- 遊戲風格皮膚（最後載入，覆寫外觀） -->
   <link rel="stylesheet" href="styles/game-theme.css">
 </head>
 <body>
 
 <div class="page-shell">
 
+  <!-- ── Header ── -->
   <header class="app-header">
     <span class="diamond-mark"></span>
-    <h1>CSS 重構 Demo</h1>
-    <span class="tier-chip">UI KIT</span>
+    <h1>程式解題紀錄</h1>
+    <span class="tier-chip">GAME THEME</span>
   </header>
   <p class="app-sub">貨幣戰爭 · 零和遊戲 風格皮膚</p>
 
-  <!-- ============= Section 1: Utilities Demo ============= -->
+  <!-- ══════════════════════════════════════
+       Section 1 — Filter Bar
+  ══════════════════════════════════════ -->
   <section>
-    <h2>Utilities 示範</h2>
+    <h2>Filter Bar</h2>
 
-    <h3>Flex 工具類</h3>
-    <div class="flex-center" style="gap: 12px; padding: 1rem; background: var(--color-canvas-subtle); border-radius: 8px;">
-      <span>✓ flex-center</span>
-      <span>✓ 左右對齊</span>
-    </div>
+    <div class="filter-bar">
+      <!-- Search -->
+      <div class="search-wrapper">
+        <i class="bx bx-search search-icon"></i>
+        <input type="text" class="search-input" id="text-search" placeholder="搜尋題目關鍵字..." autocomplete="off">
+      </div>
 
-    <h3>Spacing 工具類</h3>
-    <div style="padding: 1rem; background: var(--color-canvas-subtle); border-radius: 8px; margin-top: 1rem;">
-      <div class="flex-center gap-xs" style="margin-bottom: 0.5rem;">
-        <span style="display: inline-block; width: 20px; height: 20px; background: var(--color-accent-fg); border-radius: 4px;"></span>
-        <span>gap-xs (6px)</span>
+      <!-- Filter Chips -->
+      <div class="filter-chips">
+        <span class="badge" data-variant="filter-chip">動態規劃</span>
+        <span class="badge" data-variant="filter-chip">貪婪</span>
+        <span class="badge" data-variant="filter-chip">圖論</span>
+        <span class="badge" data-variant="filter-chip">二分搜尋</span>
       </div>
-      <div class="flex-center gap-sm" style="margin-bottom: 0.5rem;">
-        <span style="display: inline-block; width: 20px; height: 20px; background: var(--color-accent-fg); border-radius: 4px;"></span>
-        <span>gap-sm (12px)</span>
-      </div>
-      <div class="flex-center gap-md">
-        <span style="display: inline-block; width: 20px; height: 20px; background: var(--color-accent-fg); border-radius: 4px;"></span>
-        <span>gap-md (16px)</span>
+
+      <!-- Controls -->
+      <div class="filter-controls">
+        <div class="dropdown-container">
+          <button class="interactive-container md dropdown-btn" data-dd="sort-menu">
+            排序方式 <i class="bx bx-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu" id="sort-menu">
+            <div class="dropdown-option active">題號 (升序)</div>
+            <div class="dropdown-option">題號 (降序)</div>
+            <div class="dropdown-option">日期 (新到舊)</div>
+            <div class="dropdown-option">日期 (舊到新)</div>
+          </div>
+        </div>
+
+        <div class="dropdown-container">
+          <button class="interactive-container md dropdown-btn diff-btn" data-dd="diff-menu">
+            <span>全部難度</span><i class="bx bx-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu" id="diff-menu">
+            <div class="dropdown-option active">全部</div>
+            <div class="dropdown-option diff-easy"   style="--badge-color:var(--leetcode-easy)">Easy</div>
+            <div class="dropdown-option diff-medium" style="--badge-color:var(--leetcode-medium)">Medium</div>
+            <div class="dropdown-option diff-hard"   style="--badge-color:var(--leetcode-hard)">Hard</div>
+          </div>
+        </div>
+
+        <span class="result-count">共 10 篇</span>
       </div>
     </div>
   </section>
 
-  <!-- ============= Section 2: Component-Base + Badges Demo ============= -->
+  <!-- ══════════════════════════════════════
+       Section 2 — Post List
+  ══════════════════════════════════════ -->
   <section>
-    <h2>Badge 組件示範（使用 component-base）</h2>
+    <h2>Post List</h2>
 
-    <div style="padding: 1rem; background: var(--color-canvas-subtle); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 12px;">
-      <span class="interactive-container sm rounded difficulty-badge diff-easy">Easy</span>
-      <span class="interactive-container sm rounded difficulty-badge diff-medium">Medium</span>
-      <span class="interactive-container sm rounded difficulty-badge diff-hard">Hard</span>
-      <span class="interactive-container sm rounded difficulty-badge diff-0">Luogu 灰</span>
-      <span class="interactive-container sm rounded difficulty-badge diff-4">Luogu 綠</span>
-      <span class="interactive-container sm rounded difficulty-badge diff-6">Luogu 紫</span>
-    </div>
-
-    <p style="font-size: 0.9rem; margin-top: 0.5rem;">
-      💡 Badge 繼承 component-base，但有自己的 color-mix 邏輯和 hover 效果
-    </p>
-  </section>
-
-  <!-- ============= Section 3: Component-Base + Dropdown Demo ============= -->
-  <section>
-    <h2>Dropdown 組件示範（使用 component-base）</h2>
-
-    <div class="dropdown-container" style="display: inline-block;">
-      <button class="interactive-container md dropdown-btn">
-        排序方式 ▼
-      </button>
-      <div class="dropdown-menu show" style="position: relative; top: auto;">
-        <div class="dropdown-option active">按 ID 升序</div>
-        <div class="dropdown-option">按 ID 降序</div>
-        <div class="dropdown-option">按日期升序</div>
-        <div class="dropdown-option">按日期降序</div>
-      </div>
-    </div>
-
-    <p style="font-size: 0.9rem; margin-top: 1rem;">
-      💡 Dropdown Button 繼承 component-base，有自己的 hover 和 active 狀態
-    </p>
-  </section>
-
-  <!-- ============= Section 4: Post-List Demo ============= -->
-  <section>
-    <h2>Post-List 組件示範（使用 utilities）</h2>
-
-    <div class="file-list-container" style="margin-top: 1rem;">
+    <div class="file-list-container">
       <div class="post-list-grid file-list-header">
         <div class="col-title">題目</div>
         <div class="col-difficulty">難度</div>
@@ -141,12 +245,16 @@
         <div class="col-date">日期</div>
       </div>
 
+      <!-- LeetCode rows -->
       <div class="file-row post-list-grid">
         <div class="col-title">
           <div class="title-container flex-center gap-sm">
-            <span style="font-size: 1.2rem;">📄</span>
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
             <a class="post-link" href="#">
-              <span class="title-text">1. 兩數之和</span>
+              <span class="title-text">1. Two Sum</span>
             </a>
           </div>
         </div>
@@ -155,19 +263,22 @@
         </div>
         <div class="col-tags">
           <div class="tags-wrapper flex-center gap-xs">
-            <span class="interactive-container sm rounded difficulty-badge diff-0">陣列</span>
-            <span class="interactive-container sm rounded difficulty-badge diff-0">雜湊表</span>
+            <span class="badge" data-variant="tag">陣列</span>
+            <span class="badge" data-variant="tag">雜湊表</span>
           </div>
         </div>
-        <div class="col-date">2024-01-15</div>
+        <div class="col-date">2024/01/15</div>
       </div>
 
       <div class="file-row post-list-grid">
         <div class="col-title">
           <div class="title-container flex-center gap-sm">
-            <span style="font-size: 1.2rem;">📄</span>
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
             <a class="post-link" href="#">
-              <span class="title-text">2. 兩數相加</span>
+              <span class="title-text">3. Longest Substring Without Repeating Characters</span>
             </a>
           </div>
         </div>
@@ -176,19 +287,22 @@
         </div>
         <div class="col-tags">
           <div class="tags-wrapper flex-center gap-xs">
-            <span class="interactive-container sm rounded difficulty-badge diff-0">鏈表</span>
-            <span class="interactive-container sm rounded difficulty-badge diff-0">數學</span>
+            <span class="badge" data-variant="tag">字串</span>
+            <span class="badge" data-variant="tag">滑動視窗</span>
           </div>
         </div>
-        <div class="col-date">2024-01-16</div>
+        <div class="col-date">2024/02/08</div>
       </div>
 
       <div class="file-row post-list-grid">
         <div class="col-title">
           <div class="title-container flex-center gap-sm">
-            <span style="font-size: 1.2rem;">📄</span>
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
             <a class="post-link" href="#">
-              <span class="title-text">3. 尋找兩個排序陣列的中位數</span>
+              <span class="title-text">4. Median of Two Sorted Arrays</span>
             </a>
           </div>
         </div>
@@ -197,33 +311,348 @@
         </div>
         <div class="col-tags">
           <div class="tags-wrapper flex-center gap-xs">
-            <span class="interactive-container sm rounded difficulty-badge diff-0">陣列</span>
-            <span class="interactive-container sm rounded difficulty-badge diff-0">分治</span>
+            <span class="badge" data-variant="tag">二分搜尋</span>
+            <span class="badge" data-variant="tag">分治法</span>
           </div>
         </div>
-        <div class="col-date">2024-01-17</div>
+        <div class="col-date">2024/03/12</div>
+      </div>
+
+      <div class="file-row post-list-grid">
+        <div class="col-title">
+          <div class="title-container flex-center gap-sm">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <a class="post-link" href="#">
+              <span class="title-text">53. Maximum Subarray</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-difficulty">
+          <span class="interactive-container sm rounded difficulty-badge diff-easy">Easy</span>
+        </div>
+        <div class="col-tags">
+          <div class="tags-wrapper flex-center gap-xs">
+            <span class="badge" data-variant="tag">動態規劃</span>
+            <span class="badge" data-variant="tag">分治法</span>
+          </div>
+        </div>
+        <div class="col-date">2024/03/25</div>
+      </div>
+
+      <div class="file-row post-list-grid">
+        <div class="col-title">
+          <div class="title-container flex-center gap-sm">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <a class="post-link" href="#">
+              <span class="title-text">23. Merge k Sorted Lists</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-difficulty">
+          <span class="interactive-container sm rounded difficulty-badge diff-hard">Hard</span>
+        </div>
+        <div class="col-tags">
+          <div class="tags-wrapper flex-center gap-xs">
+            <span class="badge" data-variant="tag">堆積</span>
+            <span class="badge" data-variant="tag">鏈結串列</span>
+            <span class="badge" data-variant="tag">分治法</span>
+          </div>
+        </div>
+        <div class="col-date">2024/04/01</div>
+      </div>
+
+      <div class="file-row post-list-grid">
+        <div class="col-title">
+          <div class="title-container flex-center gap-sm">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <a class="post-link" href="#">
+              <span class="title-text">45. Jump Game II</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-difficulty">
+          <span class="interactive-container sm rounded difficulty-badge diff-medium">Medium</span>
+        </div>
+        <div class="col-tags">
+          <div class="tags-wrapper flex-center gap-xs">
+            <span class="badge" data-variant="tag">貪婪</span>
+            <span class="badge" data-variant="tag">動態規劃</span>
+          </div>
+        </div>
+        <div class="col-date">2024/04/18</div>
+      </div>
+
+      <!-- ZeroJudge rows -->
+      <div class="file-row post-list-grid">
+        <div class="col-title">
+          <div class="title-container flex-center gap-sm">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <a class="post-link" href="#">
+              <span class="title-text">a001 漢諾塔</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-difficulty">
+          <span class="interactive-container sm rounded difficulty-badge diff-2">Lv 2</span>
+        </div>
+        <div class="col-tags">
+          <div class="tags-wrapper flex-center gap-xs">
+            <span class="badge" data-variant="tag">遞迴</span>
+          </div>
+        </div>
+        <div class="col-date">2024/05/02</div>
+      </div>
+
+      <div class="file-row post-list-grid">
+        <div class="col-title">
+          <div class="title-container flex-center gap-sm">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <a class="post-link" href="#">
+              <span class="title-text">b002 最短路徑問題</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-difficulty">
+          <span class="interactive-container sm rounded difficulty-badge diff-5">Lv 5</span>
+        </div>
+        <div class="col-tags">
+          <div class="tags-wrapper flex-center gap-xs">
+            <span class="badge" data-variant="tag">圖論</span>
+            <span class="badge" data-variant="tag">最短路徑</span>
+          </div>
+        </div>
+        <div class="col-date">2024/05/20</div>
+      </div>
+
+      <div class="file-row post-list-grid">
+        <div class="col-title">
+          <div class="title-container flex-center gap-sm">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <a class="post-link" href="#">
+              <span class="title-text">c015 矩陣連乘</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-difficulty">
+          <span class="interactive-container sm rounded difficulty-badge diff-4">Lv 4</span>
+        </div>
+        <div class="col-tags">
+          <div class="tags-wrapper flex-center gap-xs">
+            <span class="badge" data-variant="tag">動態規劃</span>
+          </div>
+        </div>
+        <div class="col-date">2024/06/03</div>
+      </div>
+
+      <div class="file-row post-list-grid">
+        <div class="col-title">
+          <div class="title-container flex-center gap-sm">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <a class="post-link" href="#">
+              <span class="title-text">51. N-Queens</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-difficulty">
+          <span class="interactive-container sm rounded difficulty-badge diff-hard">Hard</span>
+        </div>
+        <div class="col-tags">
+          <div class="tags-wrapper flex-center gap-xs">
+            <span class="badge" data-variant="tag">回溯</span>
+          </div>
+        </div>
+        <div class="col-date">2024/06/15</div>
       </div>
     </div>
-
-    <p style="font-size: 0.9rem; margin-top: 1rem;">
-      💡 Post-List 使用 utilities 的 .flex-center、.gap-xs 等，減少重複的 flex 定義
-    </p>
   </section>
 
-  <!-- ============= Summary ============= -->
-  <section class="summary-panel">
-    <h2>🎯 重構成果</h2>
-    <ul>
-      <li><strong>utilities.css</strong> - 可組合的工具類（flex、spacing、transition）</li>
-      <li><strong>component-base.css</strong> - 互動容器的基礎樣式（padding、border、border-radius）</li>
-      <li><strong>badges-refactored.css</strong> - Badge 的顏色邏輯 + 自己的 hover</li>
-      <li><strong>dropdown-refactored.css</strong> - Dropdown 的邏輯 + 自己的互動</li>
-      <li><strong>post-list-refactored.css</strong> - Post-list 的 grid 邏輯</li>
-    </ul>
-    <p>✅ 共用的部分統一，各模塊保留變化空間</p>
+  <!-- ══════════════════════════════════════
+       Section 3 — Badge Gallery
+  ══════════════════════════════════════ -->
+  <section>
+    <h2>Badge Gallery</h2>
+
+    <div class="badge-gallery">
+      <div class="badge-group">
+        <span class="badge-group-label">LeetCode Difficulty</span>
+        <div class="badge-row">
+          <span class="interactive-container sm rounded difficulty-badge diff-easy">Easy</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-medium">Medium</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-hard">Hard</span>
+        </div>
+      </div>
+
+      <div class="badge-group">
+        <span class="badge-group-label">ZeroJudge Level</span>
+        <div class="badge-row">
+          <span class="interactive-container sm rounded difficulty-badge diff-0">Lv 0</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-1">Lv 1</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-2">Lv 2</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-3">Lv 3</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-4">Lv 4</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-5">Lv 5</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-6">Lv 6</span>
+          <span class="interactive-container sm rounded difficulty-badge diff-7">Lv 7</span>
+        </div>
+      </div>
+
+      <div class="badge-group">
+        <span class="badge-group-label">Tag Badges</span>
+        <div class="badge-row">
+          <span class="badge" data-variant="tag">動態規劃</span>
+          <span class="badge" data-variant="tag">貪婪</span>
+          <span class="badge" data-variant="tag">圖論</span>
+          <span class="badge" data-variant="tag">二分搜尋</span>
+          <span class="badge" data-variant="tag">回溯</span>
+          <span class="badge" data-variant="tag">字串</span>
+          <span class="badge" data-variant="tag">陣列</span>
+          <span class="badge" data-variant="tag">雜湊表</span>
+        </div>
+      </div>
+
+      <div class="badge-group">
+        <span class="badge-group-label">Filter Chips</span>
+        <div class="badge-row">
+          <span class="badge" data-variant="filter-chip">動態規劃</span>
+          <span class="badge" data-variant="filter-chip">貪婪</span>
+          <span class="badge" data-variant="filter-chip">圖論</span>
+          <span class="badge" data-variant="filter-chip">字串</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       Section 4 — Dropdown Preview
+  ══════════════════════════════════════ -->
+  <section>
+    <h2>Dropdown Preview</h2>
+
+    <div class="dropdown-preview-grid">
+      <!-- Difficulty dropdown (open) -->
+      <div class="dropdown-preview-item">
+        <span class="dropdown-preview-label">Difficulty (open)</span>
+        <button class="interactive-container md dropdown-btn diff-btn" style="margin-bottom: 4px;">
+          <span>全部難度</span><i class="bx bx-chevron-up"></i>
+        </button>
+        <div class="dropdown-menu show" style="position: static;">
+          <div class="dropdown-option active">全部</div>
+          <div class="dropdown-option diff-easy"   style="--badge-color:var(--leetcode-easy)">Easy</div>
+          <div class="dropdown-option diff-medium" style="--badge-color:var(--leetcode-medium)">Medium</div>
+          <div class="dropdown-option diff-hard"   style="--badge-color:var(--leetcode-hard)">Hard</div>
+        </div>
+      </div>
+
+      <!-- Sort dropdown (open) -->
+      <div class="dropdown-preview-item">
+        <span class="dropdown-preview-label">Sort (open)</span>
+        <button class="interactive-container md dropdown-btn" style="margin-bottom: 4px;">
+          排序方式 <i class="bx bx-chevron-up"></i>
+        </button>
+        <div class="dropdown-menu show" style="position: static;">
+          <div class="dropdown-option active">題號 (升序)</div>
+          <div class="dropdown-option">題號 (降序)</div>
+          <div class="dropdown-option">日期 (新到舊)</div>
+          <div class="dropdown-option">日期 (舊到新)</div>
+        </div>
+      </div>
+
+      <!-- Tag dropdown with search (open) -->
+      <div class="dropdown-preview-item">
+        <span class="dropdown-preview-label">Tag Filter (open)</span>
+        <button class="interactive-container md dropdown-btn" style="margin-bottom: 4px;">
+          選擇標籤 <i class="bx bx-chevron-up"></i>
+        </button>
+        <div class="dropdown-menu show" style="position: static; width: 240px;">
+          <div class="dropdown-search-container">
+            <div class="dropdown-search-wrap">
+              <i class="bx bx-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--color-fg-muted);pointer-events:none;z-index:2;"></i>
+              <input class="dropdown-search-input" type="text" placeholder="搜尋標籤..." style="padding-left:32px;">
+            </div>
+          </div>
+          <div class="dropdown-chips-grid">
+            <span class="badge" data-variant="filter-chip" style="--g-tag-ring:rgba(95,214,234,0.60);--g-tag-fill:rgba(70,110,210,0.22);color:var(--g-cyan-soft)!important;">動態規劃</span>
+            <span class="badge" data-variant="filter-chip">貪婪</span>
+            <span class="badge" data-variant="filter-chip">圖論</span>
+            <span class="badge" data-variant="filter-chip">二分搜尋</span>
+            <span class="badge" data-variant="filter-chip">字串</span>
+            <span class="badge" data-variant="filter-chip">陣列</span>
+            <span class="badge" data-variant="filter-chip">回溯</span>
+            <span class="badge" data-variant="filter-chip">雜湊表</span>
+          </div>
+          <div class="dropdown-footer">
+            <span style="font-size:0.8rem;color:var(--color-fg-muted);">AND / OR</span>
+            <span style="font-size:0.8rem;color:var(--color-fg-muted);">清除</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropdown button states -->
+      <div class="dropdown-preview-item">
+        <span class="dropdown-preview-label">Button States</span>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
+          <button class="interactive-container md dropdown-btn">
+            Default <i class="bx bx-chevron-down"></i>
+          </button>
+          <button class="interactive-container md dropdown-btn diff-btn">
+            <span>Diff Style</span><i class="bx bx-chevron-down"></i>
+          </button>
+          <button class="interactive-container md dropdown-btn active">
+            Active State <i class="bx bx-chevron-down"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 
 </div>
+
+<script>
+  // 可互動的 dropdown（Filter Bar 區）
+  document.querySelectorAll('[data-dd]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const menuId = btn.dataset.dd;
+      const menu = document.getElementById(menuId);
+      const isOpen = menu.classList.contains('show');
+      document.querySelectorAll('.dropdown-menu.show').forEach(m => {
+        if (!m.style.position || m.style.position === 'absolute') {
+          m.classList.remove('show');
+        }
+      });
+      if (!isOpen) menu.classList.add('show');
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('[data-dd]').forEach(btn => {
+      const menuId = btn.dataset.dd;
+      const menu = document.getElementById(menuId);
+      menu?.classList.remove('show');
+    });
+  });
+</script>
 
 </body>
 </html>

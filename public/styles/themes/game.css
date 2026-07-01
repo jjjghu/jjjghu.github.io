@@ -1,12 +1,4 @@
-/* ============================================
-   GAME THEME — 「貨幣戰爭」風格
-   深靛藍放射狀背景 + halftone 點陣 + 幾何網格
-   金 / 青 雙重點綴色 + 斜切倒角科幻面板
-============================================ */
-
-/* ---------- 主題變數 ---------- */
 :root {
-  /* 畫布 */
   --color-canvas-default: #131a40;
   --color-canvas-subtle: rgba(40, 54, 122, 0.55);
   --color-canvas-overlay: #1b2456;
@@ -14,70 +6,93 @@
   --color-page-bg: #131a40;
   --bg-overlay-alpha: 70%;
 
-  /* 邊框 */
   --color-border-default: rgba(150, 178, 255, 0.28);
   --color-border-muted: rgba(150, 178, 255, 0.14);
 
-  /* 文字 */
   --color-fg-default: #e7ecff;
   --color-fg-muted: #97a3d8;
   --color-accent-fg: #7d97ff;
 
-  /* LeetCode 難度 */
-  --leetcode-easy: #00B8A3;
-  --leetcode-medium: #FFC01E;
-  --leetcode-hard: #FF375F;
+  --leetcode-easy: #00b8a3;
+  --leetcode-medium: #ffc01e;
+  --leetcode-hard: #ff375f;
 
-  /* 遊戲點綴色 */
   --g-gold: #f4c84a;
   --g-gold-soft: #ffe39a;
   --g-cyan: #5fd6ea;
   --g-cyan-soft: #a7ecf6;
   --g-blue-bright: #6d8bff;
 
-  /* 斜切尺寸 */
   --chamfer-sm: 6px;
   --chamfer: 10px;
 
-  /* 斜切 clip-path 預設值（只寫一次） */
   --clip-sm: polygon(
-    var(--chamfer-sm) 0, 100% 0,
-    100% calc(100% - var(--chamfer-sm)), calc(100% - var(--chamfer-sm)) 100%,
-    0 100%, 0 var(--chamfer-sm)
+    var(--chamfer-sm) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm)),
+    calc(100% - var(--chamfer-sm)) 100%,
+    0 100%,
+    0 var(--chamfer-sm)
   );
   --clip-md: polygon(
-    var(--chamfer) 0, 100% 0,
-    100% calc(100% - var(--chamfer)), calc(100% - var(--chamfer)) 100%,
-    0 100%, 0 var(--chamfer)
+    var(--chamfer) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer)),
+    calc(100% - var(--chamfer)) 100%,
+    0 100%,
+    0 var(--chamfer)
   );
 
-  /* 描邊漸層預設值 */
-  --ring-blue: linear-gradient(160deg, rgba(190,208,255,0.78), rgba(120,150,255,0.20));
-  --ring-gold: linear-gradient(160deg, rgba(255,227,154,0.95), rgba(244,200,74,0.30));
+  --ring-blue: linear-gradient(
+    160deg,
+    rgba(190, 208, 255, 0.78),
+    rgba(120, 150, 255, 0.2)
+  );
+  --ring-gold: linear-gradient(
+    160deg,
+    rgba(255, 227, 154, 0.95),
+    rgba(244, 200, 74, 0.3)
+  );
 }
 
-/* ---------- 背景 ---------- */
 html {
-  background: radial-gradient(ellipse 120% 90% at 50% 18%,
-              #34439a 0%, #28327e 34%, #1a2056 64%, #121739 100%);
+  background: radial-gradient(
+    ellipse 120% 90% at 50% 18%,
+    #34439a 0%,
+    #28327e 34%,
+    #1a2056 64%,
+    #121739 100%
+  );
 }
 
-body { background: transparent; }
+body {
+  background: transparent;
+}
 
-/* halftone 點陣 */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image: radial-gradient(circle, rgba(190, 208, 255, 0.07) 1px, transparent 1.4px);
+  background-image: radial-gradient(
+    circle,
+    rgba(190, 208, 255, 0.07) 1px,
+    transparent 1.4px
+  );
   background-size: 13px 13px;
-  mask-image: radial-gradient(ellipse 100% 80% at 50% 25%, #000 35%, transparent 85%);
-  -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 25%, #000 35%, transparent 85%);
+  mask-image: radial-gradient(
+    ellipse 100% 80% at 50% 25%,
+    #000 35%,
+    transparent 85%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 100% 80% at 50% 25%,
+    #000 35%,
+    transparent 85%
+  );
 }
 
-/* 幾何網格線 */
 body::after {
   content: "";
   position: fixed;
@@ -86,26 +101,57 @@ body::after {
   z-index: 0;
   opacity: 0.5;
   background-image:
-    linear-gradient(115deg, transparent 49.7%, rgba(150,178,255,0.10) 49.85%, rgba(150,178,255,0.10) 50.1%, transparent 50.25%),
-    linear-gradient(28deg,  transparent 49.7%, rgba(150,178,255,0.08) 49.85%, rgba(150,178,255,0.08) 50.1%, transparent 50.25%),
-    linear-gradient(72deg,  transparent 49.8%, rgba(140,180,255,0.07) 49.9%,  rgba(140,180,255,0.07) 50.05%, transparent 50.2%),
-    linear-gradient(160deg, transparent 49.8%, rgba(140,180,255,0.06) 49.9%,  rgba(140,180,255,0.06) 50.05%, transparent 50.2%);
-  background-size: 340px 340px, 270px 270px, 200px 480px, 520px 230px;
-  mask-image: radial-gradient(ellipse 110% 95% at 50% 30%, #000 20%, transparent 90%);
-  -webkit-mask-image: radial-gradient(ellipse 110% 95% at 50% 30%, #000 20%, transparent 90%);
+    linear-gradient(
+      115deg,
+      transparent 49.7%,
+      rgba(150, 178, 255, 0.1) 49.85%,
+      rgba(150, 178, 255, 0.1) 50.1%,
+      transparent 50.25%
+    ),
+    linear-gradient(
+      28deg,
+      transparent 49.7%,
+      rgba(150, 178, 255, 0.08) 49.85%,
+      rgba(150, 178, 255, 0.08) 50.1%,
+      transparent 50.25%
+    ),
+    linear-gradient(
+      72deg,
+      transparent 49.8%,
+      rgba(140, 180, 255, 0.07) 49.9%,
+      rgba(140, 180, 255, 0.07) 50.05%,
+      transparent 50.2%
+    ),
+    linear-gradient(
+      160deg,
+      transparent 49.8%,
+      rgba(140, 180, 255, 0.06) 49.9%,
+      rgba(140, 180, 255, 0.06) 50.05%,
+      transparent 50.2%
+    );
+  background-size:
+    340px 340px,
+    270px 270px,
+    200px 480px,
+    520px 230px;
+  mask-image: radial-gradient(
+    ellipse 110% 95% at 50% 30%,
+    #000 20%,
+    transparent 90%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 110% 95% at 50% 30%,
+    #000 20%,
+    transparent 90%
+  );
 }
 
-/* ============================================
-   斜切框系統 A — .interactive-container
-   使用 --ic-ring / --ic-fill（保留原有命名，
-   避免與 badges.css specificity 衝突）
-============================================ */
 .interactive-container {
   position: relative;
   isolation: isolate;
   border: 0 !important;
-  border-radius: 0;
-  clip-path: var(--clip-sm);
+  border-radius: 0 !important;
+  clip-path: var(--clip-sm) !important;
   background: var(--ic-ring, var(--color-border-default));
   transition: all 0.18s ease;
 }
@@ -119,66 +165,120 @@ body::after {
   background: var(--ic-fill, var(--interactive-bg, var(--color-canvas-subtle)));
   transition: background 0.18s ease;
 }
-.interactive-container.rounded { border-radius: 0; }
+.interactive-container.rounded {
+  border-radius: 0 !important;
+}
 
-/* 難度徽章 */
 .difficulty-badge {
   --ic-ring: color-mix(in srgb, var(--badge-color) 60%, transparent);
-  --ic-fill: color-mix(in srgb, var(--badge-color) 18%, rgba(20,26,64,0.85));
+  --ic-fill: color-mix(in srgb, var(--badge-color) 18%, rgba(20, 26, 64, 0.85));
   text-shadow: 0 0 8px color-mix(in srgb, var(--badge-color) 40%, transparent);
   font-weight: 600;
   letter-spacing: 0.03em;
 }
 .difficulty-badge:hover {
   --ic-ring: color-mix(in srgb, var(--badge-color) 90%, transparent);
-  --ic-fill: color-mix(in srgb, var(--badge-color) 30%, rgba(20,26,64,0.85));
+  --ic-fill: color-mix(in srgb, var(--badge-color) 30%, rgba(20, 26, 64, 0.85));
   box-shadow: 0 0 12px color-mix(in srgb, var(--badge-color) 35%, transparent);
-  /* 抵銷 badges.css hover 的 background-color */
   background: var(--ic-ring) !important;
 }
-.diff-0 { --badge-color: #9fb2ee; }
+.diff-0 {
+  --badge-color: #9fb2ee;
+}
 
-/* Dropdown 按鈕 */
 .dropdown-btn {
   --ic-ring: var(--ring-blue);
-  --ic-fill: linear-gradient(165deg, rgba(58,74,160,0.95), rgba(28,36,92,0.97));
+  --ic-fill: linear-gradient(
+    165deg,
+    rgba(58, 74, 160, 0.95),
+    rgba(28, 36, 92, 0.97)
+  );
   color: #fff;
   font-weight: 600;
   letter-spacing: 0.05em;
 }
 .dropdown-btn:hover {
-  --ic-ring: linear-gradient(160deg, var(--g-cyan), rgba(95,214,234,0.4));
-  --ic-fill: linear-gradient(165deg, rgba(78,98,200,0.97), rgba(38,48,120,0.98));
+  --ic-ring: linear-gradient(160deg, var(--g-cyan), rgba(95, 214, 234, 0.4));
+  --ic-fill: linear-gradient(
+    165deg,
+    rgba(78, 98, 200, 0.97),
+    rgba(38, 48, 120, 0.98)
+  );
 }
 
-/* ============================================
-   斜切框系統 B — badges / containers
-   使用 --g-ring / --g-fill，每個元素設定自己的顏色
-============================================ */
-
-/* 共用基礎 */
 .badge[data-variant="tag"],
-.badge[data-variant="filter-chip"],
-.file-list-container,
-.dropdown-menu {
+.badge[data-variant="filter-chip"] {
   position: relative;
   isolation: isolate;
   border: 0 !important;
-  border-radius: 0;
-  clip-path: var(--clip-sm);
-  background: var(--g-ring, var(--color-border-default));
+  border-radius: 0 !important;
+  clip-path: var(--clip-sm) !important;
+  background: var(--g-ring, var(--color-border-default)) !important;
 }
 
-/* 較大斜切 */
-.file-list-container,
-.dropdown-menu {
-  clip-path: var(--clip-md);
-}
-
-/* 共用填色層 */
 .badge[data-variant="tag"]::before,
-.badge[data-variant="filter-chip"]::before,
-.file-list-container::before,
+.badge[data-variant="filter-chip"]::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: inherit;
+  background: var(--g-fill, var(--color-canvas-overlay));
+  transition: background 0.18s ease;
+}
+
+.file-list-container {
+  position: relative;
+  isolation: isolate;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 1px !important;
+  clip-path: var(--clip-md) !important;
+  /* 內層填色（深藍）*/
+  background: linear-gradient(
+    165deg,
+    rgba(22, 30, 82, 0.98),
+    rgba(14, 20, 58, 0.99)
+  ) !important;
+}
+
+/* 外框描邊：evenodd polygon 直接裁出 1px 倒角「邊框環」，
+   疊在子元素之上，斜角與直邊都有描邊，不依賴 mask */
+.file-list-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(
+    160deg,
+    rgba(190, 208, 255, 0.55),
+    rgba(120, 150, 255, 0.18)
+  );
+  clip-path: polygon(
+    evenodd,
+    /* 外圈（同 --clip-md）*/
+    var(--chamfer) 0, 100% 0,
+    100% calc(100% - var(--chamfer)), calc(100% - var(--chamfer)) 100%,
+    0 100%, 0 var(--chamfer), var(--chamfer) 0,
+    /* 內圈（內縮 1px）*/
+    calc(var(--chamfer) + 0.5px) 1px, calc(100% - 1px) 1px,
+    calc(100% - 1px) calc(100% - var(--chamfer) - 0.5px),
+    calc(100% - var(--chamfer) - 0.5px) calc(100% - 1px),
+    1px calc(100% - 1px), 1px calc(var(--chamfer) + 0.5px),
+    calc(var(--chamfer) + 0.5px) 1px
+  );
+}
+
+.dropdown-menu {
+  isolation: isolate;
+  border: 0 !important;
+  border-radius: 0 !important;
+  clip-path: var(--clip-md) !important;
+  background: var(--g-ring, var(--color-border-default)) !important;
+}
+
 .dropdown-menu::before {
   content: "";
   position: absolute;
@@ -190,60 +290,62 @@ body::after {
   transition: background 0.18s ease;
 }
 
-/* 各元素設定 --g-ring 和 --g-fill */
-
 .dropdown-menu {
   --g-ring: var(--ring-blue);
   --g-fill: linear-gradient(165deg, #1e2860, #141a44);
   overflow: hidden;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.45);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
-.file-list-container {
-  --g-ring: var(--ring-blue);
-  --g-fill: linear-gradient(165deg, rgba(26,34,84,0.97), rgba(18,24,60,0.98));
-}
-
-/* Tag badges（覆蓋 TagBadge.astro 寫死顏色） */
 .badge[data-variant="tag"] {
-  --g-ring: rgba(150, 178, 255, 0.38);
-  --g-fill: rgba(109, 139, 255, 0.14);
-  color: #a7b8f8 !important;
+  --g-ring: rgba(150, 178, 255, 0.45);
+  --g-fill: rgba(20, 28, 80, 0.82);
+  color: var(--color-fg-muted) !important;
 }
 .badge[data-variant="tag"]:hover {
-  --g-ring: rgba(95, 214, 234, 0.55);
-  --g-fill: rgba(109, 139, 255, 0.26);
+  --g-ring: rgba(95, 214, 234, 0.6);
+  --g-fill: rgba(70, 110, 210, 0.22);
+  color: var(--g-cyan-soft) !important;
 }
 
-/* 標籤篩選 chip */
 .badge[data-variant="filter-chip"] {
-  --g-ring: rgba(150, 178, 255, 0.25);
-  --g-fill: var(--color-canvas-subtle);
+  --g-ring: rgba(150, 178, 255, 0.45);
+  --g-fill: rgba(20, 28, 80, 0.82);
+  color: var(--color-fg-muted) !important;
+}
+.badge[data-variant="filter-chip"]:hover,
+.tag-chip:hover .badge[data-variant="filter-chip"] {
+  --g-ring: rgba(95, 214, 234, 0.6);
+  --g-fill: rgba(70, 110, 210, 0.22);
+  color: var(--g-cyan-soft) !important;
+}
+.tag-chip input:checked + .badge[data-variant="filter-chip"] {
+  --g-ring: var(--ring-blue);
+  --g-fill: rgba(95, 130, 255, 0.28);
+  color: var(--g-cyan-soft) !important;
 }
 
-/* ============================================
-   Dropdown 選單內容
-============================================ */
 .dropdown-option {
   background-color: transparent;
   color: var(--color-fg-default);
   border-left: 2px solid transparent;
 }
 .dropdown-option:hover {
-  background-color: rgba(109,139,255,0.18);
+  background-color: rgba(109, 139, 255, 0.18);
   border-left-color: var(--g-cyan);
 }
 .dropdown-option.active {
-  background: linear-gradient(90deg, rgba(244,200,74,0.22), transparent);
+  background: linear-gradient(90deg, rgba(244, 200, 74, 0.22), transparent);
   border-left-color: var(--g-gold);
   color: var(--g-gold-soft);
 }
 
-/* ============================================
-   Post List
-============================================ */
 .file-list-header {
-  background: linear-gradient(100deg, rgba(96,126,230,0.45), rgba(40,54,122,0.25));
+  background: linear-gradient(
+    100deg,
+    rgba(96, 126, 230, 0.45),
+    rgba(40, 54, 122, 0.25)
+  );
   border-bottom: 1px solid var(--color-border-default);
   color: #fff;
   letter-spacing: 0.05em;
@@ -254,35 +356,237 @@ body::after {
   position: relative;
 }
 .file-row:hover {
-  background: linear-gradient(90deg, rgba(109,139,255,0.16), rgba(109,139,255,0.04));
+  background: linear-gradient(
+    90deg,
+    rgba(109, 139, 255, 0.16),
+    rgba(109, 139, 255, 0.04)
+  );
 }
 .file-row::before {
   content: "";
   position: absolute;
-  left: 0; top: 50%;
-  width: 3px; height: 0;
-  transform: translateY(-50%);
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 0;
   background: linear-gradient(var(--g-cyan), var(--g-gold));
-  box-shadow: 0 0 10px rgba(95,214,234,0.6);
+  box-shadow: 0 0 10px rgba(95, 214, 234, 0.6);
   transition: height 0.2s ease;
 }
-.file-row:hover::before { height: 70%; }
-
-.post-link:hover { color: var(--g-cyan); }
-.title-text { letter-spacing: 0.02em; }
-
-/* ============================================
-   搜尋框（input 不支援 ::before）
-   用 border 顏色 + clip-path，border 隨斜切自然裁切
-============================================ */
-#text-search,
-.dropdown-search-input {
-  border-radius: 0 !important;
-  border-color: rgba(150, 178, 255, 0.35) !important;
-  background-color: rgba(20, 28, 80, 0.5) !important;
-  clip-path: var(--clip-sm);
+.file-row:hover::before {
+  height: 100%;
 }
-#text-search:focus,
-.dropdown-search-input:focus {
+
+.post-link:hover {
+  color: var(--g-cyan);
+}
+.title-text {
+  letter-spacing: 0.02em;
+}
+
+.search-wrapper {
+  isolation: isolate;
+  clip-path: var(--clip-sm);
+  background: rgba(150, 178, 255, 0.45);
+  transition: background 0.18s ease;
+}
+.search-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  clip-path: inherit;
+  background: rgba(16, 22, 72, 0.7);
+  z-index: -1;
+  pointer-events: none;
+}
+.search-wrapper:focus-within {
+  background: rgba(95, 214, 234, 0.6);
+}
+.search-wrapper input {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  border: none !important;
+  outline: none;
+  clip-path: none !important;
+  color: var(--color-fg-default);
+}
+.search-wrapper input::placeholder {
+  color: var(--color-fg-muted);
+}
+
+.dropdown-search-container {
+  isolation: isolate;
+  clip-path: var(--clip-sm);
+  background: rgba(150, 178, 255, 0.4);
+  transition: background 0.18s ease;
+}
+.dropdown-search-container::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  clip-path: inherit;
+  background: rgba(14, 19, 65, 0.75);
+  z-index: -1;
+  pointer-events: none;
+}
+.dropdown-search-container:focus-within {
+  background: rgba(95, 214, 234, 0.55);
+}
+.dropdown-search-container .dropdown-search-input {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none;
+  color: var(--color-fg-default);
+}
+.dropdown-search-container .dropdown-search-input::placeholder {
+  color: var(--color-fg-muted);
+}
+.dropdown-search-container .search-icon {
+  z-index: 2;
+}
+
+.post-card {
+  position: relative;
+  isolation: isolate;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: linear-gradient(
+    160deg,
+    rgba(190, 208, 255, 0.55),
+    rgba(120, 150, 255, 0.18)
+  );
+  clip-path: polygon(
+    0 var(--chamfer),
+    var(--chamfer) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer)),
+    calc(100% - var(--chamfer)) 100%,
+    0 100%
+  );
+}
+.post-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: inherit;
+  background: linear-gradient(
+    165deg,
+    rgba(22, 30, 82, 0.98),
+    rgba(14, 20, 58, 0.99)
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.post-card h1 {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #fff;
+  border-bottom: 1px solid rgba(150, 178, 255, 0.25);
+  text-shadow: 0 2px 14px rgba(120, 150, 255, 0.4);
+  margin-top: 0;
+}
+.post-card h1 a {
+  color: inherit;
+  text-decoration: none;
+}
+.post-card h1 a:hover {
+  color: var(--g-cyan-soft);
+  text-decoration: none;
+}
+
+.article-body h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: linear-gradient(
+    100deg,
+    rgba(96, 126, 230, 0.28),
+    rgba(40, 54, 122, 0.05)
+  );
+  border-bottom: none;
+  border-left: 3px solid var(--g-cyan);
+  padding: 6px 20px 6px 14px;
+  clip-path: none;
+  margin: 1.5em 0 0.75em;
+}
+
+.article-body h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--g-cyan-soft);
+  border-bottom: 1px solid rgba(95, 214, 234, 0.18);
+  padding-bottom: 4px;
+  margin: 1.25em 0 0.5em;
+}
+
+code:not(pre code) {
+  background-color: rgba(95, 130, 255, 0.14) !important;
+  border-color: rgba(150, 178, 255, 0.28) !important;
+  color: var(--g-cyan-soft) !important;
+  border-radius: 0 !important;
+}
+
+pre {
+  border-radius: 0 !important;
+  border: 1px solid rgba(150, 178, 255, 0.18) !important;
+  background: rgba(11, 15, 50, 0.92) !important;
+}
+
+.copy-code-btn {
+  border-radius: 0 !important;
+  border-color: rgba(150, 178, 255, 0.28) !important;
+  background: rgba(14, 20, 60, 0.8) !important;
+  color: var(--color-fg-muted) !important;
+}
+.copy-code-btn:hover {
   border-color: var(--g-cyan) !important;
+  color: var(--g-cyan) !important;
+  background: rgba(14, 20, 60, 0.95) !important;
+}
+.copy-code-btn.copied {
+  border-color: var(--g-gold) !important;
+  color: var(--g-gold) !important;
+}
+
+.article-body hr {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--g-cyan),
+    var(--g-gold),
+    transparent
+  );
+  height: 1px;
+  border: 0;
+  margin: 1.5em 0;
+}
+
+blockquote {
+  border-left: 3px solid var(--g-gold);
+  background: rgba(244, 200, 74, 0.05);
+  color: var(--color-fg-muted);
+}
+
+.article-body ul li::marker {
+  color: var(--g-cyan);
+}
+.article-body ol li::marker {
+  color: var(--g-gold);
+}
+
+.katex {
+  color: var(--g-cyan-soft);
+}
+.katex-display .katex {
+  color: var(--g-gold-soft);
 }

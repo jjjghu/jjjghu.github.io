@@ -48,6 +48,9 @@
   --leetcode-easy: #00B8A3;
   --leetcode-medium: #FFC01E;
   --leetcode-hard: #FF375F;
+
+  /* 背景透明度（供 color-mix 使用，100% = 不透明） */
+  --bg-overlay-alpha: 100%;
 }
 
 html.light {

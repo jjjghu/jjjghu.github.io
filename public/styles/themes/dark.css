@@ -10,4 +10,5 @@
   --color-accent-fg: rgb(112, 160, 255);
   --color-page-bg: rgb(13, 17, 23);
   --color-card-bg: rgb(22, 27, 34);
+  --bg-overlay-alpha: 100%;
 }

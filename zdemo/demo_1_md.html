@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>64. 最小路徑和 — Game Theme Demo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- Syntax highlighting & Math -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* 基礎變數（game-theme.css 會覆寫） */
+    :root {
+      --color-canvas-default: rgb(13,17,23);
+      --color-canvas-subtle: rgb(22,27,34);
+      --color-canvas-overlay: rgb(33,38,45);
+      --color-border-default: rgb(48,54,61);
+      --color-border-muted: rgb(33,38,45);
+      --color-fg-default: rgb(201,209,217);
+      --color-fg-muted: rgb(139,148,158);
+      --color-accent-fg: rgb(112,160,255);
+      --color-card-bg: rgb(22,27,34);
+      --bg-overlay-alpha: 40%;
+      --diff-gray: #9ca3af;
+      --diff-red: #f87171;
+      --diff-orange: #fb923c;
+      --diff-yellow: #facc15;
+      --diff-green: #4ade80;
+      --diff-blue: #60a5fa;
+      --diff-purple: #c084fc;
+      --diff-black: #e2e8f0;
+      --leetcode-easy: #00B8A3;
+      --leetcode-medium: #FFC01E;
+      --leetcode-hard: #FF375F;
+      --interactive-py: 6px;
+      --interactive-px: 12px;
+      --interactive-radius: 8px;
+      --interactive-bg: var(--color-canvas-subtle);
+      --interactive-fg: var(--color-fg-default);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-canvas-default);
+      color: var(--color-fg-default);
+      font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    a { color: var(--color-accent-fg); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── 文章兩欄佈局 ── */
+    .article-layout {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .article-layout { grid-template-columns: 1fr; }
+      .toc-sidebar { display: none; }
+    }
+
+    /* ── 返回導覽 ── */
+    .article-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--color-border-muted);
+    }
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-fg-muted);
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+    .nav-meta {
+      font-size: 0.8rem;
+      color: var(--color-fg-muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── TOC ── */
+    .toc-sidebar { height: 100%; }
+    .toc-container {
+      position: sticky;
+      top: 2rem;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding-left: 1rem;
+      border-left: 1px solid var(--color-border-muted);
+    }
+    .toc-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-fg-muted);
+      margin: 0 0 0.75rem;
+    }
+    .toc-list { list-style: none; padding: 0; margin: 0; }
+    .toc-item { margin-bottom: 0.4rem; line-height: 1.4; }
+    .toc-item a {
+      color: var(--color-fg-muted);
+      font-size: 0.875rem;
+      text-decoration: none;
+      display: block;
+      transition: color 0.2s;
+    }
+    .toc-item.depth-3 { padding-left: 1rem; }
+    .toc-item.depth-3 a { font-size: 0.82rem; }
+
+    /* ── Post Card 基礎（game-theme.css 會改外觀） ── */
+    .post-card {
+      background-color: var(--color-card-bg);
+      border: 1px solid var(--color-border-default);
+      border-radius: 6px;
+      padding: 2rem;
+      line-height: 1.75;
+    }
+
+    .post-header-row { margin-bottom: 0.5rem; }
+    .post-header-row h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      margin: 0;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid var(--color-border-default);
+      line-height: 1.25;
+    }
+    .post-header-row h1 a {
+      color: var(--color-fg-default);
+      text-decoration: none;
+    }
+    .post-header-row h1 a:hover { color: var(--color-accent-fg); }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 1rem 0 2rem;
+    }
+
+    /* ── Article body 基礎 ── */
+    .article-body { line-height: 1.75; }
+    .article-body h2 {
+      font-size: 1.25em;
+      font-weight: 600;
+      margin-top: 1.5em;
+      margin-bottom: 0.8em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid var(--color-border-default);
+    }
+    .article-body h3 {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-top: 1.25em;
+      margin-bottom: 0.5em;
+    }
+    .article-body p { margin: 0 0 0.75em; }
+    .article-body ul,
+    .article-body ol { padding-left: 1.5em; margin: 0 0 0.75em; }
+    .article-body ul li::marker { color: var(--color-accent-fg); }
+
+    /* Inline code */
+    code:not(pre code) {
+      padding: 0.1em 0.3em;
+      margin: 0 0.15em;
+      background-color: rgba(35,43,53,0.8);
+      border: 1px solid rgb(65,73,82);
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.875em;
+      color: var(--color-fg-default);
+    }
+
+    /* Code block */
+    .code-wrapper { position: relative; margin-bottom: 1rem; }
+    .code-wrapper pre { margin-bottom: 0; }
+
+    pre {
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      line-height: 1.5;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    pre code.hljs { background: transparent; padding: 0; font-size: 100%; }
+
+    /* Copy button */
+    .copy-code-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 10;
+      background-color: transparent;
+      border: 1px solid #30363d;
+      color: #8696a9;
+      border-radius: 4px;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      opacity: 0;
+    }
+    .copy-code-btn:hover {
+      background-color: rgba(22,27,34,0.9);
+      border-color: var(--color-fg-default);
+      color: var(--color-fg-default);
+      opacity: 0.9 !important;
+    }
+    .code-wrapper:hover .copy-code-btn { opacity: 1; }
+    .copy-code-btn.copied { border-color: #2da44e; color: #2da44e; }
+
+    /* HR */
+    hr {
+      height: 1px;
+      padding: 0;
+      margin: 1.5em 0;
+      background-color: var(--color-border-default);
+      border: 0;
+    }
+
+    /* KaTeX */
+    .katex-display { margin: 1em 0; overflow-x: auto; overflow-y: hidden; }
+  </style>
+
+  <link rel="stylesheet" href="styles/utilities.css">
+  <link rel="stylesheet" href="styles/component-base.css">
+  <link rel="stylesheet" href="styles/badges-refactored.css">
+  <link rel="stylesheet" href="styles/game-theme.css">
+</head>
+<body>
+
+<div class="page-shell">
+
+  <!-- 返回導覽 -->
+  <nav class="article-nav">
+    <a href="demo_1.html" class="nav-back">
+      <i class="bx bx-arrow-back"></i>
+      返回列表
+    </a>
+    <span class="nav-meta">LeetCode &nbsp;·&nbsp; 動態規劃</span>
+  </nav>
+
+  <!-- 兩欄佈局 -->
+  <div class="article-layout">
+
+    <!-- 文章主體 -->
+    <main>
+      <div class="post-card">
+
+        <div class="post-header-row">
+          <h1><a href="https://leetcode.com/problems/minimum-path-sum/" target="_blank">64. 最小路徑和</a></h1>
+        </div>
+
+        <div class="tags-container">
+          <span class="interactive-container sm rounded difficulty-badge diff-medium">Medium</span>
+          <span class="badge" data-variant="tag">陣列</span>
+          <span class="badge" data-variant="tag">動態規劃</span>
+          <span class="badge" data-variant="tag">矩陣</span>
+          <span class="badge" data-variant="tag">DFS</span>
+          <span class="badge" data-variant="tag">遞迴</span>
+          <span class="badge" data-variant="tag">記憶化</span>
+        </div>
+
+        <article class="article-body">
+
+          <h2 id="memoization">記憶化搜索</h2>
+          <p>根據題目，要想走到 \((x, y)\)，可以從左邊或是上面來，也就是 \((x-1, y)\) 或 \((x, y-1)\)。<br>
+          那麼，對於格子 \((x, y)\) 來說，最好的路徑就是下面兩種選項擇一。</p>
+          <ul>
+            <li>走到 \((x-1, y)\) 的最小成本加上 <code>grid[x][y]</code></li>
+            <li>走到 \((x, y-1)\) 的最小成本加上 <code>grid[x][y]</code></li>
+          </ul>
+          <p>那麼走到這兩個點的最小成本是多少呢？把上面那段文字的 \((x, y)\) 改成 \((x-1, y)\) 和 \((x, y-1)\) 就行。</p>
+          <p>遞迴時，我們能事先存下已經算過的值，就能避免重複計算。<br>
+          比如 \((x+1, y)\) 和 \((x, y+1)\)，都會計算 \((x, y)\) 的最小成本，<br>
+          在第二次計算時，將事先紀錄的數字填入即可。</p>
+
+          <div class="code-wrapper">
+            <pre><code class="language-cpp">class Solution {
+public:
+    int minPathSum(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
+        int m = grid.size(), n = grid[0].size();
+        vector&lt;vector&lt;int&gt;&gt; memo(m, vector&lt;int&gt;(n, -1));
+        auto dfs = [&amp;](this auto&amp;&amp; dfs, int x, int y) -&gt; int {
+            if(x &lt; 0 || y &lt; 0) return INT_MAX; // 遞迴終點
+            if(x == 0 &amp;&amp; y == 0) return grid[x][y];
+            int&amp; res = memo[x][y]; // 這裡是引用
+            if(res != -1) { // 代表有算過
+                return res;
+            }
+            res = min(dfs(x - 1, y), dfs(x, y - 1)) + grid[x][y];
+            return res;
+        };
+        return dfs(m - 1, n - 1);
+    }
+};</code></pre>
+            <button class="copy-code-btn" title="複製程式碼"><i class="bx bx-copy"></i></button>
+          </div>
+
+          <h3 id="memo-complexity">複雜度分析</h3>
+          <ul>
+            <li>時間複雜度：\(O(mn)\)，每個位置都被算一次。</li>
+            <li>空間複雜度：\(O(mn)\)，需要存下每個位置。</li>
+          </ul>
+
+          <h2 id="dp">動態規劃</h2>
+          <p>第二個方法是動態規劃，其實就是把上面的遞迴改成迭代。<br>
+          用 <code>dp[i][j]</code> 代表走到 \((i, j)\) 的最小成本。<br>
+          在更新 <code>dp[i][j]</code> 時，一樣可以從兩個方向來：</p>
+          <ul>
+            <li><code>dp[i-1][j]</code> + <code>grid[i][j]</code></li>
+            <li><code>dp[i][j-1]</code> + <code>grid[i][j]</code></li>
+          </ul>
+          <p>因此可以得到轉移方程</p>
+          $$dp[i][j] = \min\!\bigl(dp[i-1][j],\; dp[i][j-1]\bigr) + grid[i][j]$$
+
+          <div class="code-wrapper">
+            <pre><code class="language-cpp">class Solution {
+public:
+    int minPathSum(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
+        int m = grid.size(), n = grid[0].size();
+        vector&lt;vector&lt;int&gt;&gt; dp(m, vector&lt;int&gt;(n, INT_MAX));
+        dp[0][0] = 0; // 初始值為 0，而不是 grid[0][0]
+        for(int i = 0; i &lt; m; ++i) {
+            for(int j = 0; j &lt; n; ++j) {
+                if(i - 1 &gt;= 0) dp[i][j] = dp[i - 1][j];
+                if(j - 1 &gt;= 0) dp[i][j] = min(dp[i][j], dp[i][j - 1]);
+                dp[i][j] += grid[i][j];
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+};</code></pre>
+            <button class="copy-code-btn" title="複製程式碼"><i class="bx bx-copy"></i></button>
+          </div>
+
+          <h3 id="dp-complexity">複雜度分析</h3>
+          <ul>
+            <li>時間複雜度：\(O(mn)\)，每個位置都被算一次。</li>
+            <li>空間複雜度：\(O(mn)\)，需要存下每個位置。</li>
+          </ul>
+
+          <hr>
+
+          <h3 id="compression">狀態壓縮</h3>
+          <p>最後，在更新 <code>dp</code> 矩陣時，被更新的數值會從左到右更新，然後來到下一行。<br>
+          更新時，只會用到上一排的數值，和左邊的數值，因此只需要存這些「會被用到的資料」就好，<br>
+          因此能壓縮矩陣，變成一維的樣子。</p>
+          <p>更新的寫法不同是因為一旦更新，前面一排的數據就丟失了。</p>
+
+          <div class="code-wrapper">
+            <pre><code class="language-cpp">class Solution {
+public:
+    int minPathSum(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
+        int m = grid.size(), n = grid[0].size();
+        vector&lt;int&gt; dp(n, INT_MAX);
+        dp[0] = 0;
+        for(int i = 0; i &lt; m; ++i) {
+            for(int j = 0; j &lt; n; ++j) {
+                if(i - 1 &gt;= 0 &amp;&amp; j - 1 &gt;= 0) {
+                    dp[j] = min(dp[j], dp[j - 1]); // dp[j] = dp[i-1][j]
+                }
+                else if(j - 1 &gt;= 0) {
+                    dp[j] = dp[j - 1]; // dp[j-1] = dp[i][j-1]
+                }
+                dp[j] += grid[i][j];
+            }
+        }
+        return dp.back();
+    }
+};</code></pre>
+            <button class="copy-code-btn" title="複製程式碼"><i class="bx bx-copy"></i></button>
+          </div>
+
+        </article>
+      </div>
+    </main>
+
+    <!-- TOC -->
+    <aside class="toc-sidebar">
+      <div class="toc-container">
+        <p class="toc-title">ON THIS PAGE</p>
+        <ul class="toc-list">
+          <li class="toc-item depth-2"><a href="#memoization">記憶化搜索</a></li>
+          <li class="toc-item depth-3"><a href="#memo-complexity">複雜度分析</a></li>
+          <li class="toc-item depth-2"><a href="#dp">動態規劃</a></li>
+          <li class="toc-item depth-3"><a href="#dp-complexity">複雜度分析</a></li>
+          <li class="toc-item depth-3"><a href="#compression">狀態壓縮</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  </div><!-- article-layout -->
+</div><!-- page-shell -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<script>
+  // 語法高亮
+  hljs.highlightAll();
+
+  // KaTeX 數學公式
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$',  right: '$',  display: false },
+      { left: '\\(', right: '\\)', display: false },
+      { left: '\\[', right: '\\]', display: true }
+    ],
+    throwOnError: false
+  });
+
+  // 複製按鈕
+  document.querySelectorAll('.copy-code-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const pre = btn.parentElement.querySelector('pre');
+      const text = pre?.innerText || '';
+      await navigator.clipboard.writeText(text);
+      btn.innerHTML = '<i class="bx bx-check"></i>';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = '<i class="bx bx-copy"></i>';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  });
+
+  // TOC active highlight on scroll
+  const headings = document.querySelectorAll('.article-body h2[id], .article-body h3[id]');
+  const tocLinks = document.querySelectorAll('.toc-item a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`.toc-item a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '0px 0px -60% 0px' });
+
+  headings.forEach(h => observer.observe(h));
+</script>
+
+</body>
+</html>
