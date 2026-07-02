@@ -164,11 +164,26 @@ const postsJson = JSON.stringify(posts).replace(/</g, "\\u003c");
     const urlParams = new URLSearchParams(window.location.search);
     const categoryParam = urlParams.get("category");
 
+    // 初始狀態主動從 localStorage 讀取（不依賴各 dropdown 的初始事件推送，
+    // 避免 module script 執行順序造成的競態）。後續變更才走事件。
+    const [savedField, savedOrder] = (
+      localStorage.getItem(STORAGE_KEYS.sortPreference) || "id-asc"
+    ).split("-");
+    let currentSortField = savedField as SortConfig["field"];
+    let currentSortOrder = savedOrder as SortConfig["order"];
+    let currentDifficulty =
+      localStorage.getItem(STORAGE_KEYS.difficultyPreference) || "all";
+
     let selectedTags = new Set<string>();
     let filterLogic: "AND" | "OR" = "AND";
-    let currentSortField: SortConfig["field"] = "id";
-    let currentSortOrder: SortConfig["order"] = "asc";
-    let currentDifficulty = "all";
+    try {
+      const tagPref = JSON.parse(
+        localStorage.getItem(STORAGE_KEYS.tagPreference) || "{}"
+      );
+      if (Array.isArray(tagPref.tags)) selectedTags = new Set(tagPref.tags);
+      if (tagPref.logic === "OR") filterLogic = "OR";
+    } catch {}
+
     let currentCategory = categoryParam || "leetcode";
     let isEnglish = localStorage.getItem(STORAGE_KEYS.isEnglish) === "true";
 
