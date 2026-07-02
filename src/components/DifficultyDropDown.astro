@@ -83,6 +83,7 @@ const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
 
 <script>
     import { getSettingsManager } from "../scripts/settingsManager";
+    import { STORAGE_KEYS, EVENTS } from "../constants";
 
     const diffBtn = document.getElementById("diff-btn");
     const diffMenu = document.getElementById("diff-menu");
@@ -132,7 +133,7 @@ const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
     updateDropdownVisibility(params.get("category"));
 
     settings.register({
-        key: "difficultyPreference",
+        key: STORAGE_KEYS.difficultyPreference,
         type: "select",
         defaultValue: "all",
         onApply: (value) => {
@@ -155,7 +156,7 @@ const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
 
                         // Force update text now
                         const isEnglish =
-                            localStorage.getItem("isEnglish") === "true";
+                            localStorage.getItem(STORAGE_KEYS.isEnglish) === "true";
                         updateLabelText(diffLabel as HTMLElement, isEnglish);
                     }
                 } else {
@@ -164,7 +165,7 @@ const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
             });
 
             // 3. Dispatch Event
-            const event = new CustomEvent("difficulty-change", {
+            const event = new CustomEvent(EVENTS.difficultyChange, {
                 detail: {
                     value,
                 },
@@ -185,31 +186,15 @@ const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
             e.stopPropagation();
             // @ts-ignore
             const value = e.target.dataset.value;
-            settings.set("difficultyPreference", value);
+            settings.set(STORAGE_KEYS.difficultyPreference, value);
 
             // Close menu
             diffMenu?.classList.remove("show");
         });
     });
 
-    // Listen for language change to update current label and dropdown items
-    document.addEventListener("language-change", (e: any) => {
-        const isEnglish = e.detail.isEnglish;
-
-        // Update main label
-        updateLabelText(diffLabel as HTMLElement, isEnglish);
-
-        // Update dropdown options
-        diffOptions.forEach((opt) => {
-            updateLabelText(opt as HTMLElement, isEnglish);
-        });
-    });
-
-    // Initial sync
-    const initialIsEnglish = localStorage.getItem("isEnglish") === "true";
-    diffOptions.forEach((opt) => {
-        updateLabelText(opt as HTMLElement, initialIsEnglish);
-    });
+    // 語言切換與初始同步由 LanguageToggle 的泛用 [data-cn]/[data-en] 機制處理，
+    // 此處不需重複監聽 language-change。
 </script>
 
 <style>

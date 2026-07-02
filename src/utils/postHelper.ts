@@ -3,16 +3,6 @@ import type { PostEntry } from "../types";
 
 const tagMap: Record<string, string> = tagMapping;
 
-// 根據日期排序文章 (新 -> 舊)
-export function sortPostsByDate(posts: PostEntry[]) {
-    return posts.sort(
-        (a, b) =>
-            new Date(b.data.date).valueOf() -
-            new Date(a.data.date).valueOf(),
-    );
-}
-
-// 根據題號排序文章 (小 -> 大)
 // 根據題號排序文章 (小 -> 大)
 export function sortPostsById(posts: PostEntry[]) {
     return posts.sort((a, b) => {
@@ -96,11 +86,6 @@ export function getAllUniqueDifficulties(posts: PostEntry[]) {
     });
 
     return sorted;
-}
-
-// 保持向下兼容 (雖然主要建議用 getTagCN)
-export function translateTag(tag: string) {
-    return getTagCN(tag);
 }
 
 // 過濾掉隱藏的文章 (例如 .模板.md)

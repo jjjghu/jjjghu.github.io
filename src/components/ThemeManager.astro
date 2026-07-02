@@ -2,12 +2,6 @@
 import "../styles/dropdown.css";
 import "../styles/utilities.css";
 import "../styles/component-base.css";
-
-const OFFICIAL_THEMES = [
-  { id: 'dark',  name: '深色主題 (Dark)',  path: '/styles/themes/dark.css' },
-  { id: 'light', name: '淺色主題 (Light)', path: '/styles/themes/light.css' },
-  { id: 'game',  name: '遊戲主題 (Game)',  path: '/styles/themes/game.css' },
-];
 ---
 
 <div class="theme-manager-container">
@@ -59,35 +53,31 @@ const OFFICIAL_THEMES = [
 
 <script>
   import { getSettingsManager } from '../scripts/settingsManager';
+  import { OFFICIAL_THEMES, DEFAULT_THEME_ID } from '../themes';
+  import { STORAGE_KEYS } from '../constants';
 
   const settings = getSettingsManager();
 
-  const OFFICIAL_THEMES = [
-    { id: 'dark',  name: '深色主題 (Dark)',  path: '/styles/themes/dark.css',  source: 'official' },
-    { id: 'light', name: '淺色主題 (Light)', path: '/styles/themes/light.css', source: 'official' },
-    { id: 'game',  name: '遊戲主題 (Game)',  path: '/styles/themes/game.css',  source: 'official' },
-  ];
-
   settings.register({
-    key: 'customThemes',
+    key: STORAGE_KEYS.customThemes,
     type: 'text',
     defaultValue: JSON.stringify([]),
     onApply: () => renderAllThemes(),
   });
 
   settings.register({
-    key: 'activeThemeId',
+    key: STORAGE_KEYS.activeThemeId,
     type: 'text',
-    defaultValue: 'dark',
+    defaultValue: DEFAULT_THEME_ID,
     onApply: () => renderAllThemes(),
   });
 
   function getCustomThemes() {
-    return JSON.parse(settings.get('customThemes') as string || '[]');
+    return JSON.parse(settings.get(STORAGE_KEYS.customThemes) as string || '[]');
   }
 
   function getActiveId() {
-    return (settings.get('activeThemeId') as string) || 'dark';
+    return (settings.get(STORAGE_KEYS.activeThemeId) as string) || DEFAULT_THEME_ID;
   }
 
   function renderAllThemes() {
@@ -96,7 +86,7 @@ const OFFICIAL_THEMES = [
     const customThemes = getCustomThemes();
 
     const allThemes = [
-      ...OFFICIAL_THEMES,
+      ...OFFICIAL_THEMES.map((t) => ({ ...t, source: 'official' })),
       ...customThemes.map((t: any) => ({ ...t, source: 'custom' })),
     ];
 
@@ -130,7 +120,7 @@ const OFFICIAL_THEMES = [
       card.addEventListener('click', (e) => {
         if ((e.target as HTMLElement).closest('.theme-delete-btn')) return;
         const id = (card as HTMLElement).dataset.id!;
-        settings.set('activeThemeId', id);
+        settings.set(STORAGE_KEYS.activeThemeId, id);
         applyTheme(id);
       });
     });
@@ -142,11 +132,11 @@ const OFFICIAL_THEMES = [
         const id = (btn as HTMLElement).dataset.id!;
         if (!confirm('確定要刪除這個主題嗎？')) return;
         const filtered = getCustomThemes().filter((t: any) => t.id !== id);
-        settings.set('customThemes', JSON.stringify(filtered));
+        settings.set(STORAGE_KEYS.customThemes, JSON.stringify(filtered));
         // 若刪除的是當前主題，回到預設
         if (getActiveId() === id) {
-          settings.set('activeThemeId', 'dark');
-          applyTheme('dark');
+          settings.set(STORAGE_KEYS.activeThemeId, DEFAULT_THEME_ID);
+          applyTheme(DEFAULT_THEME_ID);
         }
       });
     });
@@ -159,14 +149,15 @@ const OFFICIAL_THEMES = [
     // 移除 html.light class
     document.documentElement.classList.remove('light');
 
-    if (id === 'dark') return; // dark 是預設，不需注入
+    if (id === DEFAULT_THEME_ID) return; // 預設主題不需注入
 
     // 官方主題：fetch 後注入
     const official = OFFICIAL_THEMES.find(t => t.id === id);
     if (official) {
+      if (!official.path) return;
       fetch(official.path)
         .then(r => r.text())
-        .then(css => injectCSS(id, css, id === 'light'));
+        .then(css => injectCSS(id, css, !!official.isLight));
       return;
     }
 
@@ -233,7 +224,7 @@ const OFFICIAL_THEMES = [
       css,
       source: 'custom',
     });
-    settings.set('customThemes', JSON.stringify(themes));
+    settings.set(STORAGE_KEYS.customThemes, JSON.stringify(themes));
 
     (document.getElementById('theme-name') as HTMLInputElement).value = '';
     (document.getElementById('theme-tags') as HTMLInputElement).value = '';

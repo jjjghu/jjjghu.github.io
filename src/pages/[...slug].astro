@@ -75,6 +75,8 @@ const tags = post.data.tags || [];
     </div>
 
     <script>
+        import { STORAGE_KEYS, EVENTS } from "../constants";
+
         const postLink = document.getElementById("post-link");
         let isEnglish = false;
 
@@ -95,10 +97,10 @@ const tags = post.data.tags || [];
         }
 
         // Init
-        updatePostLink(localStorage.getItem("isEnglish") === "true");
+        updatePostLink(localStorage.getItem(STORAGE_KEYS.isEnglish) === "true");
 
         // Listen for global change
-        document.addEventListener("language-change", (e) => {
+        document.addEventListener(EVENTS.languageChange, (e) => {
             // @ts-ignore
             updatePostLink(e.detail.isEnglish);
         });

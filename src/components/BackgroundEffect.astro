@@ -2,73 +2,10 @@
 
 ---
 
-<div id="ambient-light" class="ambient-light"></div>
-<div id="bg-pattern" class="bg-pattern"></div>
 <div id="spotlight" class="spotlight"></div>
 
 <style>
-    /* 1. Ambient Light */
-    .ambient-light {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 500px;
-        pointer-events: none;
-        z-index: -2; /* Behind everything */
-        background: radial-gradient(
-            circle at 50% 0%,
-            rgba(112, 160, 255, 0.15),
-            transparent 70%
-        );
-        opacity: 0; /* Hidden by default */
-        transition: opacity 0.5s ease;
-    }
-
-    :global(html.bg-lines-enabled) .ambient-light {
-        opacity: 0.6;
-    }
-
-    /* 2. Background Pattern */
-    .bg-pattern {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -3; /* Behind ambient light */
-        pointer-events: none;
-        background-image:
-            linear-gradient(
-                color-mix(in srgb, var(--color-accent-fg) 10%, transparent) 1px,
-                transparent 1px
-            ),
-            linear-gradient(
-                90deg,
-                color-mix(in srgb, var(--color-accent-fg) 10%, transparent) 1px,
-                transparent 1px
-            );
-
-        background-size: 50px 50px;
-        mask-image: radial-gradient(
-            circle at center top,
-            black 40%,
-            transparent 100%
-        );
-        -webkit-mask-image: radial-gradient(
-            circle at center top,
-            black 40%,
-            transparent 100%
-        );
-        opacity: 0;
-        transition: opacity 0.5s ease;
-    }
-
-    :global(html.bg-lines-enabled) .bg-pattern {
-        opacity: 1;
-    }
-
-    /* 3. Spotlight (Mouse Follower) */
+    /* Spotlight (Mouse Follower) */
     .spotlight {
         position: fixed;
         top: 0;
@@ -77,7 +14,7 @@
         height: 600px;
         background: radial-gradient(
             circle,
-            var(--color-accent-fg-alpha-10, rgba(112, 160, 255, 0.1)) 0%,
+            color-mix(in srgb, var(--color-accent-fg) 10%, transparent) 0%,
             transparent 70%
         );
         transform: translate(-50%, -50%);
@@ -89,13 +26,6 @@
 
     :global(html.spotlight-enabled) .spotlight {
         opacity: 1;
-    }
-
-    /* Light Mode Adjustment */
-    :global(html.light) .bg-pattern {
-        background-image:
-            linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
     }
 </style>
 
@@ -113,34 +43,4 @@
             }
         });
     }
-
-    // Dynamic accent color for ambient light (using CSS variables if possible, or just relying on opacity)
-    // To support Custom Theme Color impacting the Ambient Light:
-    // We can update a CSS variable whenever the theme color changes.
-    // SettingIcon.astro sets --color-accent-fg.
-    // We can use color-mix to generate the transparent versions if browser supports it (modern browsers do).
-
-    // In style block above, I used a fallback variable.
-    // Let's inject a small script to update CSS variables for alpha channels if needed,
-    // OR just use color-mix in CSS:
-    // background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--color-accent-fg) 15%, transparent), transparent 70%);
 </script>
-
-<style>
-    /* Update CSS to use color-mix for dynamic theme support */
-    .ambient-light {
-        background: radial-gradient(
-            circle at 50% 0%,
-            color-mix(in srgb, var(--color-accent-fg) 15%, transparent),
-            transparent 70%
-        );
-    }
-
-    .spotlight {
-        background: radial-gradient(
-            circle,
-            color-mix(in srgb, var(--color-accent-fg) 10%, transparent) 0%,
-            transparent 70%
-        );
-    }
-</style>

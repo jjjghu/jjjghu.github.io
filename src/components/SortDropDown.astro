@@ -54,6 +54,7 @@ import { UI_TEXT } from "../i18n/ui";
 
 <script>
     import { getSettingsManager } from "../scripts/settingsManager";
+    import { STORAGE_KEYS, EVENTS } from "../constants";
 
     const sortBtn = document.getElementById("sort-btn");
     const sortMenu = document.getElementById("sort-menu");
@@ -64,7 +65,7 @@ import { UI_TEXT } from "../i18n/ui";
     const settings = getSettingsManager();
 
     settings.register({
-        key: "sortPreference",
+        key: STORAGE_KEYS.sortPreference,
         type: "select", // effectively string
         defaultValue: "id-asc",
         onApply: (value) => {
@@ -95,7 +96,7 @@ import { UI_TEXT } from "../i18n/ui";
             });
 
             // 3. Dispatch Event
-            const event = new CustomEvent("sort-change", {
+            const event = new CustomEvent(EVENTS.sortChange, {
                 detail: {
                     field,
                     order,
@@ -121,7 +122,7 @@ import { UI_TEXT } from "../i18n/ui";
             const order = e.target.dataset.order;
 
             const value = `${field}-${order}`;
-            settings.set("sortPreference", value);
+            settings.set(STORAGE_KEYS.sortPreference, value);
 
             // Close menu
             sortMenu?.classList.remove("show");

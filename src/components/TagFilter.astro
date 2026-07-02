@@ -90,6 +90,7 @@ const { tags } = Astro.props;
 
 <script>
     import { getSettingsManager } from "../scripts/settingsManager";
+    import { STORAGE_KEYS, EVENTS } from "../constants";
 
     // Initialize Settings
     const settings = getSettingsManager();
@@ -116,7 +117,7 @@ const { tags } = Astro.props;
 
     // Register Setting
     settings.register({
-        key: "tagPreference",
+        key: STORAGE_KEYS.tagPreference,
         type: "select", // complex object stored as string/json
         defaultValue: JSON.stringify({ tags: [], logic: "AND" }),
         onApply: (value) => {
@@ -154,7 +155,7 @@ const { tags } = Astro.props;
             updateBadge();
 
             // 4. Update Logic UI
-            const isEnglish = localStorage.getItem("isEnglish") === "true";
+            const isEnglish = localStorage.getItem(STORAGE_KEYS.isEnglish) === "true";
             const cnText =
                 filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
             const enText =
@@ -181,7 +182,7 @@ const { tags } = Astro.props;
             tags: Array.from(selectedTags),
             logic: filterLogic,
         };
-        settings.set("tagPreference", JSON.stringify(state));
+        settings.set(STORAGE_KEYS.tagPreference, JSON.stringify(state));
     }
 
     // --- 1. Dropdown Toggle ---
@@ -291,7 +292,7 @@ const { tags } = Astro.props;
     }
 
     function dispatchChange() {
-        const event = new CustomEvent("tag-filter-change", {
+        const event = new CustomEvent(EVENTS.tagFilterChange, {
             detail: {
                 selectedTags: Array.from(selectedTags),
                 logic: filterLogic,

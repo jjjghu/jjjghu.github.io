@@ -368,27 +368,28 @@ import { UI_TEXT } from "../i18n/ui";
 
 <script>
   import { getSettingsManager } from "../scripts/settingsManager";
+  import { STORAGE_KEYS } from "../constants";
 
   // Initialize Manager
   const settings = getSettingsManager();
 
   // 1. Register Settings
   settings.register({
-    key: "hoverGlowEnabled",
+    key: STORAGE_KEYS.hoverGlowEnabled,
     type: "boolean",
     defaultValue: true, // Based on previous user preference or default
     cssClass: "hover-glow-enabled",
   });
 
   settings.register({
-    key: "spotlightEnabled",
+    key: STORAGE_KEYS.spotlightEnabled,
     type: "boolean",
     defaultValue: false,
     cssClass: "spotlight-enabled",
   });
 
   settings.register({
-    key: "customAccentColor",
+    key: STORAGE_KEYS.customAccentColor,
     type: "color",
     defaultValue: null,
     cssVar: "--color-accent-fg",
@@ -408,8 +409,8 @@ import { UI_TEXT } from "../i18n/ui";
     }
   }
 
-  bindToggle("hover-glow-toggle", "hoverGlowEnabled");
-  bindToggle("spotlight-toggle", "spotlightEnabled");
+  bindToggle("hover-glow-toggle", STORAGE_KEYS.hoverGlowEnabled);
+  bindToggle("spotlight-toggle", STORAGE_KEYS.spotlightEnabled);
 
   // 3. Bind Color Picker
   const colorPicker = document.getElementById("theme-color-picker");
@@ -417,7 +418,7 @@ import { UI_TEXT } from "../i18n/ui";
 
   if (colorPicker) {
     // Init
-    const savedColor = settings.get("customAccentColor");
+    const savedColor = settings.get(STORAGE_KEYS.customAccentColor);
     if (savedColor) {
       (colorPicker as HTMLInputElement).value = savedColor;
     } else {
@@ -430,13 +431,13 @@ import { UI_TEXT } from "../i18n/ui";
 
     // Change
     colorPicker.addEventListener("input", (e) => {
-      settings.set("customAccentColor", (e.target as HTMLInputElement).value);
+      settings.set(STORAGE_KEYS.customAccentColor, (e.target as HTMLInputElement).value);
     });
   }
 
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
-      settings.reset("customAccentColor");
+      settings.reset(STORAGE_KEYS.customAccentColor);
       // Update picker visual
       setTimeout(() => {
         const computed = getComputedStyle(document.documentElement)
@@ -452,7 +453,7 @@ import { UI_TEXT } from "../i18n/ui";
     mutations.forEach((mutation) => {
       if (
         mutation.attributeName === "class" &&
-        !settings.get("customAccentColor")
+        !settings.get(STORAGE_KEYS.customAccentColor)
       ) {
         const defaultColor = getComputedStyle(document.documentElement)
           .getPropertyValue("--color-accent-fg")

@@ -1,4 +1,4 @@
-export type SettingType = 'boolean' | 'color' | 'range' | 'select';
+export type SettingType = 'boolean' | 'color' | 'range' | 'select' | 'text';
 
 export interface SettingConfig {
     key: string;            // localStorage key

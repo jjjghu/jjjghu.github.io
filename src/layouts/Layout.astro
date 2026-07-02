@@ -14,10 +14,18 @@ import BackgroundEffect from "../components/BackgroundEffect.astro";
 import type { MarkdownHeading } from "astro";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { OFFICIAL_THEMES, DEFAULT_THEME_ID } from "../themes";
+import { STORAGE_KEYS } from "../constants";
 
 // 在 build time 讀取官方主題 CSS，嵌入 head 腳本避免 FOUC
-const lightCSS = readFileSync(join(process.cwd(), "public/styles/themes/light.css"), "utf-8");
-const gameCSS  = readFileSync(join(process.cwd(), "public/styles/themes/game.css"),  "utf-8");
+const themeCSS = Object.fromEntries(
+  OFFICIAL_THEMES.filter((t) => t.path).map((t) => [
+    t.id,
+    readFileSync(join(process.cwd(), "public", t.path!), "utf-8"),
+  ])
+);
+const lightThemeIds = OFFICIAL_THEMES.filter((t) => t.isLight).map((t) => t.id);
+const defaultThemeId = DEFAULT_THEME_ID;
 
 interface Props {
   title: string;
@@ -74,7 +82,7 @@ const showTOC = headings && headings.length > 0;
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
-    <script is:inline define:vars={{ lightCSS, gameCSS }}>
+    <script is:inline define:vars={{ themeCSS, lightThemeIds, defaultThemeId, K: STORAGE_KEYS }}>
       // 同步執行，在任何內容渲染前套用主題與設定，避免 FOUC
       (function () {
         if (typeof localStorage === "undefined") return;
@@ -82,14 +90,13 @@ const showTOC = headings && headings.length > 0;
         const root = document.documentElement;
 
         // 1. 主題（官方主題 CSS 已在 build time 嵌入，不需要 fetch）
-        const activeId = localStorage.getItem("activeThemeId") || "dark";
+        const activeId = localStorage.getItem(K.activeThemeId) || defaultThemeId;
         root.classList.remove("light");
 
-        if (activeId !== "dark") {
-          const officialCSS = { light: lightCSS, game: gameCSS }[activeId];
-          const css = officialCSS ?? (() => {
+        if (activeId !== defaultThemeId) {
+          const css = themeCSS[activeId] ?? (() => {
             try {
-              const customs = JSON.parse(localStorage.getItem("customThemes") || "[]");
+              const customs = JSON.parse(localStorage.getItem(K.customThemes) || "[]");
               return (customs.find((t) => t.id === activeId) || {}).css || null;
             } catch { return null; }
           })();
@@ -99,18 +106,23 @@ const showTOC = headings && headings.length > 0;
             el.textContent = css;
             el.dataset.themeId = activeId;
             document.head.appendChild(el);
+            // dev 模式 Vite 會在本腳本之後才插入全域樣式，導致主題被蓋掉；
+            // DOM ready 後把主題樣式移到 body 尾端，文件順序永遠最後
+            document.addEventListener("DOMContentLoaded", () => {
+              document.body.appendChild(el);
+            });
           }
-          if (activeId === "light") root.classList.add("light");
+          if (lightThemeIds.includes(activeId)) root.classList.add("light");
         }
 
         // 2. Accent Color
-        const savedColor = localStorage.getItem("customAccentColor");
+        const savedColor = localStorage.getItem(K.customAccentColor);
         if (savedColor) {
           root.style.setProperty("--color-accent-fg", savedColor);
         }
 
         // 3. Global Toggles
-        ["hoverGlowEnabled", "spotlightEnabled"].forEach((key) => {
+        [K.hoverGlowEnabled, K.spotlightEnabled].forEach((key) => {
           const className = key.replace(/([A-Z])/g, "-$1").toLowerCase();
           if (localStorage.getItem(key) === "true") {
             root.classList.add(className);
