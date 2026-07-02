@@ -36,7 +36,9 @@
 
 /* --- Dropdown Menu --- */
 .dropdown-menu {
-  position: absolute;
+  /* position 是結構行為（浮層），不是外觀。用 !important 鎖住，避免自訂主題
+     把它誤設成 relative/static，導致展開時把周邊頁面內容推開。 */
+  position: absolute !important;
   top: 110%;
   background-color: var(--color-canvas-overlay);
   border: 1px solid var(--color-border-default);

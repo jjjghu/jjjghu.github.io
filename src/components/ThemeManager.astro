@@ -37,7 +37,12 @@ import "../styles/component-base.css";
           <button id="load-template-btn" class="template-btn" type="button">套入變數模板</button>
         </div>
         <p class="field-desc">
-          覆寫下方 CSS 變數來改變整個網站的外觀。不需要全部填寫，只填想修改的部分即可。
+          點「套入變數模板」載入完整的變數清單，填入你想要的色彩即可改變整個網站外觀。
+          不確定怎麼配色？把模板整段貼給 ChatGPT、Claude 等 AI，描述你想要的風格
+          （例如「暗色霓虹賽博龐克」），請它填好所有變數後貼回這裡即可。
+          想做更進階的主題（斜切邊框、背景紋理、發光等）？參考
+          <a href="/theme-authoring.html" target="_blank" rel="noopener">主題製作指南</a>，
+          可整份貼給 AI 產出完整主題。
         </p>
         <textarea id="theme-css" placeholder="貼入你的 CSS 代碼，或點擊「套入變數模板」開始編輯..." class="textarea-field" rows="14"></textarea>
       </div>
@@ -178,23 +183,50 @@ import "../styles/component-base.css";
     }
   }
 
-  // 套入變數模板
-  const CSS_TEMPLATE = `/* 主題名稱：修改這裡 */
+  // 套入變數模板：完整列出所有可覆寫的變數，方便直接編輯或交給 AI 填色。
+  const CSS_TEMPLATE = `/* ================================================================
+   自訂主題模板
+   ----------------------------------------------------------------
+   給 AI 的說明：這是一個網站的完整主題色彩變數表。請根據我描述的風格，
+   把下列每一個變數都填上恰當的顏色值（rgb()、hex 或 hsl 皆可），
+   維持良好的對比與可讀性，並直接回傳整段可貼回的 CSS。
+   ================================================================ */
 :root {
-  /* ── 背景 ─────────────────────────────── */
-  --color-canvas-default: rgb(13, 17, 23);   /* 頁面底色 */
-  --color-canvas-subtle:  rgb(22, 27, 34);   /* 卡片、輸入框背景 */
-  --color-canvas-overlay: rgb(33, 38, 45);   /* 下拉選單、彈窗背景 */
+  /* ── 背景（由深到淺）───────────────────────────── */
+  --color-page-bg:        rgb(13, 17, 23);   /* 整個頁面的最底層背景 */
+  --color-canvas-default: rgb(13, 17, 23);   /* 主要內容區背景 */
+  --color-canvas-subtle:  rgb(22, 27, 34);   /* 程式碼區塊、輸入框背景 */
+  --color-canvas-overlay: rgb(33, 38, 45);   /* 下拉選單、彈窗背景（最上層）*/
   --color-card-bg:        rgb(22, 27, 34);   /* 文章卡片背景 */
 
-  /* ── 邊框 ─────────────────────────────── */
-  --color-border-default: rgb(48, 54, 61);   /* 一般邊框 */
-  --color-border-muted:   rgb(33, 38, 45);   /* 次要邊框、分隔線 */
+  /* ── 邊框與分隔線 ─────────────────────────────── */
+  --color-border-default: rgb(48, 54, 61);   /* 一般邊框（卡片、按鈕）*/
+  --color-border-muted:   rgb(33, 38, 45);   /* 次要邊框、標題下分隔線 */
+  --color-neutral-muted:  rgba(35, 43, 53, 0.2); /* 行內程式碼背景 */
+  --color-border-neutral: rgb(65, 73, 82);   /* 行內程式碼邊框 */
 
-  /* ── 文字 ─────────────────────────────── */
+  /* ── 文字 ─────────────────────────────────────── */
   --color-fg-default: rgb(201, 209, 217);    /* 主要文字 */
   --color-fg-muted:   rgb(139, 148, 158);    /* 次要文字、說明 */
-  --color-accent-fg:  rgb(112, 160, 255);    /* 連結、強調色 */
+  --color-accent-fg:  rgb(112, 160, 255);    /* 連結、強調色、focus 高亮 */
+
+  /* ── 難度標籤色（題目列表用）───────────────────── */
+  --diff-gray:   #9ca3af;
+  --diff-red:    #f87171;
+  --diff-orange: #fb923c;
+  --diff-yellow: #facc15;
+  --diff-green:  #4ade80;
+  --diff-blue:   #60a5fa;
+  --diff-purple: #c084fc;
+  --diff-black:  #e2e8f0;
+
+  /* ── LeetCode 官方難度色 ──────────────────────── */
+  --leetcode-easy:   #00B8A3;
+  --leetcode-medium: #FFC01E;
+  --leetcode-hard:   #FF375F;
+
+  /* ── 背景不透明度（100% = 完全不透明，可調低做半透明玻璃感）── */
+  --bg-overlay-alpha: 100%;
 }`;
 
   document.getElementById('load-template-btn')?.addEventListener('click', () => {

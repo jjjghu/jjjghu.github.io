@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>主題製作指南</title>
+<style>
+  body {
+    margin: 0; padding: 2rem;
+    background: #0d1117; color: #c9d1d9;
+    font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 1.4rem; }
+  p { color: #8b949e; }
+  .bar { display: flex; gap: 0.75rem; align-items: center; margin: 1rem 0; }
+  button {
+    background: #238636; color: #fff; border: 0; border-radius: 6px;
+    padding: 0.55rem 1.1rem; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  }
+  button:hover { background: #2ea043; }
+  #status { color: #3fb950; font-size: 0.9rem; }
+  textarea {
+    width: 100%; height: 70vh; box-sizing: border-box;
+    background: #161b22; color: #c9d1d9;
+    border: 1px solid #30363d; border-radius: 8px; padding: 1rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem; line-height: 1.5; resize: vertical;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>主題製作指南</h1>
+  <p>把下方整段內容複製，連同你想要的風格描述貼給 ChatGPT、Claude 等 AI，即可產出完整主題 CSS，再貼回主題頁的「CSS 代碼」欄位。</p>
+  <div class="bar">
+    <button id="copy">複製全部</button>
+    <span id="status"></span>
+  </div>
+  <textarea id="content" readonly># 主題製作指南（可整份貼給 AI）
+
+這份文件描述本網站的樣式契約。若你想做出像「遊戲主題」那種不只換色、還有斜切邊框／發光／背景紋理的進階主題，把這整份文件連同你想要的風格描述貼給 ChatGPT、Claude 等 AI，請它產出完整 CSS，再貼回主題頁的「CSS 代碼」欄位即可。
+
+====================================================================
+給 AI 的任務
+====================================================================
+以下是一個以 Astro 建置的解題筆記網站的完整樣式契約。請根據我描述的風格「＿＿（在這裡寫你想要的風格，例如：暗色霓虹賽博龐克、溫暖的紙張擬物風、極簡黑白）＿＿」，產出一份完整的自訂主題 CSS。要求：
+1. 覆寫「可覆寫變數」章節列出的每一個 :root 變數，維持良好對比與可讀性。
+2. 若風格需要，額外針對「DOM 結構與可掛載點」章節的 selector 撰寫裝飾性樣式（邊框、圓角、陰影、背景紋理、hover 效果等）。
+3. 覆寫元件外觀的視覺屬性時一律加 !important（原因見「注入機制與優先權」）。
+4. 直接回傳一整段可貼上的 CSS，不要拆段說明。
+
+====================================================================
+注入機制與優先權（重要）
+====================================================================
+- 自訂主題的 CSS 會被注入到頁面 <body> 的最尾端，cascade 順序排在所有網站樣式之後。
+- 但本站部分樣式來自 Astro 元件的 scoped style，選擇器會被自動加上 [data-astro-cid-xxx] 屬性，specificity 較高（約 0,2,0）。純 class 選擇器 0,1,0 蓋不過它們。
+- 結論：覆寫元件外觀時，視覺屬性請加 !important（例如 border-radius: 0 !important;）。只覆寫 :root 變數則不需要。
+- 不要對 .fouc-loading、#post-list、.filter-bar 動 opacity / display，那是防閃爍機制會壞掉。
+
+只改「外觀」，不要碰「版面與行為」屬性（重要，最常見的錯誤）：
+- 可以改：color、background、border 的顏色與寬度、border-radius、box-shadow、text-shadow、clip-path、filter、opacity。
+- 不要改：position、top / right / bottom / left、display、float、z-index、overflow。這些是版面結構，改了會讓元件錯位或行為壞掉。
+- 特別注意 .dropdown-menu（排序、難度下拉選單）是 position: absolute 的浮層。千萬不要把它設成 position: relative 或 static，否則選單展開時會把整頁內容往下推開。
+- 下方「斜切雙層描邊」技巧裡的 position: relative 只能用在原本就是一般區塊的元素（例如 .post-card、.file-list-container）。不要把 .dropdown-menu 和它們寫在同一組規則裡；.dropdown-menu 要維持 absolute，一樣可以做斜切（它本身已是定位元素，::before 的 inset 會正確對齊）。
+- 不要用 * 全域選擇器（例如 * { border-radius: 0 }）。它會誤傷不該改的元素、也影響效能。請列舉具體的 selector（例如 .interactive-container、.badge、pre、code）。
+
+====================================================================
+可覆寫變數（完整清單）
+====================================================================
+全部定義在 :root。純換色主題只需覆寫這些：
+
+:root {
+  /* 背景（由深到淺）*/
+  --color-page-bg:        rgb(13, 17, 23);   /* 頁面最底層 */
+  --color-canvas-default: rgb(13, 17, 23);   /* 主要內容區 */
+  --color-canvas-subtle:  rgb(22, 27, 34);   /* 程式碼區塊、輸入框 */
+  --color-canvas-overlay: rgb(33, 38, 45);   /* 下拉選單、彈窗 */
+  --color-card-bg:        rgb(22, 27, 34);   /* 文章卡片 */
+
+  /* 邊框與分隔線 */
+  --color-border-default: rgb(48, 54, 61);
+  --color-border-muted:   rgb(33, 38, 45);
+  --color-neutral-muted:  rgba(35, 43, 53, 0.2); /* 行內程式碼背景 */
+  --color-border-neutral: rgb(65, 73, 82);       /* 行內程式碼邊框 */
+
+  /* 文字 */
+  --color-fg-default: rgb(201, 209, 217);
+  --color-fg-muted:   rgb(139, 148, 158);
+  --color-accent-fg:  rgb(112, 160, 255);   /* 連結、強調、focus */
+
+  /* 難度標籤色（題目列表）*/
+  --diff-gray: #9ca3af;   --diff-red: #f87171;    --diff-orange: #fb923c;
+  --diff-yellow: #facc15; --diff-green: #4ade80;  --diff-blue: #60a5fa;
+  --diff-purple: #c084fc; --diff-black: #e2e8f0;
+
+  /* LeetCode 官方難度色 */
+  --leetcode-easy: #00B8A3; --leetcode-medium: #FFC01E; --leetcode-hard: #FF375F;
+
+  /* 背景不透明度（100%=不透明，可調低做半透明玻璃感）*/
+  --bg-overlay-alpha: 100%;
+}
+
+====================================================================
+DOM 結構與可掛載點
+====================================================================
+進階主題針對這些 selector 撰寫樣式。以下依區域列出，附 DOM 巢狀關係與角色。
+
+【全域 / 版面】
+html                     ← 可設整頁背景（漸層、圖片）
+body                     ← 內容背景；body::before / body::after 可鋪背景紋理（點陣、線條）
+main.content(.has-toc)   ← 主內容區；有目錄時加 .has-toc
+.site-header .nav-link(.active)   ← 頂部導覽；.active 為當前分類
+.site-footer             ← 頁尾
+#lang-toggle             ← 右下角語言切換鈕
+.toc-sidebar .toc-list .toc-item.depth-2/.depth-3   ← 文章目錄側欄
+
+【首頁題目列表】
+.page-container
+  .filter-bar                       ← 篩選列容器
+    .search-wrapper > input, .search-icon    ← 搜尋框
+    .dropdown-container
+      .dropdown-btn / .dropdown-menu / .dropdown-option(.active)  ← 排序/難度下拉
+      .dropdown-search-container > .dropdown-search-input
+    .badge[data-variant=tag] / .badge[data-variant=filter-chip]  ← 標籤 chip
+    .tag-chip input:checked + .badge   ← 選中的標籤
+    .result-count
+  .file-list-container              ← 列表外框（遊戲主題在此做斜切外框）
+    .file-list-header.post-list-grid ← 表頭
+    #post-list
+      .file-row.post-list-grid       ← 每一列題目；.file-row:hover
+        .col-title (.file-icon, .post-link, .title-text)
+        .col-difficulty (.difficulty-badge.diff-easy/medium/hard 或 .diff-0~7)
+        .col-tags (.badge[data-variant=tag])
+        .col-date
+
+【文章頁】
+.post-card                ← 文章外框卡片（遊戲主題在此做斜切 + 雙層描邊）
+  .post-header-row h1#post-title > a#post-link
+  .tags-container (.difficulty-badge, .badge[data-variant=tag])
+  article.article-body    ← Markdown 內文
+    h1 / h2 / h3
+    p / ul li::marker / ol li::marker
+    pre / code:not(pre code) / .copy-code-btn(.copied)
+    blockquote / hr
+    .katex / .katex-display   ← 數學公式
+
+【共用互動元件】
+.interactive-container(.sm/.md/.lg/.rounded)  ← 按鈕/標籤的基礎容器
+  變數：--interactive-py --interactive-px --interactive-radius --interactive-bg --interactive-fg
+.badge  變數：--badge-py --badge-px --badge-fs --badge-radius --badge-bg --badge-border --badge-fg
+
+====================================================================
+進階技巧速查（做「遊戲主題」等級的效果）
+====================================================================
+這些是「遊戲主題」用到的核心手法，AI 可直接沿用：
+
+1. 斜切角（chamfer）— 用 clip-path 把矩形切角：
+--chamfer: 10px;
+clip-path: polygon(var(--chamfer) 0, 100% 0, 100% calc(100% - var(--chamfer)),
+                   calc(100% - var(--chamfer)) 100%, 0 100%, 0 var(--chamfer));
+
+2. 斜切外框（描邊 + 內填雙層）— 外層填描邊色、::before 內縮 1px 填底色：
+.some-box { position: relative; isolation: isolate; clip-path: /* 見上 */;
+            background: 描邊漸層 !important; }
+.some-box::before { content:""; position:absolute; inset:1px; z-index:-1;
+                    clip-path: inherit; background: 底色; }
+   注意：.dropdown-menu 若要套用此技巧，position 必須保持 absolute（絕不能改成 relative）。
+
+3. 描邊疊在子元素之上（子元素背景會蓋住外框時用）— ::after + padding + mask 挖空中心：
+.some-box::after { content:""; position:absolute; inset:0; z-index:4;
+  pointer-events:none; padding:1px; clip-path:/* 同外框 */; background:描邊色;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; }
+
+4. 背景紋理 — 用 body::before / body::after 鋪點陣或斜線，配 mask-image 做邊緣淡出：
+body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: radial-gradient(circle, rgba(190,208,255,0.07) 1px, transparent 1.4px);
+  background-size: 13px 13px;
+  mask-image: radial-gradient(ellipse 100% 80% at 50% 25%, #000 35%, transparent 85%); }
+
+5. 移除全站圓角 — 若走硬邊風格：border-radius: 0 !important;
+   （針對 .interactive-container、.badge、pre、code 等）
+
+====================================================================
+完整範例
+====================================================================
+「遊戲主題」是一個完整的進階主題實例，直接在瀏覽器開啟即可查看整份原始碼，是最好的參考範本：
+
+    /styles/themes/game.css
+
+（把它連同本文件一起貼給 AI，請 AI 模仿其手法、換成你要的風格。）
+
+====================================================================
+完成前檢查
+====================================================================
+[ ] 每個 :root 變數都填了值
+[ ] 前景／背景對比足夠（正常閱讀不吃力）
+[ ] 覆寫元件外觀的規則都加了 !important
+[ ] 沒有動到 .fouc-loading / #post-list / .filter-bar 的 opacity 或 display
+[ ] 深色連結色與背景不會糊在一起
+</textarea>
+</div>
+<script>
+  const btn = document.getElementById("copy");
+  const status = document.getElementById("status");
+  btn.addEventListener("click", async () => {
+    const text = document.getElementById("content").value;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = document.getElementById("content");
+      ta.select();
+      document.execCommand("copy");
+    }
+    status.textContent = "已複製到剪貼簿";
+    setTimeout(() => (status.textContent = ""), 2500);
+  });
+</script>
+</body>
+</html>
