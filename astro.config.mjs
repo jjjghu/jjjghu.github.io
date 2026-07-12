@@ -5,7 +5,7 @@ import remarkLink from './src/plugins/remark-link.mjs';
 import sitemap from '@astrojs/sitemap';
 import fs from 'node:fs';
 import path from 'node:path';
-import { generateSlug } from './src/utils/slug-generator.mjs';
+import { fileToSlug } from './src/utils/slug-generator.mjs';
 
 // Helper to calculate priority
 const getPostMetadata = () => {
@@ -34,15 +34,8 @@ const getPostMetadata = () => {
       const problemId = problemIdMatch ? problemIdMatch[1] : null;
       const length = content.length;
 
-      // Approximate standard slug generation (should match Astro's behavior roughly)
-      let name = file.replace(/\.(md|mdx)$/, '');
-      // Note: matches remark-link logic to include chinese chars
-      let rawSlug = name.toLowerCase()
-        .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
-        .replace(/^-|-$/g, '');
-
-      // Use centralized logic
-      const slug = generateSlug(rawSlug, problemId);
+      // \u8207 Astro / remark-link \u5171\u7528\u540c\u4e00\u5957 slug \u908f\u8f2f\uff08github-slugger\uff09
+      const slug = fileToSlug(file, problemId);
 
       if (date) {
         map.set(slug, { date, length });

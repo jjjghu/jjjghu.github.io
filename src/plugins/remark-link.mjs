@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { generateSlug } from "../utils/slug-generator.mjs";
+import { fileToSlug } from "../utils/slug-generator.mjs";
 
 // 建立題目映射表: problem_id -> { slug, title }
 function createProblemMap() {
@@ -27,17 +27,8 @@ function createProblemMap() {
             const id = idMatch[1].trim();
             const title = titleMatch ? titleMatch[1].trim() : id;
 
-            // 1) 先用檔名算出 raw slug
-            const rawSlug = file
-                .replace(/\.md$/, "")
-                .toLowerCase()
-                .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
-                .replace(/^-+|-+$/g, "");
-
-            // 2) 使用統一的 Slug 生成邏輯
-            const slug = generateSlug(rawSlug, id);
-
-            map.set(id, { slug, title });
+            // 用與 Astro 相同的 slug 邏輯，避免 [[ ]] 連結與實際路由不一致
+            map.set(id, { slug: fileToSlug(file, id), title });
         }
     });
 

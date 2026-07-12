@@ -1,10 +1,29 @@
+import { slug as githubSlug } from "github-slugger";
+
 /**
- * Handles the logic for generating the public URL slug for a post.
- * This is the SINGLE SOURCE OF TRUTH for URL generation.
+ * Convert a markdown filename to the public URL slug, matching Astro's own
+ * content-collection slug generation exactly (Astro uses `github-slugger`
+ * on each path segment — see node_modules/astro/dist/content/utils.js).
  *
- * @param {string} rawSlug - The initial slug derived from the filename (e.g., "001-two-sum")
- * @param {string|null} problemId - The problem ID from frontmatter (e.g., "1")
- * @returns {string} The final public URL slug (e.g., "two-sum")
+ * This is the SINGLE SOURCE OF TRUTH for turning a filename into a URL.
+ * Using the same slugger as Astro avoids drift like "O(1)" becoming
+ * "o-1" here vs "o1" in the real route.
+ *
+ * @param {string} fileName - Markdown filename, e.g. "380. Insert Delete GetRandom O(1).md"
+ * @param {string|null} problemId - The problem ID from frontmatter (e.g. "380")
+ * @returns {string} The final public URL slug (e.g. "insert-delete-getrandom-o1")
+ */
+export function fileToSlug(fileName, problemId) {
+    const name = fileName.replace(/\.(md|mdx)$/, "");
+    return generateSlug(githubSlug(name), problemId);
+}
+
+/**
+ * Strips the leading problem-ID prefix from an already-slugified string.
+ *
+ * @param {string} rawSlug - The github-slugger output (e.g. "380-insert-delete-getrandom-o1")
+ * @param {string|null} problemId - The problem ID from frontmatter (e.g. "380")
+ * @returns {string} The final public URL slug (e.g. "insert-delete-getrandom-o1")
  */
 export function generateSlug(rawSlug, problemId) {
     let finalSlug = rawSlug;
