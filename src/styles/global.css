@@ -353,6 +353,12 @@ pre code {
   overflow-y: hidden;
 }
 
+/* katex.css 自己把 .katex-display 設成 text-align:center，
+   table 裡 <td align="right"> 這個 HTML 屬性蓋不過去，要用 CSS 明確覆寫 */
+td[align="right"] .katex-display {
+  text-align: right;
+}
+
 /* --- 複製程式碼功能樣式 --- */
 /* 1. 動態生成的容器：用來包住程式碼和按鈕 */
 .code-wrapper {
