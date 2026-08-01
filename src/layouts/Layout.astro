@@ -175,8 +175,18 @@ const showTOC = headings && headings.length > 0;
           button.innerHTML = "<i class='bx bx-copy'></i>";
           if (block.parentNode) {
             block.parentNode.insertBefore(wrapper, block);
+
+            const title = block.dataset.title;
+            if (title) {
+              const titleBar = document.createElement("div");
+              titleBar.className = "code-title";
+              titleBar.textContent = title;
+              titleBar.appendChild(button);
+              wrapper.appendChild(titleBar);
+            } else {
+              wrapper.appendChild(button);
+            }
             wrapper.appendChild(block);
-            wrapper.appendChild(button);
           }
           button.addEventListener("click", async () => {
             await navigator.clipboard.writeText(block.innerText);

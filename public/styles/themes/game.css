@@ -542,6 +542,11 @@ pre {
   background: rgba(11, 15, 50, 0.92) !important;
 }
 
+.code-title {
+  border-radius: 0 !important;
+  background: rgba(11, 15, 50, 0.92) !important;
+}
+
 .copy-code-btn {
   border-radius: 0 !important;
   border-color: rgba(150, 178, 255, 0.28) !important;

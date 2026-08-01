@@ -45,9 +45,9 @@
   --diff-black: #e2e8f0;
 
   /* LeetCode Colors (Dark) */
-  --leetcode-easy: #00B8A3;
-  --leetcode-medium: #FFC01E;
-  --leetcode-hard: #FF375F;
+  --leetcode-easy: #00b8a3;
+  --leetcode-medium: #ffc01e;
+  --leetcode-hard: #ff375f;
 
   /* 背景透明度（供 color-mix 使用，100% = 不透明） */
   --bg-overlay-alpha: 100%;
@@ -99,7 +99,9 @@ html.light {
 
 /* 讓切換時有平滑的過渡效果 */
 body {
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* 基礎設定 */
@@ -111,7 +113,9 @@ body {
   /* 改用頁面底色 */
   color: var(--color-fg-default);
   /* 使用系統預設的無襯線字體，閱讀起來最舒服 */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   line-height: 1.5;
   word-wrap: break-word;
   isolation: isolate;
@@ -223,11 +227,11 @@ blockquote {
   border-left: 0.25em solid var(--color-border-default);
 }
 
-blockquote> :first-child {
+blockquote > :first-child {
   margin-top: 0;
 }
 
-blockquote> :last-child {
+blockquote > :last-child {
   margin-bottom: 0;
 }
 
@@ -240,7 +244,9 @@ code:not(pre code) {
   background-color: var(--color-neutral-muted);
   border: 1px solid var(--color-border-neutral);
   border-radius: 6px;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
 }
 
 /* 程式碼區塊 (Code Block) - 使用三個反引號包起來的區域 */
@@ -256,8 +262,20 @@ pre {
 }
 
 .light pre {
-  background-color: color-mix(in srgb, #fefefe var(--bg-overlay-alpha), transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    #fefefe var(--bg-overlay-alpha),
+    transparent
+  ) !important;
   border: 1px solid var(--color-border-default);
+}
+
+.light .code-title {
+  background-color: color-mix(
+    in srgb,
+    #fefefe var(--bg-overlay-alpha),
+    transparent
+  ) !important;
 }
 
 /* Shiki dual theme: 在 dark 模式時，把 token 顏色換成 --shiki-dark */
@@ -267,11 +285,22 @@ html:not(.light) pre.astro-code span[style*="--shiki-dark"] {
 
 /* dark 模式的 code block 背景也一起修正 */
 html:not(.light) pre.astro-code {
-  background-color: color-mix(in srgb, #24292E var(--bg-overlay-alpha), transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    #24292e var(--bg-overlay-alpha),
+    transparent
+  ) !important;
   /* background-color: var(--shiki-dark-bg) !important; */
   color: var(--shiki-dark) !important;
 }
 
+html:not(.light) .code-title {
+  background-color: color-mix(
+    in srgb,
+    #24292e var(--bg-overlay-alpha),
+    transparent
+  ) !important;
+}
 
 /* 區塊內的程式碼文字 */
 
@@ -281,9 +310,11 @@ html:not(.light) pre.astro-code {
 }
 
 pre code .line {
+  display: block;
   counter-increment: line;
   padding-left: 2rem;
   position: relative;
+  font-size: 14px;
 }
 
 pre code .line::before {
@@ -310,7 +341,9 @@ pre code {
   /* 這裡不需要縮小字體 */
   color: var(--color-fg-default);
   /* 預設顏色，之後可以加 Syntax Highlighting */
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
 }
 
 /* KaTeX 數學公式微調 */
@@ -330,7 +363,38 @@ pre code {
 
 /* 2. 為了讓按鈕定位準確，原本的 pre 不需要 margin 了 */
 .code-wrapper pre {
+  margin-top: 0;
   margin-bottom: 0;
+}
+
+/* 程式碼標題列（由 ```lang title="..."``` 產生） */
+.code-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px 4px;
+  font-size: 13px;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  color: var(--color-fg-muted);
+  border: 1px solid var(--color-border-default);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+
+.code-wrapper:has(.code-title) pre {
+  border-radius: 0 0 6px 6px;
+}
+
+/* 標題列裡的複製按鈕：跟著排版走，不用絕對定位、常駐顯示 */
+.code-title .copy-code-btn {
+  position: static;
+  opacity: 0.7;
+}
+
+.code-title .copy-code-btn:hover {
+  opacity: 1;
 }
 
 /* 3. 複製按鈕本體 */
@@ -414,9 +478,11 @@ pre code {
 
 /* --- Shared Article/Post Card Styles --- */
 .post-card {
-  background-color: color-mix(in srgb,
-      var(--color-canvas-subtle) var(--bg-overlay-alpha),
-      transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--color-canvas-subtle) var(--bg-overlay-alpha),
+    transparent
+  );
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
   padding: 2rem;
