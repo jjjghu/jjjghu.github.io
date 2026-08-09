@@ -4,7 +4,7 @@ category: "leetcode"
 title: "LCP 35. 電動車遊城市"
 en_title: "LCP 35. 電動車遊城市"
 
-problem_id: "35"
+problem_id: "LCP35"
 difficulty: "hard"
 tags: ["graph", "shortest path"]
 

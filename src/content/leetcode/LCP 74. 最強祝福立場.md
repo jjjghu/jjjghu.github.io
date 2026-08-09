@@ -1,10 +1,10 @@
 ---
 category: "leetcode"
 
-title: "LCP 74 最強祝福立場"   
+title: "LCP 74 最強祝福立場"
 en_title: "LCP 74 最強祝福立場"
 
-problem_id: "74"
+problem_id: "LCP74"
 difficulty: "medium"
 tags: ["prefix sum", "binary search"]
 
@@ -12,8 +12,11 @@ link: "https://leetcode.cn/problems/xepqZ5/"
 en_link: "https://leetcode.cn/problems/xepqZ5/"
 date: "2026-01-31"
 ---
+
 推薦事前閱讀：[二維差分數組](/2ddifference)
+
 ## 思路
+
 如果單看題目，這跟模板練習題的做法是差不多的，\
 問題在於，資料範圍的大小來到了 $10^9$ ，\
 如果這個時候還打算申請一個 `diff[1e9][1e9]` 的二維差分數組，空間會爆炸。\
@@ -23,8 +26,11 @@ date: "2026-01-31"
 既然不能開一個超大的差分數組，那我們可以開一個小的。先統計 $x$ 座標上有幾個不同的座標出現過，\
 比如 $[1,10,33550336]$ ，我們不需要開一個寬 $33050336$ 這麼大的差分數組，\
 而是將數字重新編號，變成 $[0,1,2]$ 用來代表原先的三個 $x$ 座標。對 $y$ 軸也是一樣的操作。
+
 ## 程式碼
+
 ### 前綴和 + 離散化處理
+
 ```cpp
 class Solution {
 private:
@@ -74,7 +80,9 @@ public:
     }
 };
 ```
+
 ### 前綴和 + 離散化 + 二分搜
+
 ```cpp
 class Solution {
 private:
@@ -131,7 +139,8 @@ public:
     }
 };
 ```
+
 ## 複雜度分析
+
 - 時間複雜度：$O(k^2)$
 - 空間複雜度：$O(k)$
-
