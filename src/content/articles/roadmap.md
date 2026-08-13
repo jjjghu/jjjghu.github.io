@@ -279,3 +279,12 @@ title: "題單"
 - [[213]]
 - [[2560]]
 - [[max-submatrix-lcci]]
+- [[152]]
+- [[divideby7]]
+- [[689]]
+- [[revOneMax]]
+- [[deleteNumLenK]]
+
+## 最長遞增子序列與其擴展
+
+- [[300]]
