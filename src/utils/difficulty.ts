@@ -33,6 +33,8 @@ export const getDifficultyClass = (difficulty: string | undefined | null): strin
         "普及-": "diff-2",
         "普及/提高-": "diff-3",
         "普及+/提高": "diff-4",
+        "普及+/提高-": "diff-4",
+        "提高": "diff-5",
         "提高+/省選-": "diff-5",
         "省選/noi-": "diff-6",
         "noi/noi+/ctsc": "diff-7"
