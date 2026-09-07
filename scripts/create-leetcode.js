@@ -1,149 +1,121 @@
+import { mkdirSync, realpathSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { stringify } from 'yaml';
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const CONTENT_DIR = fileURLToPath(new URL('../src/content/leetcode/', import.meta.url));
+const MAX_RESPONSE_BYTES = 1_000_000;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const args = process.argv.slice(2);
-if (args.length === 0) {
-    console.error('請提供 LeetCode URL 或 題目Slug (例如: two-sum)');
-    process.exit(1);
+export function parseProblemSlug(input) {
+    if (typeof input !== 'string' || input.length > 2048) throw new Error('Invalid problem URL or slug');
+    let slug = input;
+    if (input.includes('://')) {
+        const url = new URL(input);
+        if (url.protocol !== 'https:' || !['leetcode.com', 'leetcode.cn'].includes(url.hostname) ||
+            url.username || url.password || url.port) throw new Error('Expected an HTTPS LeetCode URL');
+        const match = url.pathname.match(/^\/problems\/([a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*)(?:\/(?:description|solutions|submissions|discuss))?\/?$/);
+        if (!match) throw new Error('Invalid LeetCode problem path');
+        slug = match[1];
+    }
+    if (!/^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$/.test(slug) || slug.length > 200) throw new Error('Invalid problem slug');
+    return slug;
 }
 
-const input = args[0];
-// Extract slug from URL or use as is
-// Handles:
-// https://leetcode.com/problems/two-sum/
-// https://leetcode.cn/problems/two-sum/
-// two-sum
-let slug = input.replace(/\/$/, '').split('/').pop();
-
-async function fetchFromLeetCodeCN(slug) {
-    const query = `
-    query questionData($titleSlug: String!) {
-      question(titleSlug: $titleSlug) {
-        questionId
-        questionFrontendId
-        title
-        translatedTitle
-        titleSlug
-        difficulty
-        topicTags {
-          name
-          slug
-          translatedName
-        }
-      }
+function requireText(value, field, max = 200) {
+    if (typeof value !== 'string' || !value.trim() || value.length > max || /[\u0000-\u001f\u007f]/.test(value)) {
+        throw new Error(`Invalid ${field} in LeetCode response`);
     }
-  `;
+    return value.trim();
+}
 
+export function validateQuestion(value) {
+    if (!value || typeof value !== 'object') throw new Error('Question not found');
+    const id = requireText(value.questionFrontendId, 'questionFrontendId', 60);
+    if (/[<>:"/\\|?*]/.test(id) || id === '.' || id === '..') throw new Error('Unsafe problem ID');
+    const title = requireText(value.title, 'title');
+    const translatedTitle = value.translatedTitle ? requireText(value.translatedTitle, 'translatedTitle') : title;
+    const difficulty = requireText(value.difficulty, 'difficulty').toLowerCase();
+    if (!['easy', 'medium', 'hard'].includes(difficulty)) throw new Error('Unknown difficulty');
+    if (!Array.isArray(value.topicTags) || value.topicTags.length > 100) throw new Error('Invalid topic tags');
+    const tags = value.topicTags.map(tag => requireText(tag?.slug, 'tag', 100));
+    return { id, title, translatedTitle, difficulty, tags };
+}
+
+export async function fetchQuestion(slug, fetchImpl = fetch) {
+    const response = await fetchImpl('https://leetcode.cn/graphql', {
+        method: 'POST',
+        redirect: 'error',
+        signal: AbortSignal.timeout(15_000),
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+            query: `query questionData($titleSlug: String!) {
+                question(titleSlug: $titleSlug) {
+                    questionFrontendId title translatedTitle difficulty topicTags { slug }
+                }
+            }`,
+            variables: { titleSlug: parseProblemSlug(slug) },
+        }),
+    });
+    if (!response.ok) throw new Error(`LeetCode HTTP ${response.status}`);
+    if (!response.headers.get('content-type')?.includes('application/json') || !response.body) throw new Error('LeetCode did not return JSON');
+    const reader = response.body.getReader();
+    const chunks = [];
+    let size = 0;
     try {
-        const response = await fetch('https://leetcode.cn/graphql', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // 1. 更新 User-Agent 為現代瀏覽器
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                // 2. 加入 Referer 模仿從官網進入
-                'Referer': 'https://leetcode.cn/problemset/all/',
-                'Origin': 'https://leetcode.cn',
-                // 3. 增加接受的語言，有助於避開基礎檢查
-                'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-            },
-            body: JSON.stringify({
-                query,
-                variables: { titleSlug: slug }
-            })
-        });
-
-        // 先檢查 HTTP 狀態碼
-        if (!response.ok) {
-            console.error(`HTTP 錯誤: ${response.status}`);
-            return null;
+        for (;;) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            size += value.byteLength;
+            if (size > MAX_RESPONSE_BYTES) throw new Error('LeetCode response is too large');
+            chunks.push(value);
         }
-
-        const text = await response.text();
-
-        // 檢查是否回傳了 HTML 而不是 JSON
-        if (text.trim().startsWith('<!DOCTYPE')) {
-            console.error('LeetCode 回傳了 HTML 頁面而非資料（可能是被防火牆阻擋或需要驗證）。');
-            return null;
-        }
-
-        const json = JSON.parse(text);
-        return json.data.question;
-    } catch (e) {
-        console.error('抓取 leetcode.cn 時發生錯誤:', e.message);
-        return null;
+    } finally {
+        await reader.cancel();
+        reader.releaseLock();
     }
+    const json = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+    if (json.errors?.length) throw new Error('LeetCode GraphQL request failed');
+    validateQuestion(json.data?.question);
+    return json.data.question;
+}
+
+export function createNote(data, slug, targetDir = CONTENT_DIR, date = new Date()) {
+    slug = parseProblemSlug(slug);
+    const question = validateQuestion(data);
+    const frontmatter = stringify({
+        category: 'leetcode',
+        title: `${question.id}. ${question.translatedTitle}`,
+        en_title: `${question.id}. ${question.title}`,
+        problem_id: question.id,
+        difficulty: question.difficulty,
+        tags: question.tags,
+        link: `https://leetcode.cn/problems/${slug}/description/`,
+        en_link: `https://leetcode.com/problems/${slug}/description/`,
+        date: date.toISOString().slice(0, 10),
+    });
+    const title = question.title.replace(/[<>:"/\\|?*]/g, '').replace(/[. ]+$/, '');
+    if (!title) throw new Error('Title cannot be used as a filename');
+    const filename = `${question.id}. ${title}.md`;
+    if (filename.length > 240 || /^(con|prn|aux|nul|com[1-9]|lpt[1-9])\./i.test(filename)) throw new Error('Unsupported filename');
+    mkdirSync(targetDir, { recursive: true });
+    const directory = realpathSync(targetDir);
+    const filepath = path.resolve(directory, filename);
+    if (path.dirname(filepath) !== directory) throw new Error('Filename escapes content directory');
+    const body = '\n## 思路\n\n## 程式碼\n\n```cpp\n\n```\n\n## 複雜度分析\n- 時間複雜度：\n- 空間複雜度：\n';
+    // Exclusive creation also rejects an existing symlink instead of following it.
+    writeFileSync(filepath, `---\n${frontmatter}---\n${body}`, { encoding: 'utf8', flag: 'wx' });
+    return filepath;
 }
 
 async function main() {
-    console.log(`正在獲取題目資訊: ${slug}...`);
-    let data = await fetchFromLeetCodeCN(slug);
-
-    if (!data) {
-        console.error('無法獲取題目資訊。請確認 slug 是否正確，或檢查網路連線。');
-        process.exit(1);
-    }
-
-    const { questionFrontendId, title, translatedTitle, difficulty, topicTags } = data;
-
-    const cnTitle = translatedTitle || title;
-    const enTitle = title;
-    const diff = difficulty.toLowerCase();
-    // Ensure "array" -> "array", etc. Usually they are consistent.
-    const tags = topicTags ? topicTags.map(t => t.slug) : [];
-    const date = new Date().toISOString().split('T')[0];
-
-    const fileContent = `---
-category: "leetcode"
-
-title: "${questionFrontendId}. ${cnTitle}"
-en_title: "${questionFrontendId}. ${enTitle}"
-
-problem_id: "${questionFrontendId}"
-difficulty: "${diff}"
-tags: [${tags.map(t => `"${t}"`).join(', ')}]
-
-link: "https://leetcode.cn/problems/${slug}/description/"
-en_link: "https://leetcode.com/problems/${slug}/description/"
-date: "${date}"
----
-小貼士：
-## 思路
-
-## 程式碼
-### 1.
-\`\`\````cpp
-    \`\`\`
-## 複雜度分析
-- 時間複雜度：
-- 空間複雜度：
-`;
-
-    const targetDir = path.resolve(__dirname, '../src/content/leetcode');
-
-    // Filename: <id>. <en_title>.md
-    // Remove special characters forbidden in Windows filenames
-    const safeTitle = enTitle.replace(/[<>:"/\\|?*]/g, '');
-    const fileName = `${questionFrontendId}. ${safeTitle}.md`;
-    const filePath = path.join(targetDir, fileName);
-
-    if (fs.existsSync(filePath)) {
-        console.error(`檔案已存在: ${filePath}`);
-        process.exit(1);
-    }
-
-    // Ensure directory exists (it should, but good practice)
-    if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
-    }
-
-    fs.writeFileSync(filePath, fileContent);
-    console.log(`成功創建: ${filePath}`);
+    const slug = parseProblemSlug(process.argv[2]);
+    const data = await fetchQuestion(slug);
+    console.log(`Created: ${createNote(data, slug)}`);
 }
 
-main();
+if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
+    main().catch(error => {
+        console.error(error.message);
+        process.exitCode = 1;
+    });
+}

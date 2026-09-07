@@ -1,0 +1,1 @@
+import{t as e}from"./themeRuntime.BEAL2ZBg.js";import{t}from"./storage.DaD5dDf0.js";import{n}from"./constants.vIqzkD2m.js";var r=t.getItem(n.activeThemeId);r?.startsWith(`custom-`)&&e(r);

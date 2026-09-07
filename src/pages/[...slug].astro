@@ -10,6 +10,7 @@ import DifficultyBadge from "../components/DifficultyBadge.astro";
 // 1. 生成靜態路徑
 import { generateSlug } from "../utils/slug-generator.mjs";
 import { isPublicPost } from "../utils/postHelper.ts";
+import { serializeJson } from "../utils/security";
 
 export async function getStaticPaths() {
     const leetcodePosts = await getCollection(
@@ -26,7 +27,7 @@ export async function getStaticPaths() {
 
     return allPosts.map((post) => {
         // Use the centralized slug generation logic
-        const finalSlug = generateSlug(post.slug, post.data.problem_id);
+        const finalSlug = generateSlug(post.id, post.data.problem_id);
 
         return {
             params: { slug: finalSlug },
@@ -76,8 +77,10 @@ const tags = post.data.tags || [];
 
     <script>
         import { STORAGE_KEYS, EVENTS } from "../constants";
+        import { storage } from "../scripts/storage";
+        import { isHttpUrl } from "../utils/security";
 
-        const postLink = document.getElementById("post-link");
+        const postLink = document.querySelector<HTMLAnchorElement>("#post-link");
         let isEnglish = false;
 
         // @ts-ignore
@@ -90,14 +93,16 @@ const tags = post.data.tags || [];
                     ? postLink.dataset.enTitle
                     : postLink.dataset.cnTitle;
                 // @ts-ignore
-                postLink.href = isEnglish
+                const url = isEnglish
                     ? postLink.dataset.enLink
                     : postLink.dataset.cnLink;
+                if (url && isHttpUrl(url)) postLink.href = url;
+                else postLink.removeAttribute('href');
             }
         }
 
         // Init
-        updatePostLink(localStorage.getItem(STORAGE_KEYS.isEnglish) === "true");
+        updatePostLink(storage.getItem(STORAGE_KEYS.isEnglish) === "true");
 
         // Listen for global change
         document.addEventListener(EVENTS.languageChange, (e) => {
@@ -107,8 +112,9 @@ const tags = post.data.tags || [];
     </script>
 
     <script
+        is:inline
         type="application/ld+json"
-        set:html={JSON.stringify({
+        set:html={serializeJson({
             "@context": "https://schema.org",
             "@type": "Article",
             headline: post.data.title,

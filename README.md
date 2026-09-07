@@ -67,16 +67,21 @@ date: "2023-01-01"
 
 ## 開發指令
 
+需要 Node.js 22.12 以上版本。安全邊界、主題限制與部署防護見 [SECURITY.md](./SECURITY.md)。
+
 - `npm run dev`: 啟動本地開發伺服器。
 - `npm run build`: 建置靜態網站。
 - `npm test`: 以監聽模式執行單元測試。
 - `npm run test:run`: 執行一次單元測試並結束。
+- `npm run check`: 檢查 Astro 與 TypeScript 型別。
+- `npm run test:browser`: 建置後執行 Chrome 瀏覽器回歸測試。
 
 ## 單元測試
 
-本專案包含 **24 個單元測試**，覆蓋篩選和排序邏輯：
+本專案包含 **66 個單元與整合測試**，覆蓋篩選、排序、內容與安全邊界：
 - **FilterEngine** (14 個測試)：分類、難度、標籤（AND/OR）、搜尋、組合篩選
 - **SortEngine** (10 個測試)：ID 排序、日期排序、邊界情況
+- **安全與內容測試**：XSS、CSS 資源限制、儲存容錯、匯入檔案安全、Markdown 清理、CSP 及全站路由。
 
 測試框架：[Vitest](https://vitest.dev/)  
-測試文件：`src/scripts/*.test.ts`
+測試文件：`src/**/*.test.ts`、`scripts/*.test.ts`；瀏覽器測試位於 `tests/browser/`。

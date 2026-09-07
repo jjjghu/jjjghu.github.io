@@ -42,25 +42,21 @@
   }
 </style>
 
-<script is:inline>
+<script>
+  import { storage } from '../scripts/storage';
+  import { STORAGE_KEYS, EVENTS } from '../constants';
   // 使用 IIFE 避免全域變數污染
   (function () {
     const langBtn = document.getElementById("lang-toggle");
     const langText = langBtn?.querySelector(".lang-text");
 
     function getStoredLanguage() {
-      if (
-        typeof localStorage !== "undefined" &&
-        localStorage.getItem("isEnglish")
-      ) {
-        return localStorage.getItem("isEnglish") === "true";
-      }
-      return false; // Default to Chinese
+      return storage.getItem(STORAGE_KEYS.isEnglish) === "true";
     }
 
-    function setLanguage(isEnglish) {
+    function setLanguage(isEnglish: boolean) {
       // 1. Update localStorage
-      localStorage.setItem("isEnglish", String(isEnglish));
+      storage.setItem(STORAGE_KEYS.isEnglish, String(isEnglish));
 
       // 2. Update Button Text
       if (langText) {
@@ -68,23 +64,21 @@
       }
 
       // 3. Update Global Data Attributes (Text)
-      document.querySelectorAll("[data-cn]").forEach((el) => {
-        // @ts-ignore
+      document.querySelectorAll<HTMLElement>("[data-cn]").forEach((el) => {
         el.textContent = isEnglish
-          ? el.dataset.en || el.dataset.cn
-          : el.dataset.cn;
+          ? el.dataset.en || el.dataset.cn || ''
+          : el.dataset.cn || '';
       });
 
       // 4. Update Placeholders
-      document.querySelectorAll("[data-cn-placeholder]").forEach((el) => {
-        // @ts-ignore
+      document.querySelectorAll<HTMLInputElement>("[data-cn-placeholder]").forEach((el) => {
         el.placeholder = isEnglish
-          ? el.dataset.enPlaceholder || el.dataset.cnPlaceholder
-          : el.dataset.cnPlaceholder;
+          ? el.dataset.enPlaceholder || el.dataset.cnPlaceholder || ''
+          : el.dataset.cnPlaceholder || '';
       });
 
       // 5. Dispatch Event for custom handling (e.g., links, filters)
-      const event = new CustomEvent("language-change", {
+      const event = new CustomEvent(EVENTS.languageChange, {
         detail: { isEnglish },
       });
       document.dispatchEvent(event);

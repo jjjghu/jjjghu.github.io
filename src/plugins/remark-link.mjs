@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileToSlug } from "../utils/slug-generator.mjs";
+import { readFrontmatter } from "../utils/frontmatter.mjs";
 
 // 建立題目映射表: problem_id -> { slug, title }
 function createProblemMap() {
@@ -15,17 +16,14 @@ function createProblemMap() {
         const files = fs.readdirSync(fullDir);
 
         for (const file of files) {
-            if (!file.endsWith(".md")) continue;
+            if (!file.endsWith(".md") || file.startsWith('.')) continue;
 
             const content = fs.readFileSync(path.join(fullDir, file), "utf-8");
 
-            const idMatch = content.match(/problem_id:\s*["']?([^"'\n]+)["']?/);
-            const titleMatch = content.match(/title:\s*["']?([^"'\n]+)["']?/);
-
-            if (!idMatch) continue;
-
-            const id = idMatch[1].trim();
-            const title = titleMatch ? titleMatch[1].trim() : id;
+            const metadata = readFrontmatter(content);
+            if (!metadata.problem_id) continue;
+            const id = String(metadata.problem_id).trim();
+            const title = String(metadata.title || id);
 
             // 用與 Astro 相同的 slug 邏輯，避免 [[ ]] 連結與實際路由不一致
             map.set(id, { slug: fileToSlug(file, id), title });
@@ -40,6 +38,7 @@ export default function remarkLink() {
 
     return (tree) => {
         function traverseAndReplace(node) {
+            if (node.type === 'link' || node.type === 'linkReference') return;
             if (!node.children) return;
 
             const newChildren = [];

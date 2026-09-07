@@ -18,6 +18,7 @@ const dateCN = formatDateCN(new Date(post.date).toISOString().split('T')[0]);
 <div
     class="file-row post-list-grid"
     data-post-id={post.id}
+    data-post-slug={post.slug}
     data-en-title={post.enTitle}
 >
     <!-- Title -->

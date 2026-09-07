@@ -44,7 +44,7 @@ export const getDifficultyClass = (difficulty: string | undefined | null): strin
     // But "普及/提高-" toLowerCase is "普及/提高-" (Chinese characters don't change)
     // "省選/NOI-" -> "省選/noi-"
 
-    return map[lowerDiff] || "diff-0";
+    return Object.hasOwn(map, lowerDiff) ? map[lowerDiff] : "diff-0";
 };
 
 export function getDifficultyLabel(difficulty: string | undefined | null, isEnglish: boolean = false): string {
@@ -53,7 +53,7 @@ export function getDifficultyLabel(difficulty: string | undefined | null, isEngl
     const lowerDiff = difficulty.toLowerCase();
 
     // Standard LeetCode translation
-    if (lowerDiff in DIFFICULTY_LABELS) {
+    if (Object.hasOwn(DIFFICULTY_LABELS, lowerDiff)) {
         return isEnglish ? DIFFICULTY_LABELS[lowerDiff].en : DIFFICULTY_LABELS[lowerDiff].cn;
     }
 

@@ -5,7 +5,7 @@ const tagMap: Record<string, string> = tagMapping;
 
 // 根據題號排序文章 (小 -> 大)
 export function sortPostsById(posts: PostEntry[]) {
-    return posts.sort((a, b) => {
+    return [...posts].sort((a, b) => {
         const idA = a.data.problem_id;
         const idB = b.data.problem_id;
 
@@ -32,11 +32,11 @@ const revTagMap: Record<string, string> = Object.fromEntries(
 );
 
 export function getTagCN(tag: string) {
-    return tagMap[tag] || tag;
+    return Object.hasOwn(tagMap, tag) ? tagMap[tag] : tag;
 }
 
 export function getTagEN(tag: string) {
-    return revTagMap[tag] || tag;
+    return Object.hasOwn(revTagMap, tag) ? revTagMap[tag] : tag;
 }
 
 // 取得所有不重複標籤 (統一轉為中文以避免中英混用時出現重複選項)
@@ -52,7 +52,7 @@ export function getAllUniqueTags(posts: PostEntry[]) {
             // 如果 input 是 "array" -> tagMap 有 (ok)
             // 如果 input 是 "數組" -> tagMap 無, 但 revTagMap 有 (ok)
             // 如果 input 是 "unknown" -> 兩個都無 (warn)
-            if (!tagMap[tag] && !revTagMap[tag]) {
+            if (!Object.hasOwn(tagMap, tag) && !Object.hasOwn(revTagMap, tag)) {
                 console.warn(
                     `⚠️ 警告: 標籤 "${tag}" 尚未在 tag_mapping.json 中定義！`,
                 );

@@ -6,6 +6,8 @@ import "../styles/component-base.css";
 import "../styles/badges.css";
 import "../styles/dropdown.css";
 import "../styles/post-list.css";
+import "katex/dist/katex.min.css";
+import "boxicons/css/boxicons.min.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LanguageToggle from "../components/LanguageToggle.astro";
@@ -74,18 +76,11 @@ const showTOC = headings && headings.length > 0;
     <meta name="twitter:image" content={finalImage} />
     <meta name="twitter:url" content={canonicalURL} />
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-    />
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <script is:inline define:vars={{ themeCSS, lightThemeIds, defaultThemeId, K: STORAGE_KEYS }}>
       // 同步執行，在任何內容渲染前套用主題與設定，避免 FOUC
       (function () {
-        if (typeof localStorage === "undefined") return;
+        try {
 
         const root = document.documentElement;
 
@@ -94,12 +89,7 @@ const showTOC = headings && headings.length > 0;
         root.classList.remove("light");
 
         if (activeId !== defaultThemeId) {
-          const css = themeCSS[activeId] ?? (() => {
-            try {
-              const customs = JSON.parse(localStorage.getItem(K.customThemes) || "[]");
-              return (customs.find((t) => t.id === activeId) || {}).css || null;
-            } catch { return null; }
-          })();
+          const css = Object.hasOwn(themeCSS, activeId) ? themeCSS[activeId] : null;
 
           if (css) {
             const el = document.createElement("style");
@@ -117,7 +107,7 @@ const showTOC = headings && headings.length > 0;
 
         // 2. Accent Color
         const savedColor = localStorage.getItem(K.customAccentColor);
-        if (savedColor) {
+        if (savedColor && /^#[a-fA-F0-9]{6}$/.test(savedColor)) {
           root.style.setProperty("--color-accent-fg", savedColor);
         }
 
@@ -128,7 +118,15 @@ const showTOC = headings && headings.length > 0;
             root.classList.add(className);
           }
         });
+        } catch { /* Storage can be unavailable in privacy modes. */ }
       })();
+    </script>
+    <script>
+      import { storage } from '../scripts/storage';
+      import { STORAGE_KEYS } from '../constants';
+      import { applyTheme } from '../scripts/themeRuntime';
+      const activeId = storage.getItem(STORAGE_KEYS.activeThemeId);
+      if (activeId?.startsWith('custom-')) applyTheme(activeId);
     </script>
   </head>
 

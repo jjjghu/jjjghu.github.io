@@ -82,6 +82,7 @@ const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
 </div>
 
 <script>
+    import { storage } from "../scripts/storage";
     import { getSettingsManager } from "../scripts/settingsManager";
     import { STORAGE_KEYS, EVENTS } from "../constants";
 
@@ -156,7 +157,7 @@ const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
 
                         // Force update text now
                         const isEnglish =
-                            localStorage.getItem(STORAGE_KEYS.isEnglish) === "true";
+                            storage.getItem(STORAGE_KEYS.isEnglish) === "true";
                         updateLabelText(diffLabel as HTMLElement, isEnglish);
                     }
                 } else {

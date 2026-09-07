@@ -1,0 +1,380 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-ju4pidww=""><head><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-M8DVSaJ+YeqYVsh5wFJ6Q+RIgLX3j8V92S4YiWYqpZU=' 'sha256-GgKF4mR8A419XQWMH3egVyBIWI54sTKAbMQSPzEKjfM=' 'sha256-mKlH+oFyMW0jW9QWgQPJUCsP7ZyUFnAjjqN18u+WsuY=' 'sha256-bDdoJT4WwSaQoO48yNhiN2DBLEFYRdZWF8g3PryDzvg='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>題單</title><meta name="description" content="程式題目的解題思路"><meta name="keywords" content="LeetCode, ZeroJudge, Programming, Solution, Algorithm, C++, CP"><link rel="canonical" href="https://jjjghu.github.io/roadmap/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jjjghu.github.io/roadmap/"><meta property="og:title" content="題單"><meta property="og:description" content="程式題目的解題思路"><meta property="og:image" content="https://jjjghu.github.io/og-image.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="題單"><meta name="twitter:description" content="程式題目的解題思路"><meta name="twitter:image" content="https://jjjghu.github.io/og-image.png"><meta name="twitter:url" content="https://jjjghu.github.io/roadmap/"><meta name="referrer" content="strict-origin-when-cross-origin"><script>(function(){const themeCSS = {"light":"/* Light Theme */\n:root {\n  --color-canvas-default: rgb(255, 255, 255);\n  --color-canvas-subtle: rgb(246, 248, 250);\n  --color-canvas-overlay: rgb(255, 255, 255);\n  --color-border-default: rgb(208, 215, 222);\n  --color-border-muted: rgb(216, 222, 228);\n  --color-fg-default: rgb(36, 41, 47);\n  --color-fg-muted: rgb(87, 96, 106);\n  --color-accent-fg: rgb(9, 105, 218);\n  --color-neutral-muted: rgba(175, 184, 193, 0.2);\n  --color-border-neutral: rgba(208, 215, 222, 1);\n  --color-page-bg: rgb(246, 248, 250);\n  --color-card-bg: rgb(255, 255, 255);\n  --diff-gray: #9ca3af;\n  --diff-red: #ef4444;\n  --diff-orange: #f97316;\n  --diff-yellow: #eab308;\n  --diff-green: #22c55e;\n  --diff-blue: #3b82f6;\n  --diff-purple: #a855f7;\n  --diff-black: #0f172a;\n  --leetcode-easy: #00B8A3;\n  --leetcode-medium: #FFC01E;\n  --leetcode-hard: #FF375F;\n  --bg-overlay-alpha: 100%;\n}\n","game":":root {\n  --color-canvas-default: #131a40;\n  --color-canvas-subtle: rgba(40, 54, 122, 0.55);\n  --color-canvas-overlay: #1b2456;\n  --color-card-bg: #1a2256;\n  --color-page-bg: #131a40;\n  --bg-overlay-alpha: 70%;\n\n  --color-border-default: rgba(150, 178, 255, 0.28);\n  --color-border-muted: rgba(150, 178, 255, 0.14);\n\n  --color-fg-default: #e7ecff;\n  --color-fg-muted: #97a3d8;\n  --color-accent-fg: #7d97ff;\n\n  --leetcode-easy: #00b8a3;\n  --leetcode-medium: #ffc01e;\n  --leetcode-hard: #ff375f;\n\n  --g-gold: #f4c84a;\n  --g-gold-soft: #ffe39a;\n  --g-cyan: #5fd6ea;\n  --g-cyan-soft: #a7ecf6;\n  --g-blue-bright: #6d8bff;\n\n  --chamfer-sm: 6px;\n  --chamfer: 10px;\n\n  --clip-sm: polygon(\n    var(--chamfer-sm) 0,\n    100% 0,\n    100% calc(100% - var(--chamfer-sm)),\n    calc(100% - var(--chamfer-sm)) 100%,\n    0 100%,\n    0 var(--chamfer-sm)\n  );\n  --clip-md: polygon(\n    var(--chamfer) 0,\n    100% 0,\n    100% calc(100% - var(--chamfer)),\n    calc(100% - var(--chamfer)) 100%,\n    0 100%,\n    0 var(--chamfer)\n  );\n\n  --ring-blue: linear-gradient(\n    160deg,\n    rgba(190, 208, 255, 0.78),\n    rgba(120, 150, 255, 0.2)\n  );\n  --ring-gold: linear-gradient(\n    160deg,\n    rgba(255, 227, 154, 0.95),\n    rgba(244, 200, 74, 0.3)\n  );\n}\n\nhtml {\n  background: radial-gradient(\n    ellipse 120% 90% at 50% 18%,\n    #34439a 0%,\n    #28327e 34%,\n    #1a2056 64%,\n    #121739 100%\n  );\n}\n\nbody {\n  background: transparent;\n}\n\nbody::before {\n  content: \"\";\n  position: fixed;\n  inset: 0;\n  pointer-events: none;\n  z-index: 0;\n  background-image: radial-gradient(\n    circle,\n    rgba(190, 208, 255, 0.07) 1px,\n    transparent 1.4px\n  );\n  background-size: 13px 13px;\n  mask-image: radial-gradient(\n    ellipse 100% 80% at 50% 25%,\n    #000 35%,\n    transparent 85%\n  );\n  -webkit-mask-image: radial-gradient(\n    ellipse 100% 80% at 50% 25%,\n    #000 35%,\n    transparent 85%\n  );\n}\n\nbody::after {\n  content: \"\";\n  position: fixed;\n  inset: 0;\n  pointer-events: none;\n  z-index: 0;\n  opacity: 0.5;\n  background-image:\n    linear-gradient(\n      115deg,\n      transparent 49.7%,\n      rgba(150, 178, 255, 0.1) 49.85%,\n      rgba(150, 178, 255, 0.1) 50.1%,\n      transparent 50.25%\n    ),\n    linear-gradient(\n      28deg,\n      transparent 49.7%,\n      rgba(150, 178, 255, 0.08) 49.85%,\n      rgba(150, 178, 255, 0.08) 50.1%,\n      transparent 50.25%\n    ),\n    linear-gradient(\n      72deg,\n      transparent 49.8%,\n      rgba(140, 180, 255, 0.07) 49.9%,\n      rgba(140, 180, 255, 0.07) 50.05%,\n      transparent 50.2%\n    ),\n    linear-gradient(\n      160deg,\n      transparent 49.8%,\n      rgba(140, 180, 255, 0.06) 49.9%,\n      rgba(140, 180, 255, 0.06) 50.05%,\n      transparent 50.2%\n    );\n  background-size:\n    340px 340px,\n    270px 270px,\n    200px 480px,\n    520px 230px;\n  mask-image: radial-gradient(\n    ellipse 110% 95% at 50% 30%,\n    #000 20%,\n    transparent 90%\n  );\n  -webkit-mask-image: radial-gradient(\n    ellipse 110% 95% at 50% 30%,\n    #000 20%,\n    transparent 90%\n  );\n}\n\n.interactive-container {\n  position: relative;\n  isolation: isolate;\n  border: 0 !important;\n  border-radius: 0 !important;\n  clip-path: var(--clip-sm) !important;\n  background: var(--ic-ring, var(--color-border-default));\n  transition: all 0.18s ease;\n}\n.interactive-container::before {\n  content: \"\";\n  position: absolute;\n  inset: 1px;\n  z-index: -1;\n  pointer-events: none;\n  clip-path: inherit;\n  background: var(--ic-fill, var(--interactive-bg, var(--color-canvas-subtle)));\n  transition: background 0.18s ease;\n}\n.interactive-container.rounded {\n  border-radius: 0 !important;\n}\n\n.difficulty-badge {\n  --ic-ring: color-mix(in srgb, var(--badge-color) 60%, transparent);\n  --ic-fill: color-mix(in srgb, var(--badge-color) 18%, rgba(20, 26, 64, 0.85));\n  text-shadow: 0 0 8px color-mix(in srgb, var(--badge-color) 40%, transparent);\n  font-weight: 600;\n  letter-spacing: 0.03em;\n}\n.difficulty-badge:hover {\n  --ic-ring: color-mix(in srgb, var(--badge-color) 90%, transparent);\n  --ic-fill: color-mix(in srgb, var(--badge-color) 30%, rgba(20, 26, 64, 0.85));\n  box-shadow: 0 0 12px color-mix(in srgb, var(--badge-color) 35%, transparent);\n  background: var(--ic-ring) !important;\n}\n.diff-0 {\n  --badge-color: #9fb2ee;\n}\n\n.dropdown-btn {\n  --ic-ring: var(--ring-blue);\n  --ic-fill: linear-gradient(\n    165deg,\n    rgba(58, 74, 160, 0.95),\n    rgba(28, 36, 92, 0.97)\n  );\n  color: #fff;\n  font-weight: 600;\n  letter-spacing: 0.05em;\n}\n.dropdown-btn:hover {\n  --ic-ring: linear-gradient(160deg, var(--g-cyan), rgba(95, 214, 234, 0.4));\n  --ic-fill: linear-gradient(\n    165deg,\n    rgba(78, 98, 200, 0.97),\n    rgba(38, 48, 120, 0.98)\n  );\n}\n\n.badge[data-variant=\"tag\"],\n.badge[data-variant=\"filter-chip\"] {\n  position: relative;\n  isolation: isolate;\n  border: 0 !important;\n  border-radius: 0 !important;\n  clip-path: var(--clip-sm) !important;\n  background: var(--g-ring, var(--color-border-default)) !important;\n}\n\n.badge[data-variant=\"tag\"]::before,\n.badge[data-variant=\"filter-chip\"]::before {\n  content: \"\";\n  position: absolute;\n  inset: 1px;\n  z-index: -1;\n  pointer-events: none;\n  clip-path: inherit;\n  background: var(--g-fill, var(--color-canvas-overlay));\n  transition: background 0.18s ease;\n}\n\n.file-list-container {\n  position: relative;\n  isolation: isolate;\n  border: 0 !important;\n  border-radius: 0 !important;\n  padding: 1px !important;\n  clip-path: var(--clip-md) !important;\n  /* 內層填色（深藍）*/\n  background: linear-gradient(\n    165deg,\n    rgba(22, 30, 82, 0.98),\n    rgba(14, 20, 58, 0.99)\n  ) !important;\n}\n\n/* 外框描邊：evenodd polygon 直接裁出 1px 倒角「邊框環」，\n   疊在子元素之上，斜角與直邊都有描邊，不依賴 mask */\n.file-list-container::after {\n  content: \"\";\n  position: absolute;\n  inset: 0;\n  z-index: 4;\n  pointer-events: none;\n  background: linear-gradient(\n    160deg,\n    rgba(190, 208, 255, 0.55),\n    rgba(120, 150, 255, 0.18)\n  );\n  clip-path: polygon(\n    evenodd,\n    /* 外圈（同 --clip-md）*/\n    var(--chamfer) 0, 100% 0,\n    100% calc(100% - var(--chamfer)), calc(100% - var(--chamfer)) 100%,\n    0 100%, 0 var(--chamfer), var(--chamfer) 0,\n    /* 內圈（內縮 1px）*/\n    calc(var(--chamfer) + 0.5px) 1px, calc(100% - 1px) 1px,\n    calc(100% - 1px) calc(100% - var(--chamfer) - 0.5px),\n    calc(100% - var(--chamfer) - 0.5px) calc(100% - 1px),\n    1px calc(100% - 1px), 1px calc(var(--chamfer) + 0.5px),\n    calc(var(--chamfer) + 0.5px) 1px\n  );\n}\n\n.dropdown-menu {\n  isolation: isolate;\n  border: 0 !important;\n  border-radius: 0 !important;\n  clip-path: var(--clip-md) !important;\n  background: var(--g-ring, var(--color-border-default)) !important;\n}\n\n.dropdown-menu::before {\n  content: \"\";\n  position: absolute;\n  inset: 1px;\n  z-index: -1;\n  pointer-events: none;\n  clip-path: inherit;\n  background: var(--g-fill, var(--color-canvas-overlay));\n  transition: background 0.18s ease;\n}\n\n.dropdown-menu {\n  --g-ring: var(--ring-blue);\n  --g-fill: linear-gradient(165deg, #1e2860, #141a44);\n  overflow: hidden;\n  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);\n}\n\n.badge[data-variant=\"tag\"] {\n  --g-ring: rgba(150, 178, 255, 0.45);\n  --g-fill: rgba(20, 28, 80, 0.82);\n  color: var(--color-fg-muted) !important;\n}\n.badge[data-variant=\"tag\"]:hover {\n  --g-ring: rgba(95, 214, 234, 0.6);\n  --g-fill: rgba(70, 110, 210, 0.22);\n  color: var(--g-cyan-soft) !important;\n}\n\n.badge[data-variant=\"filter-chip\"] {\n  --g-ring: rgba(150, 178, 255, 0.45);\n  --g-fill: rgba(20, 28, 80, 0.82);\n  color: var(--color-fg-muted) !important;\n}\n.badge[data-variant=\"filter-chip\"]:hover,\n.tag-chip:hover .badge[data-variant=\"filter-chip\"] {\n  --g-ring: rgba(95, 214, 234, 0.6);\n  --g-fill: rgba(70, 110, 210, 0.22);\n  color: var(--g-cyan-soft) !important;\n}\n.tag-chip input:checked + .badge[data-variant=\"filter-chip\"] {\n  --g-ring: var(--ring-blue);\n  --g-fill: rgba(95, 130, 255, 0.28);\n  color: var(--g-cyan-soft) !important;\n}\n\n.dropdown-option {\n  background-color: transparent;\n  color: var(--color-fg-default);\n  border-left: 2px solid transparent;\n}\n.dropdown-option:hover {\n  background-color: rgba(109, 139, 255, 0.18);\n  border-left-color: var(--g-cyan);\n}\n.dropdown-option.active {\n  background: linear-gradient(90deg, rgba(244, 200, 74, 0.22), transparent);\n  border-left-color: var(--g-gold);\n  color: var(--g-gold-soft);\n}\n\n.file-list-header {\n  background: linear-gradient(\n    100deg,\n    rgba(96, 126, 230, 0.45),\n    rgba(40, 54, 122, 0.25)\n  );\n  border-bottom: 1px solid var(--color-border-default);\n  color: #fff;\n  letter-spacing: 0.05em;\n}\n\n.file-row {\n  border-top: 1px solid var(--color-border-muted);\n  position: relative;\n}\n.file-row:hover {\n  background: linear-gradient(\n    90deg,\n    rgba(109, 139, 255, 0.16),\n    rgba(109, 139, 255, 0.04)\n  );\n}\n.file-row::before {\n  content: \"\";\n  position: absolute;\n  left: 0;\n  top: 0;\n  width: 3px;\n  height: 0;\n  background: linear-gradient(var(--g-cyan), var(--g-gold));\n  box-shadow: 0 0 10px rgba(95, 214, 234, 0.6);\n  transition: height 0.2s ease;\n}\n.file-row:hover::before {\n  height: 100%;\n}\n\n.post-link:hover {\n  color: var(--g-cyan);\n}\n.title-text {\n  letter-spacing: 0.02em;\n}\n\n.search-wrapper {\n  isolation: isolate;\n  clip-path: var(--clip-sm);\n  background: rgba(150, 178, 255, 0.45);\n  transition: background 0.18s ease;\n}\n.search-wrapper::before {\n  content: \"\";\n  position: absolute;\n  inset: 1px;\n  clip-path: inherit;\n  background: rgba(16, 22, 72, 0.7);\n  z-index: -1;\n  pointer-events: none;\n}\n.search-wrapper:focus-within {\n  background: rgba(95, 214, 234, 0.6);\n}\n.search-wrapper input {\n  position: relative;\n  z-index: 1;\n  background: transparent !important;\n  border: none !important;\n  outline: none;\n  clip-path: none !important;\n  color: var(--color-fg-default);\n}\n.search-wrapper input::placeholder {\n  color: var(--color-fg-muted);\n}\n\n.dropdown-search-container {\n  isolation: isolate;\n  clip-path: var(--clip-sm);\n  background: rgba(150, 178, 255, 0.4);\n  transition: background 0.18s ease;\n}\n.dropdown-search-container::before {\n  content: \"\";\n  position: absolute;\n  inset: 1px;\n  clip-path: inherit;\n  background: rgba(14, 19, 65, 0.75);\n  z-index: -1;\n  pointer-events: none;\n}\n.dropdown-search-container:focus-within {\n  background: rgba(95, 214, 234, 0.55);\n}\n.dropdown-search-container .dropdown-search-input {\n  position: relative;\n  z-index: 1;\n  background: transparent !important;\n  border: none !important;\n  border-radius: 0 !important;\n  outline: none;\n  color: var(--color-fg-default);\n}\n.dropdown-search-container .dropdown-search-input::placeholder {\n  color: var(--color-fg-muted);\n}\n.dropdown-search-container .search-icon {\n  z-index: 2;\n}\n\n.post-card {\n  position: relative;\n  isolation: isolate;\n  border: 0 !important;\n  border-radius: 0 !important;\n  background: linear-gradient(\n    160deg,\n    rgba(190, 208, 255, 0.55),\n    rgba(120, 150, 255, 0.18)\n  );\n  clip-path: polygon(\n    0 var(--chamfer),\n    var(--chamfer) 0,\n    100% 0,\n    100% calc(100% - var(--chamfer)),\n    calc(100% - var(--chamfer)) 100%,\n    0 100%\n  );\n}\n.post-card::before {\n  content: \"\";\n  position: absolute;\n  inset: 1px;\n  z-index: -1;\n  pointer-events: none;\n  clip-path: inherit;\n  background: linear-gradient(\n    165deg,\n    rgba(22, 30, 82, 0.98),\n    rgba(14, 20, 58, 0.99)\n  );\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);\n}\n\n.post-card h1 {\n  font-size: 1.65rem;\n  font-weight: 800;\n  color: #fff;\n  border-bottom: 1px solid rgba(150, 178, 255, 0.25);\n  text-shadow: 0 2px 14px rgba(120, 150, 255, 0.4);\n  margin-top: 0;\n}\n.post-card h1 a {\n  color: inherit;\n  text-decoration: none;\n}\n.post-card h1 a:hover {\n  color: var(--g-cyan-soft);\n  text-decoration: none;\n}\n\n.article-body h2 {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  font-size: 1.1rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  color: #fff;\n  background: linear-gradient(\n    100deg,\n    rgba(96, 126, 230, 0.28),\n    rgba(40, 54, 122, 0.05)\n  );\n  border-bottom: none;\n  border-left: 3px solid var(--g-cyan);\n  padding: 6px 20px 6px 14px;\n  clip-path: none;\n  margin: 1.5em 0 0.75em;\n}\n\n.article-body h3 {\n  font-size: 1rem;\n  font-weight: 600;\n  color: var(--g-cyan-soft);\n  border-bottom: 1px solid rgba(95, 214, 234, 0.18);\n  padding-bottom: 4px;\n  margin: 1.25em 0 0.5em;\n}\n\ncode:not(pre code) {\n  background-color: rgba(95, 130, 255, 0.14) !important;\n  border-color: rgba(150, 178, 255, 0.28) !important;\n  color: var(--g-cyan-soft) !important;\n  border-radius: 0 !important;\n}\n\npre {\n  border-radius: 0 !important;\n  border: 1px solid rgba(150, 178, 255, 0.18) !important;\n  background: rgba(11, 15, 50, 0.92) !important;\n}\n\n.code-title {\n  border-radius: 0 !important;\n  background: rgba(11, 15, 50, 0.92) !important;\n}\n\n.copy-code-btn {\n  border-radius: 0 !important;\n  border-color: rgba(150, 178, 255, 0.28) !important;\n  background: rgba(14, 20, 60, 0.8) !important;\n  color: var(--color-fg-muted) !important;\n}\n.copy-code-btn:hover {\n  border-color: var(--g-cyan) !important;\n  color: var(--g-cyan) !important;\n  background: rgba(14, 20, 60, 0.95) !important;\n}\n.copy-code-btn.copied {\n  border-color: var(--g-gold) !important;\n  color: var(--g-gold) !important;\n}\n\n.article-body hr {\n  background: linear-gradient(\n    90deg,\n    transparent,\n    var(--g-cyan),\n    var(--g-gold),\n    transparent\n  );\n  height: 1px;\n  border: 0;\n  margin: 1.5em 0;\n}\n\nblockquote {\n  border-left: 3px solid var(--g-gold);\n  background: rgba(244, 200, 74, 0.05);\n  color: var(--color-fg-muted);\n}\n\n.article-body ul li::marker {\n  color: var(--g-cyan);\n}\n.article-body ol li::marker {\n  color: var(--g-gold);\n}\n\n.katex {\n  color: var(--g-cyan-soft);\n}\n.katex-display .katex {\n  color: var(--g-gold-soft);\n}\n"};
+const lightThemeIds = ["light"];
+const defaultThemeId = "dark";
+const K = {"isEnglish":"isEnglish","activeThemeId":"activeThemeId","customThemes":"customThemes","customAccentColor":"customAccentColor","hoverGlowEnabled":"hoverGlowEnabled","spotlightEnabled":"spotlightEnabled","sortPreference":"sortPreference","difficultyPreference":"difficultyPreference","tagPreference":"tagPreference"};
+
+      // 同步執行，在任何內容渲染前套用主題與設定，避免 FOUC
+      (function () {
+        try {
+
+        const root = document.documentElement;
+
+        // 1. 主題（官方主題 CSS 已在 build time 嵌入，不需要 fetch）
+        const activeId = localStorage.getItem(K.activeThemeId) || defaultThemeId;
+        root.classList.remove("light");
+
+        if (activeId !== defaultThemeId) {
+          const css = Object.hasOwn(themeCSS, activeId) ? themeCSS[activeId] : null;
+
+          if (css) {
+            const el = document.createElement("style");
+            el.textContent = css;
+            el.dataset.themeId = activeId;
+            document.head.appendChild(el);
+            // dev 模式 Vite 會在本腳本之後才插入全域樣式，導致主題被蓋掉；
+            // DOM ready 後把主題樣式移到 body 尾端，文件順序永遠最後
+            document.addEventListener("DOMContentLoaded", () => {
+              document.body.appendChild(el);
+            });
+          }
+          if (lightThemeIds.includes(activeId)) root.classList.add("light");
+        }
+
+        // 2. Accent Color
+        const savedColor = localStorage.getItem(K.customAccentColor);
+        if (savedColor && /^#[a-fA-F0-9]{6}$/.test(savedColor)) {
+          root.style.setProperty("--color-accent-fg", savedColor);
+        }
+
+        // 3. Global Toggles
+        [K.hoverGlowEnabled, K.spotlightEnabled].forEach((key) => {
+          const className = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+          if (localStorage.getItem(key) === "true") {
+            root.classList.add(className);
+          }
+        });
+        } catch { /* Storage can be unavailable in privacy modes. */ }
+      })();
+    })();</script><script type="module" src="/_astro/Layout.astro_astro_type_script_index_0_lang.DtQg686e.js"></script><link rel="stylesheet" href="/_astro/Layout.DY-pSl9h.css"></head><body data-astro-cid-ju4pidww=""><header class="site-header" data-astro-cid-nen7h5rs=""><div class="header-inner" data-astro-cid-nen7h5rs=""><div class="header-title-row" data-astro-cid-nen7h5rs=""><a href="/" class="site-title" data-astro-cid-nen7h5rs=""><span data-cn="解題" data-en="Coding " data-astro-cid-nen7h5rs="">解題</span><span class="accent-text" data-cn="筆記" data-en="Notes" data-astro-cid-nen7h5rs="">筆記</span></a><nav class="header-nav-row" data-astro-cid-nen7h5rs=""><ul class="nav-links" data-astro-cid-nen7h5rs=""><li data-astro-cid-nen7h5rs=""><a href="/" class="nav-link" data-category="leetcode" data-cn="LeetCode" data-en="LeetCode" data-astro-cid-nen7h5rs="">LeetCode</a></li><li data-astro-cid-nen7h5rs=""><a href="/?category=zerojudge" class="nav-link" data-category="zerojudge" data-cn="其他" data-en="Other" data-astro-cid-nen7h5rs="">其他</a></li><li data-astro-cid-nen7h5rs=""><a href="/roadmap" class="nav-link" data-category="roadmap" data-cn="題單" data-en="Roadmap" data-astro-cid-nen7h5rs="">題單</a></li><li data-astro-cid-nen7h5rs=""><a href="/guide" class="nav-link" data-category="guide" data-cn="腳本安裝" data-en="Script Guide" data-astro-cid-nen7h5rs="">腳本安裝</a></li><li data-astro-cid-nen7h5rs=""><a href="/themes" class="nav-link" data-category="themes" data-cn="主題" data-en="Themes" data-astro-cid-nen7h5rs="">主題</a></li><li data-astro-cid-nen7h5rs=""><a href="https://gjplieqszy7.sg.larksuite.com/wiki/KJC1wRJAqidzAqkpCEClyp2YgUf?from=from_copylink" class="nav-link" data-cn="演算法筆記" data-en="Notes" data-astro-cid-nen7h5rs="">演算法筆記</a></li></ul><script>
+          (function () {
+            const pathname = window.location.pathname;
+            const params = new URLSearchParams(window.location.search);
+            const categoryParam = params.get("category");
+
+            // 判斷當前應該 active 的分類
+            let currentCategory = "";
+
+            // 判斷是否在 themes 頁面
+            if (pathname.includes("/themes")) {
+              currentCategory = "themes";
+            }
+            // 判斷是否在 roadmap 頁面 (相容結尾有沒有斜線)
+            else if (pathname.includes("/roadmap")) {
+              currentCategory = "roadmap";
+            }
+            // 判斷是否在 guide 頁面
+            else if (pathname.includes("/guide")) {
+              currentCategory = "guide";
+            }
+            // 判斷是否在首頁且參數為 zerojudge
+            else if (categoryParam === "zerojudge") {
+              currentCategory = "zerojudge";
+            }
+            // 判斷是否在首頁且沒有其他參數
+            else if (pathname === "/" || pathname === "") {
+              currentCategory = "leetcode";
+            }
+
+            const links = document.querySelectorAll(".nav-link");
+            links.forEach((link) => {
+              // 若該按鈕的 dataset.category 吻合當前狀態，則加上 active
+              if (
+                link.dataset.category &&
+                link.dataset.category === currentCategory
+              ) {
+                link.classList.add("active");
+              } else {
+                link.classList.remove("active");
+              }
+            });
+          })();
+        </script></nav></div></div></header><div id="spotlight" class="spotlight" data-astro-cid-jbta7uy7=""></div><script type="module">var e=document.getElementById(`spotlight`);e&&document.addEventListener(`mousemove`,t=>{document.documentElement.classList.contains(`spotlight-enabled`)&&(e.style.left=`${t.clientX}px`,e.style.top=`${t.clientY}px`)});</script><main class="content has-toc" data-astro-cid-ju4pidww=""><article class="article-body" data-astro-cid-ju4pidww=""><div class="post-card"><div class="post-header-row"><h1 id="post-title">題單</h1></div><article class="article-body"><p>題目內容都來自：<a href="https://www.bilibili.com/list/8888480/?sid=3509640">《算法通關》</a><br>
+標題列的《演算法筆記》包含所有題目思路的講解，以及對應演算法的介紹。</p>
+<h2 id="基本題目">基本題目</h2>
+<ul>
+<li><a href="/insert-delete-getrandom-o1" title="380. O(1) 時間插入，刪除，和獲取隨機元素">380. O(1) 時間插入，刪除，和獲取隨機元素</a></li>
+<li><a href="/merge-two-sorted-lists-copy" title="21. 合併兩個有序鏈表">21. 合併兩個有序鏈表</a></li>
+<li><a href="/add-two-numbers" title="2. 兩數相加">2. 兩數相加</a></li>
+<li><a href="/partition-list" title="86. 分隔鏈表">86. 分隔鏈表</a></li>
+<li><a href="/design-circular-queue" title="622. 設計循環隊列">622. 設計循環隊列</a></li>
+<li><a href="/implement-queue-using-stacks" title="232. 用棧實現隊列">232. 用棧實現隊列</a></li>
+</ul>
+<h2 id="位運算">位運算</h2>
+<blockquote>
+<p>極 致 優 化！</p>
+</blockquote>
+<ul>
+<li><a href="/missing-number" title="268. 丟失的數字">268. 丟失的數字</a></li>
+<li><a href="/single-number" title="136. 只出現一次的數字">136. 只出現一次的數字</a></li>
+<li><a href="/single-number-ii" title="137. 只出現一次的數字 II">137. 只出現一次的數字 II</a></li>
+<li><a href="/single-number-iii" title="260. 只出現一次的數字 III">260. 只出現一次的數字 III</a></li>
+<li><a href="/bitwise-and-of-numbers-range" title="201. 數字範圍按位與">201. 數字範圍按位與</a></li>
+<li><a href="/reverse-bits" title="190. 顛倒二進制位">190. 顛倒二進制位</a></li>
+<li><a href="/hamming-distance" title="431. 漢明距離">431. 漢明距離</a></li>
+<li><a href="/n-queens-ii" title="52. N 皇后 II">52. N 皇后 II</a></li>
+</ul>
+<h2 id="鏈結串列">鏈結串列</h2>
+<ul>
+<li><a href="/intersection-of-two-linked-lists" title="160. 相交鏈表">160. 相交鏈表</a></li>
+<li><a href="/reverse-nodes-in-k-group" title="25. K 個一組翻轉鏈表">25. K 個一組翻轉鏈表</a></li>
+<li><a href="/copy-list-with-random-pointer" title="138. 複製隨機鏈表">138. 複製隨機鏈表</a></li>
+<li><a href="/palindrome-linked-list" title="234. 迴文鏈表">234. 迴文鏈表</a></li>
+<li><a href="/linked-list-cycle-ii" title="142. 環形鏈表 II">142. 環形鏈表 II</a></li>
+<li><a href="/sort-list" title="148. 鏈表排序">148. 鏈表排序</a></li>
+<li><a href="/lru-cache" title="146. LRU 緩存">146. LRU 緩存</a></li>
+<li><a href="/maximum-frequency-stack" title="895. 最大頻率棧">895. 最大頻率棧</a></li>
+<li><a href="/all-oone-data-structure" title="432. 全O(1)的數據結構">432. 全O(1)的數據結構</a></li>
+</ul>
+<h2 id="二叉樹">二叉樹</h2>
+<ul>
+<li><a href="/binary-tree-preorder-traversal" title="144. 二叉樹的前序遍歷">144. 二叉樹的前序遍歷</a></li>
+<li><a href="/binary-tree-inorder-traversal" title="94. 二叉樹的中序遍歷">94. 二叉樹的中序遍歷</a></li>
+<li><a href="/binary-tree-postorder-traversal" title="145. 二叉樹的後序遍歷">145. 二叉樹的後序遍歷</a></li>
+<li><a href="/binary-tree-level-order-traversal" title="102. 二叉樹的層序遍歷">102. 二叉樹的層序遍歷</a></li>
+<li><a href="/binary-tree-zigzag-level-order-traversal" title="103. 二叉樹的鋸齒形層序遍歷">103. 二叉樹的鋸齒形層序遍歷</a></li>
+<li><a href="/maximum-width-of-binary-tree" title="662. 二叉樹最大寬度">662. 二叉樹最大寬度</a></li>
+<li><a href="/maximum-depth-of-binary-tree" title="104. 二叉樹的最大深度">104. 二叉樹的最大深度</a></li>
+<li><a href="/serialize-and-deserialize-binary-tree" title="297. 二叉樹的序列化與反序列化">297. 二叉樹的序列化與反序列化</a></li>
+<li><a href="/construct-binary-tree-from-preorder-and-inorder-traversal" title="105. 先序和中序重構二叉樹">105. 先序和中序重構二叉樹</a></li>
+<li><a href="/check-completeness-of-a-binary-tree" title="958. 二叉樹的完全性檢驗">958. 二叉樹的完全性檢驗</a></li>
+<li><a href="/count-complete-tree-nodes" title="222. 完全二叉樹的節點個數">222. 完全二叉樹的節點個數</a></li>
+<li><a href="/lowest-common-ancestor-of-a-binary-tree" title="236. 二叉樹的最近公共祖先">236. 二叉樹的最近公共祖先</a></li>
+<li><a href="/lowest-common-ancestor-of-a-binary-search-tree" title="235. 搜索二叉樹的最近公共祖先">235. 搜索二叉樹的最近公共祖先</a></li>
+<li><a href="/path-sum-ii" title="113. 路徑總和II">113. 路徑總和II</a></li>
+<li><a href="/balanced-binary-tree" title="110. 平衡二叉樹">110. 平衡二叉樹</a></li>
+<li><a href="/validate-binary-search-tree" title="98. 驗證二叉搜索樹">98. 驗證二叉搜索樹</a></li>
+<li><a href="/trim-a-binary-search-tree" title="669. 修剪二叉搜索樹">669. 修剪二叉搜索樹</a></li>
+<li><a href="/house-robber-iii" title="337. 打家劫舍 III">337. 打家劫舍 III</a></li>
+</ul>
+<h2 id="常見經典遞迴">常見經典遞迴</h2>
+<ul>
+<li><a href="/subsets" title="78. 子集">78. 子集</a></li>
+<li><a href="/subsets-ii" title="90. 子集 II">90. 子集 II</a></li>
+<li><a href="/permutations" title="46. 全排列">46. 全排列</a></li>
+<li><a href="/permutations-ii" title="47. 全排列 II">47. 全排列 II</a></li>
+</ul>
+<h2 id="嵌套類問題">嵌套類問題</h2>
+<ul>
+<li><a href="/%E4%BA%94%E5%89%87%E9%81%8B%E7%AE%97" title="a017. 五則運算">a017. 五則運算</a></li>
+<li><a href="/decode-string" title="394. 字串解碼">394. 字串解碼</a></li>
+<li><a href="/number-of-atoms" title="726. 原子的數量">726. 原子的數量</a></li>
+</ul>
+<h2 id="字典樹">字典樹</h2>
+<p><a href="/trie">字典樹介紹</a></p>
+<ul>
+<li><a href="/%E6%8E%A5%E9%A0%AD%E5%AF%86%E5%8C%99" title="接頭密匙">接頭密匙</a></li>
+<li><a href="/maximum-xor-of-two-numbers-in-an-array" title="421. 數組中兩個數的最大異或值">421. 數組中兩個數的最大異或值</a></li>
+<li><a href="/word-search-ii" title="212. 單字搜索 II">212. 單字搜索 II</a></li>
+</ul>
+<h2 id="前綴和">前綴和</h2>
+<p><a href="/prefixsum">前綴和介紹</a></p>
+<ul>
+<li><a href="/range-sum-query---immutable" title="303. 區域和檢索 - 數組不可變">303. 區域和檢索 - 數組不可變</a></li>
+<li><a href="/%E6%9C%AA%E6%8E%92%E5%BA%8F%E6%95%B8%E7%B5%84%E4%B8%AD%E7%B4%AF%E5%8A%A0%E5%90%88%E7%82%BA%E5%AE%9A%E5%80%BC%E7%9A%84%E6%9C%80%E9%95%B7%E5%AD%90%E6%95%B8%E7%B5%84%E9%95%B7%E5%BA%A6" title="未排序數組中累加合為定值的最長子數組長度">未排序數組中累加合為定值的最長子數組長度</a></li>
+<li><a href="/subarray-sum-equals-k" title="560. 和為 K 的子數組">560. 和為 K 的子數組</a></li>
+<li><a href="/%E8%BF%94%E5%9B%9E%E7%84%A1%E5%BA%8F%E6%95%B8%E7%B5%84%E4%B8%AD%E6%AD%A3%E6%95%B8%E5%92%8C%E8%B2%A0%E6%95%B8%E5%80%8B%E6%95%B8%E7%9B%B8%E7%AD%89%E7%9A%84%E6%9C%80%E9%95%B7%E5%AD%90%E6%95%B8%E7%B5%84%E9%95%B7%E5%BA%A6" title="返回無序數組中正數和負數個數相等的最長子數組長度">返回無序數組中正數和負數個數相等的最長子數組長度</a></li>
+<li><a href="/longest-well-performing-interval" title="1124. 表現良好的最長時間段">1124. 表現良好的最長時間段</a></li>
+<li><a href="/make-sum-divisible-by-p" title="1590. 使數組合能被P整除">1590. 使數組合能被P整除</a></li>
+<li><a href="/find-the-longest-substring-containing-vowels-in-even-counts" title="1371. 每個元音包含偶數次的最長子字符串">1371. 每個元音包含偶數次的最長子字符串</a></li>
+</ul>
+<h2 id="差分數組">差分數組</h2>
+<p><a href="/difference">差分數組介紹</a></p>
+<ul>
+<li><a href="/corporate-flight-bookings" title="1109. 航班預定統計">1109. 航班預定統計</a></li>
+<li><a href="/p4231-%E4%B8%89%E6%AD%A5%E5%BF%85%E6%AE%BA" title="P4231. 三步必殺">P4231. 三步必殺</a></li>
+<li><a href="/p5026-lycanthropy" title="P5026. Lycanthropy">P5026. Lycanthropy</a></li>
+</ul>
+<h2 id="二維前綴和">二維前綴和</h2>
+<p><a href="/2dprefixsum">二維前綴和介紹</a></p>
+<ul>
+<li><a href="/range-sum-query-2d---immutable" title="304. 二維區域和檢索 - 矩陣不可變">304. 二維區域和檢索 - 矩陣不可變</a></li>
+<li><a href="/largest-1-bordered-square" title="1139. 最大的以 1 為邊界的正方形">1139. 最大的以 1 為邊界的正方形</a></li>
+</ul>
+<h2 id="二維差分數組">二維差分數組</h2>
+<p><a href="/2ddifference">二維差分數組介紹</a></p>
+<ul>
+<li><a href="/%E4%BA%8C%E7%B6%AD%E5%B7%AE%E5%88%86" title="二維差分">二維差分</a></li>
+<li><a href="/p3397-%E5%9C%B0%E6%AF%AF" title="P3397 地毯">P3397 地毯</a></li>
+<li><a href="/stamping-the-grid" title="2132. 用郵票貼滿網格圖">2132. 用郵票貼滿網格圖</a></li>
+<li><a href="/lcp-74-%E6%9C%80%E5%BC%B7%E7%A5%9D%E7%A6%8F%E7%AB%8B%E5%A0%B4" title="LCP 74 最強祝福立場">LCP 74 最強祝福立場</a></li>
+</ul>
+<h2 id="滑動窗口">滑動窗口</h2>
+<ul>
+<li><a href="/minimum-size-subarray-sum" title="209. 長度最小的子數組">209. 長度最小的子數組</a></li>
+<li><a href="/longest-substring-without-repeating-characters" title="3. 無重複的最長子串">3. 無重複的最長子串</a></li>
+<li><a href="/minimum-window-substring" title="76. 最小覆蓋子串">76. 最小覆蓋子串</a></li>
+<li><a href="/gas-station" title="134. 加油站">134. 加油站</a></li>
+<li><a href="/replace-the-substring-for-balanced-string" title="1234. 替換子字串得到平衡字串">1234. 替換子字串得到平衡字串</a></li>
+<li><a href="/subarrays-with-k-different-integers" title="992. K 個不同整數的子數組">992. K 個不同整數的子數組</a></li>
+<li><a href="/longest-substring-with-at-least-k-repeating-characters" title="395. 至少有 K 個重複字元的最長字串">395. 至少有 K 個重複字元的最長字串</a></li>
+</ul>
+<h2 id="雙指針">雙指針</h2>
+<ul>
+<li><a href="/sort-array-by-parity-ii" title="922. 按奇偶排序數組 II">922. 按奇偶排序數組 II</a></li>
+<li><a href="/find-the-duplicate-number" title="287. 尋找重複數">287. 尋找重複數</a></li>
+<li><a href="/trapping-rain-water" title="42. 接雨水">42. 接雨水</a></li>
+<li><a href="/boats-to-save-people" title="881. 救生艇">881. 救生艇</a></li>
+<li><a href="/container-with-most-water" title="11. 盛最多水的容器">11. 盛最多水的容器</a></li>
+<li><a href="/heaters" title="475. 供暖器">475. 供暖器</a></li>
+<li><a href="/first-missing-positive" title="41. 缺失的第一個正數">41. 缺失的第一個正數</a></li>
+</ul>
+<h2 id="二分搜索">二分搜索</h2>
+<ul>
+<li><a href="/koko-eating-bananas" title="875. 愛吃香蕉的 Koko">875. 愛吃香蕉的 Koko</a></li>
+<li><a href="/split-array-largest-sum" title="410. 分割數組的最大值">410. 分割數組的最大值</a></li>
+<li><a href="/%E6%A9%9F%E5%99%A8%E4%BA%BA%E8%B7%B3%E8%BA%8D%E5%95%8F%E9%A1%8C" title="機器人跳躍問題">機器人跳躍問題</a></li>
+<li><a href="/find-k-th-smallest-pair-distance" title="719. 找出第 K 小的數對">719. 找出第 K 小的數對</a></li>
+<li><a href="/maximum-running-time-of-n-computers" title="2141. 同時運行 N 台電腦的最長時間">2141. 同時運行 N 台電腦的最長時間</a></li>
+<li><a href="/minimum-time-to-complete-trips" title="2187. 完成旅途的最少時間">2187. 完成旅途的最少時間</a></li>
+</ul>
+<h2 id="單調棧">單調棧</h2>
+<ul>
+<li><a href="/%E5%96%AE%E8%AA%BF%E6%A3%A7%E7%B5%90%E6%A7%8B" title="單調棧結構">單調棧結構</a></li>
+<li><a href="/daily-temperatures" title="739. 每日溫度">739. 每日溫度</a></li>
+<li><a href="/sum-of-subarray-minimums" title="907. 子數組的最小值之和">907. 子數組的最小值之和</a></li>
+<li><a href="/largest-rectangle-in-histogram" title="84. 柱狀圖的最大矩形">84. 柱狀圖的最大矩形</a></li>
+<li><a href="/maximal-rectangle" title="85. 最大矩形">85. 最大矩形</a></li>
+<li><a href="/maximum-width-ramp" title="962. 最大寬度波">962. 最大寬度波</a></li>
+<li><a href="/smallest-subsequence-of-distinct-characters" title="1081. 不同字符的最小子序列">1081. 不同字符的最小子序列</a></li>
+<li><a href="/steps-to-make-array-non-decreasing" title="2289. 使數組按照非遞減順序排序">2289. 使數組按照非遞減順序排序</a></li>
+<li><a href="/%E5%A4%A7%E9%AD%9A%E5%90%83%E5%B0%8F%E9%AD%9A" title="大魚吃小魚">大魚吃小魚</a></li>
+<li><a href="/count-submatrices-with-all-ones" title="1504. 統計全 1 子矩形">1504. 統計全 1 子矩形</a></li>
+</ul>
+<h2 id="單調隊列">單調隊列</h2>
+<ul>
+<li><a href="/sliding-window-maximum" title="239. 滑動窗口最大值">239. 滑動窗口最大值</a></li>
+<li><a href="/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit" title="1438. 絕對差不超過限制的最長連續子數組">1438. 絕對差不超過限制的最長連續子數組</a></li>
+<li><a href="/p2698-flowerpot-s" title="P2698 Flowerpot S">P2698 Flowerpot S</a></li>
+<li><a href="/shortest-subarray-with-sum-at-least-k" title="862. 和至少為 K 的最短子數組">862. 和至少為 K 的最短子數組</a></li>
+<li><a href="/max-value-of-equation" title="1499. 滿足不等式的最大值">1499. 滿足不等式的最大值</a></li>
+<li><a href="/maximum-number-of-tasks-you-can-assign" title="2071. 你可以安排的最多任務數目">2071. 你可以安排的最多任務數目</a></li>
+</ul>
+<h2 id="並查集">並查集</h2>
+<p><a href="/unionfind">並查集介紹</a></p>
+<ul>
+<li><a href="/p3367-%E4%B8%A6%E6%9F%A5%E9%9B%86" title="P3367 並查集">P3367 並查集</a></li>
+<li><a href="/couples-holding-hands" title="765. 情侶牽手">765. 情侶牽手</a></li>
+<li><a href="/similar-string-groups" title="839. 相似字串組">839. 相似字串組</a></li>
+<li><a href="/number-of-islands" title="200. 島嶼數量">200. 島嶼數量</a></li>
+<li><a href="/most-stones-removed-with-same-row-or-column" title="947. 移除最多的同行或同列石頭">947. 移除最多的同行或同列石頭</a></li>
+<li><a href="/find-all-people-with-secret" title="2092. 找出知曉秘密的所有專家">2092. 找出知曉秘密的所有專家</a></li>
+<li><a href="/number-of-good-paths" title="2421. 好路徑的數目">2421. 好路徑的數目</a></li>
+<li><a href="/minimize-malware-spread-ii" title="928. 盡量減少惡意軟體的傳播 II">928. 盡量減少惡意軟體的傳播 II</a></li>
+</ul>
+<h2 id="洪水填充">洪水填充</h2>
+<ul>
+<li><a href="/number-of-islands" title="200. 島嶼數量">200. 島嶼數量</a></li>
+<li><a href="/surrounded-regions" title="130. 被圍繞的區域">130. 被圍繞的區域</a></li>
+<li><a href="/making-a-large-island" title="827. 最大人工島">827. 最大人工島</a></li>
+<li><a href="/bricks-falling-when-hit" title="803. 打磚塊">803. 打磚塊</a></li>
+</ul>
+<h2 id="拓樸排序">拓樸排序</h2>
+<ul>
+<li><a href="/course-schedule-ii" title="210. 課程表">210. 課程表</a></li>
+<li><a href="/alien-dictionary" title="269. 火星辭典">269. 火星辭典</a></li>
+<li><a href="/stamping-the-sequence" title="936. 戳印序列">936. 戳印序列</a></li>
+<li><a href="/p4017-%E9%A3%9F%E7%89%A9%E9%8F%88%E7%9A%84%E6%9C%80%E5%A4%A7%E8%A8%88%E6%95%B8" title="P4017 食物鏈的最大計數">P4017 食物鏈的最大計數</a></li>
+<li><a href="/loud-and-rich" title="851. 喧鬧和富有">851. 喧鬧和富有</a></li>
+<li><a href="/parallel-courses-iii" title="2050. 並行課程 III">2050. 並行課程 III</a></li>
+<li><a href="/maximum-employees-to-be-invited-to-a-meeting" title="2127. 參加會議的最多員工數">2127. 參加會議的最多員工數</a></li>
+</ul>
+<h2 id="最小生成樹">最小生成樹</h2>
+<ul>
+<li><a href="/p3366-%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A8%B9" title="P3366 最小生成樹">P3366 最小生成樹</a></li>
+<li><a href="/optmize-water-distribution-in-a-village" title="1168. 水資源分配優化">1168. 水資源分配優化</a></li>
+<li><a href="/min-cost-to-connect-all-points" title="1584. 連接所有點的最小費用">1584. 連接所有點的最小費用</a></li>
+<li><a href="/checking-existence-of-edge-length-limited-paths" title="1697. 檢查邊長度限制的路徑是否存在">1697. 檢查邊長度限制的路徑是否存在</a></li>
+<li><a href="/p2330-%E7%B9%81%E5%BF%99%E7%9A%84%E9%83%BD%E5%B8%82" title="P2330 繁忙的都市">P2330 繁忙的都市</a></li>
+<li><a href="/maximize-spanning-tree-stability-with-upgrades" title="3600. 升級後的最大生成樹穩定性">3600. 升級後的最大生成樹穩定性</a></li>
+</ul>
+<h2 id="廣度優先搜索及其擴展">廣度優先搜索及其擴展</h2>
+<ul>
+<li><a href="/as-far-from-land-as-possible" title="1162. 地圖分析">1162. 地圖分析</a></li>
+<li><a href="/stickers-to-spell-word" title="691. 貼紙拼詞">691. 貼紙拼詞</a></li>
+<li><a href="/trapping-rain-water-ii" title="407. 接雨水 II">407. 接雨水 II</a></li>
+<li><a href="/word-ladder-ii" title="126. 單字接龍 II">126. 單字接龍 II</a></li>
+</ul>
+<h2 id="01bfs">01BFS</h2>
+<p><a href="/01bfs">01bfs介紹</a></p>
+<ul>
+<li><a href="/minimum-obstacle-removal-to-reach-corner" title="2290. 到達角落需要移除障礙物的最小數目">2290. 到達角落需要移除障礙物的最小數目</a></li>
+<li><a href="/minimum-cost-to-make-at-least-one-valid-path-in-a-grid" title="1368. 使網格圖至少有一條有效路徑的最小代價">1368. 使網格圖至少有一條有效路徑的最小代價</a></li>
+</ul>
+<h2 id="雙向廣度優先搜尋">雙向廣度優先搜尋</h2>
+<ul>
+<li><a href="/word-ladder" title="127. 單字接龍">127. 單字接龍</a></li>
+<li><a href="/%E9%9B%B6%E9%A3%9F%E5%95%8F%E9%A1%8C" title="零食問題">零食問題</a></li>
+<li><a href="/p4799-%E4%B8%96%E7%95%8C%E5%86%B0%E7%90%83%E9%8C%A6%E6%A8%99%E8%B3%BD" title="P4799. 世界冰球錦標賽">P4799. 世界冰球錦標賽</a></li>
+</ul>
+<h2 id="dijkstra">Dijkstra</h2>
+<p><a href="/dijkstra">Dijkstra</a></p>
+<ul>
+<li><a href="/network-delay-time" title="743. 網路延遲時間">743. 網路延遲時間</a></li>
+<li><a href="/p4779-%E5%96%AE%E6%BA%90%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%91" title="P4779. 單源最短路徑">P4779. 單源最短路徑</a></li>
+<li><a href="/path-with-minimum-effort" title="1631. 最少體力消耗路徑">1631. 最少體力消耗路徑</a></li>
+<li><a href="/swim-in-rising-water" title="778. 水位上升的水位游泳">778. 水位上升的水位游泳</a></li>
+<li><a href="/shortest-path-to-get-all-keys" title="864. 獲取所有鑰匙的最短路徑">864. 獲取所有鑰匙的最短路徑</a></li>
+<li><a href="/lcp-35-%E9%9B%BB%E5%8B%95%E8%BB%8A%E9%81%8A%E5%9F%8E%E5%B8%82" title="LCP 35. 電動車遊城市">LCP 35. 電動車遊城市</a></li>
+</ul>
+<h2 id="一維動態規劃">一維動態規劃</h2>
+<p><a href="/dynamicprogramming">動態規劃介紹</a></p>
+<ul>
+<li><a href="/fibonacci-number" title="509. 費波納契數列">509. 費波納契數列</a></li>
+<li><a href="/minimum-cost-for-tickets" title="983. 最低票價">983. 最低票價</a></li>
+<li><a href="/decode-ways" title="91. 解碼方法">91. 解碼方法</a></li>
+<li><a href="/decode-ways-ii" title="639. 解碼方法 II">639. 解碼方法 II</a></li>
+<li><a href="/ugly-number-ii" title="264. 醜數 II">264. 醜數 II</a></li>
+<li><a href="/longest-valid-parentheses" title="32. 最長有效括號">32. 最長有效括號</a></li>
+<li><a href="/unique-substrings-in-wraparound-string" title="467. 環繞字串中唯一的子字串">467. 環繞字串中唯一的子字串</a></li>
+<li><a href="/distinct-subsequences-ii" title="940. 不同的子序列 II">940. 不同的子序列 II</a></li>
+</ul>
+<h2 id="二維動態規劃">二維動態規劃</h2>
+<ul>
+<li><a href="/minimum-path-sum" title="64. 最小路徑和">64. 最小路徑和</a></li>
+<li><a href="/word-search" title="79. 單字搜索">79. 單字搜索</a> (對比題)</li>
+<li><a href="/longest-common-subsequence" title="1143. 最長公共子序列">1143. 最長公共子序列</a></li>
+<li><a href="/longest-palindromic-subsequence" title="516. 最長回文子序列">516. 最長回文子序列</a></li>
+<li><a href="/%E7%AF%80%E9%BB%9E%E6%95%B8%E7%82%BA-n-%E4%B8%94%E9%AB%98%E5%BA%A6%E4%B8%8D%E5%A4%A7%E6%96%BC-m-%E7%9A%84%E4%BA%8C%E5%8F%89%E6%A8%B9%E5%80%8B%E6%95%B8" title="節點數為 n 且高度不大於 m 的二叉樹個數">節點數為 n 且高度不大於 m 的二叉樹個數</a></li>
+<li><a href="/longest-increasing-path-in-a-matrix" title="329. 矩陣中的最長遞增路徑">329. 矩陣中的最長遞增路徑</a></li>
+<li><a href="/distinct-subsequences" title="115. 不同的子序列">115. 不同的子序列</a></li>
+<li><a href="/%E6%9C%89%E6%95%88%E5%A1%97%E8%89%B2%E5%95%8F%E9%A1%8C" title="有效塗色問題">有效塗色問題</a></li>
+<li><a href="/%E5%88%AA%E9%99%A4%E6%9C%80%E5%B0%91%E5%B9%BE%E5%80%8B%E5%AD%97%E5%85%83%E5%8F%AF%E4%BB%A5%E8%AE%8A%E6%88%90%E5%8F%A6%E4%B8%80%E5%80%8B%E5%AD%97%E4%B8%B2%E7%9A%84%E5%AD%90%E5%AD%97%E4%B8%B2" title="刪除最少幾個字元可以變成另一個字串的子字串">刪除最少幾個字元可以變成另一個字串的子字串</a></li>
+</ul>
+<h2 id="三維動態規劃">三維動態規劃</h2>
+<ul>
+<li><a href="/ones-and-zeroes" title="474. 一和零">474. 一和零</a></li>
+<li><a href="/profitable-schemes" title="879. 營利計畫">879. 營利計畫</a></li>
+<li><a href="/knight-probability-in-chessboard" title="688. 騎士在棋盤上的機率">688. 騎士在棋盤上的機率</a></li>
+<li><a href="/paths-in-matrix-whose-sum-is-divisible-by-k" title="2435. 矩陣中能被k整除的路徑">2435. 矩陣中能被k整除的路徑</a></li>
+<li><a href="/scramble-string" title="87. 擾亂字串">87. 擾亂字串</a></li>
+</ul>
+<h2 id="子數組最大累加和問題與其擴展">子數組最大累加和問題與其擴展</h2>
+<ul>
+<li><a href="/maximum-subarray" title="53. 最大子數組和">53. 最大子數組和</a></li>
+<li><a href="/house-robber" title="198. 打家劫舍">198. 打家劫舍</a></li>
+<li><a href="/maximum-sum-circular-subarray" title="918. 環形子數組的最大和">918. 環形子數組的最大和</a></li>
+<li><a href="/house-robber-ii" title="213. 打家劫舍 II">213. 打家劫舍 II</a></li>
+<li><a href="/house-robber-iv" title="2560. 打家劫舍 IV">2560. 打家劫舍 IV</a></li>
+<li><a href="/%E9%9D%A2%E8%A9%A6%E9%A1%8C-1724-%E6%9C%80%E5%A4%A7%E5%AD%90%E7%9F%A9%E9%99%A3" title="面試題 17.24 最大子矩陣">面試題 17.24 最大子矩陣</a></li>
+<li><a href="/maximum-product-subarray" title="152. 最大乘積子數組">152. 最大乘積子數組</a></li>
+<li><a href="/%E8%A2%AB-7-%E6%95%B4%E9%99%A4%E7%9A%84%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%88%97%E7%B4%AF%E5%8A%A0%E5%92%8C" title="被 7 整除的最大子序列累加和">被 7 整除的最大子序列累加和</a></li>
+<li><a href="/maximum-sum-of-3-non-overlapping-subarrays" title="689. 三個無重疊子數組的最大和">689. 三個無重疊子數組的最大和</a></li>
+<li><a href="/%E5%8F%AF%E4%BB%A5%E7%BF%BB%E8%BD%89%E4%B8%80%E6%AC%A1%E7%9A%84%E6%83%85%E6%B3%81%E4%B8%8B%E7%9A%84%E5%AD%90%E6%95%B8%E7%B5%84%E6%9C%80%E5%A4%A7%E7%B4%AF%E5%8A%A0%E5%92%8C" title="可以翻轉一次的情況下的子數組最大累加和">可以翻轉一次的情況下的子數組最大累加和</a></li>
+<li><a href="/%E5%88%AA%E6%8E%89%E4%B8%80%E5%80%8B%E6%95%B8%E5%AD%97%E5%BE%8C%E9%95%B7%E5%BA%A6%E7%82%BA-k-%E7%9A%84%E5%AD%90%E6%95%B8%E7%B5%84%E6%9C%80%E5%A4%A7%E7%B4%AF%E5%8A%A0%E5%92%8C" title="刪掉一個數字後長度為 k 的子數組最大累加和">刪掉一個數字後長度為 k 的子數組最大累加和</a></li>
+</ul>
+<h2 id="最長遞增子序列與其擴展">最長遞增子序列與其擴展</h2>
+<ul>
+<li><a href="/longest-increasing-subsequence" title="300. 最長遞增子序列">300. 最長遞增子序列</a></li>
+<li><a href="/russian-doll-envelopes" title="354. 俄羅斯套娃信封問題">354. 俄羅斯套娃信封問題</a></li>
+<li><a href="/minimum-operations-to-make-the-array-k-increasing" title="2111. 使數組K遞增的最少操作次數">2111. 使數組K遞增的最少操作次數</a></li>
+<li><a href="/maximum-length-of-pair-chain" title="646. 最長數對鏈">646. 最長數對鏈</a></li>
+<li><a href="/p8776-%E6%9C%80%E9%95%B7%E4%B8%8D%E4%B8%8B%E9%99%8D%E5%AD%90%E5%BA%8F%E5%88%97" title="P8776 最長不下降子序列">P8776 最長不下降子序列</a></li>
+</ul>
+<h2 id="01背包有依賴的背包問題">01背包、有依賴的背包問題</h2>
+<ul>
+<li><a href="/p1048-%E6%8E%A1%E8%97%A5" title="P1048 採藥（背包問題模板）">P1048 採藥（背包問題模板）</a></li>
+<li><a href="/bytedance-006-%E5%A4%8F%E5%AD%A3%E7%89%B9%E8%B3%A3" title="bytedance-006. 夏季特賣">bytedance-006. 夏季特賣</a></li>
+<li><a href="/target-sum" title="494. 目標和">494. 目標和</a></li>
+<li><a href="/last-stone-weight-ii" title="1049. 最後一塊石頭的重量 II">1049. 最後一塊石頭的重量 II</a></li>
+<li><a href="/p1064-%E9%87%91%E6%98%8E%E7%9A%84%E9%A0%90%E7%AE%97%E6%96%B9%E6%A1%88" title="P1064 金明的預算方案（有依賴的背包問題）">P1064 金明的預算方案（有依賴的背包問題）</a></li>
+</ul></article></div></article><aside class="toc-sidebar" data-astro-cid-ju4pidww=""><div class="toc-container" data-astro-cid-ju4pidww=""><ul class="toc-list" data-astro-cid-ju4pidww=""><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#基本題目" data-astro-cid-ju4pidww="">基本題目</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#位運算" data-astro-cid-ju4pidww="">位運算</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#鏈結串列" data-astro-cid-ju4pidww="">鏈結串列</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#二叉樹" data-astro-cid-ju4pidww="">二叉樹</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#常見經典遞迴" data-astro-cid-ju4pidww="">常見經典遞迴</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#嵌套類問題" data-astro-cid-ju4pidww="">嵌套類問題</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#字典樹" data-astro-cid-ju4pidww="">字典樹</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#前綴和" data-astro-cid-ju4pidww="">前綴和</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#差分數組" data-astro-cid-ju4pidww="">差分數組</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#二維前綴和" data-astro-cid-ju4pidww="">二維前綴和</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#二維差分數組" data-astro-cid-ju4pidww="">二維差分數組</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#滑動窗口" data-astro-cid-ju4pidww="">滑動窗口</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#雙指針" data-astro-cid-ju4pidww="">雙指針</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#二分搜索" data-astro-cid-ju4pidww="">二分搜索</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#單調棧" data-astro-cid-ju4pidww="">單調棧</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#單調隊列" data-astro-cid-ju4pidww="">單調隊列</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#並查集" data-astro-cid-ju4pidww="">並查集</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#洪水填充" data-astro-cid-ju4pidww="">洪水填充</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#拓樸排序" data-astro-cid-ju4pidww="">拓樸排序</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#最小生成樹" data-astro-cid-ju4pidww="">最小生成樹</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#廣度優先搜索及其擴展" data-astro-cid-ju4pidww="">廣度優先搜索及其擴展</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#01bfs" data-astro-cid-ju4pidww="">01BFS</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#雙向廣度優先搜尋" data-astro-cid-ju4pidww="">雙向廣度優先搜尋</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#dijkstra" data-astro-cid-ju4pidww="">Dijkstra</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#一維動態規劃" data-astro-cid-ju4pidww="">一維動態規劃</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#二維動態規劃" data-astro-cid-ju4pidww="">二維動態規劃</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#三維動態規劃" data-astro-cid-ju4pidww="">三維動態規劃</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#子數組最大累加和問題與其擴展" data-astro-cid-ju4pidww="">子數組最大累加和問題與其擴展</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#最長遞增子序列與其擴展" data-astro-cid-ju4pidww="">最長遞增子序列與其擴展</a></li><li class="toc-item depth-2" data-astro-cid-ju4pidww=""><a href="#01背包有依賴的背包問題" data-astro-cid-ju4pidww="">01背包、有依賴的背包問題</a></li></ul></div></aside></main><footer class="site-footer" data-astro-cid-jo6i4kqk=""><div class="footer-container" data-astro-cid-jo6i4kqk=""><div class="footer-section copyright" data-astro-cid-jo6i4kqk=""><span data-astro-cid-jo6i4kqk="">Copyright © 2026<span data-cn="解題筆記" data-en="Coding Notes" data-astro-cid-jo6i4kqk="">解題筆記</span> All rights reserved.</span></div></div></footer><button id="lang-toggle" class="lang-toggle-btn" aria-label="切換語言" data-astro-cid-ra2rg4ph=""><span class="lang-text" data-astro-cid-ra2rg4ph="">EN</span></button><script type="module" src="/_astro/LanguageToggle.astro_astro_type_script_index_0_lang.h7ISUx7x.js"></script><!-- 觸發按鈕 --><button id="setting-toggle" class="setting-btn" aria-label="開啟設定面板" data-astro-cid-yr2mghod=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-yr2mghod=""><circle cx="12" cy="12" r="3" data-astro-cid-yr2mghod=""></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" data-astro-cid-yr2mghod=""></path></svg></button><!-- 設定面板 --><div id="settings-panel" class="settings-panel" data-astro-cid-yr2mghod=""><!-- Header --><div class="panel-header" data-astro-cid-yr2mghod=""><h3 class="panel-title" data-cn="顯示設定" data-en="Display Settings" data-astro-cid-yr2mghod="">顯示設定</h3><button id="close-settings-btn" class="close-btn" data-astro-cid-yr2mghod=""><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-yr2mghod=""><line x1="18" y1="6" x2="6" y2="18" data-astro-cid-yr2mghod=""></line><line x1="6" y1="6" x2="18" y2="18" data-astro-cid-yr2mghod=""></line></svg></button></div><!-- 選項 1: Hover 特效 --><div class="toggle-row" data-astro-cid-yr2mghod=""><div data-astro-cid-yr2mghod=""><div class="toggle-label" data-cn="懸停發光" data-en="Hover Glow" data-astro-cid-yr2mghod="">懸停發光</div><span class="toggle-desc" data-cn="滑鼠懸停時顯示霓虹效果" data-en="Show neon indicator on hover" data-astro-cid-yr2mghod="">滑鼠懸停時顯示霓虹效果</span></div><label class="switch" data-astro-cid-yr2mghod=""><input type="checkbox" id="hover-glow-toggle" data-astro-cid-yr2mghod=""><span class="slider" data-astro-cid-yr2mghod=""></span></label></div><!-- 選項 3: 聚光燈 --><div class="toggle-row" data-astro-cid-yr2mghod=""><div data-astro-cid-yr2mghod=""><div class="toggle-label" data-cn="聚光燈" data-en="Spotlight" data-astro-cid-yr2mghod="">聚光燈</div><span class="toggle-desc" data-cn="跟隨滑鼠的聚光燈效果" data-en="Follow cursor light effect" data-astro-cid-yr2mghod="">跟隨滑鼠的聚光燈效果</span></div><label class="switch" data-astro-cid-yr2mghod=""><input type="checkbox" id="spotlight-toggle" data-astro-cid-yr2mghod=""><span class="slider" data-astro-cid-yr2mghod=""></span></label></div><!-- 選項 3: 主題顏色 --><div class="toggle-row" data-astro-cid-yr2mghod=""><div data-astro-cid-yr2mghod=""><div class="toggle-label" data-cn="主題顏色" data-en="Theme Color" data-astro-cid-yr2mghod="">主題顏色</div><span class="toggle-desc" data-cn="自訂主要顏色" data-en="Customize primary color" data-astro-cid-yr2mghod="">自訂主要顏色</span></div><div class="color-control" data-astro-cid-yr2mghod=""><input type="color" id="theme-color-picker" value="#70A0FF" data-astro-cid-yr2mghod=""><button id="reset-color-btn" class="reset-btn" aria-label="Reset Color" title="重置" data-cn-title="重置" data-en-title="Reset" data-astro-cid-yr2mghod=""><i class="bx bx-refresh" data-astro-cid-yr2mghod=""></i></button></div></div></div><script type="module" src="/_astro/SettingIcon.astro_astro_type_script_index_0_lang.BpQ0iVCA.js"></script><script type="module">document.addEventListener(`DOMContentLoaded`,()=>{document.querySelectorAll(`pre`).forEach(e=>{let t=document.createElement(`div`);t.className=`code-wrapper`;let n=document.createElement(`button`);if(n.className=`copy-code-btn`,n.innerHTML=`<i class='bx bx-copy'></i>`,e.parentNode){e.parentNode.insertBefore(t,e);let r=e.dataset.title;if(r){let e=document.createElement(`div`);e.className=`code-title`,e.textContent=r,e.appendChild(n),t.appendChild(e)}else t.appendChild(n);t.appendChild(e)}n.addEventListener(`click`,async()=>{await navigator.clipboard.writeText(e.innerText),n.innerHTML=`<i class='bx bx-check'></i>`,n.classList.add(`copied`),setTimeout(()=>{n.innerHTML=`<i class='bx bx-copy'></i>`,n.classList.remove(`copied`)},2e3)})})});</script></body></html>

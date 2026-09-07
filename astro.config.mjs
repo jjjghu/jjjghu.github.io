@@ -2,11 +2,16 @@ import { defineConfig } from "astro/config";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import remarkLink from "./src/plugins/remark-link.mjs";
-import transformerCodeTitle from "./src/plugins/shiki-code-title.mjs";
+import transformerCodeTitle, { remarkCodeMeta } from "./src/plugins/shiki-code-title.mjs";
 import sitemap from "@astrojs/sitemap";
 import fs from "node:fs";
 import path from "node:path";
 import { fileToSlug } from "./src/utils/slug-generator.mjs";
+import { readFrontmatter } from "./src/utils/frontmatter.mjs";
+import { unified, rehypeShiki } from '@astrojs/markdown-remark';
+import rehypeRaw from 'rehype-raw';
+import securityPolicy from './src/plugins/security-policy.mjs';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 
 // Helper to calculate priority
 const getPostMetadata = () => {
@@ -19,26 +24,19 @@ const getPostMetadata = () => {
 
     const files = fs.readdirSync(dirPath);
     files.forEach((file) => {
-      if (!file.endsWith(".md") && !file.endsWith(".mdx")) return;
+      if (file.startsWith('.') || (!file.endsWith(".md") && !file.endsWith(".mdx"))) return;
 
       const content = fs.readFileSync(path.join(dirPath, file), "utf-8");
 
-      // Simple Frontmatter Parse
-      const frontmatterMatch = content.match(/^---\n([\s\S]+?)\n---/);
-      if (!frontmatterMatch) return;
-
-      const fmContent = frontmatterMatch[1];
-      const dateMatch = fmContent.match(/date:\s*"?(.+?)"?$/m);
-      const problemIdMatch = fmContent.match(/problem_id:\s*"?(.+?)"?$/m);
-
-      const date = dateMatch ? new Date(dateMatch[1]) : null;
-      const problemId = problemIdMatch ? problemIdMatch[1] : null;
+      const metadata = readFrontmatter(content);
+      const date = metadata.date ? new Date(metadata.date) : null;
+      const problemId = metadata.problem_id ? String(metadata.problem_id) : null;
       const length = content.length;
 
       // \u8207 Astro / remark-link \u5171\u7528\u540c\u4e00\u5957 slug \u908f\u8f2f\uff08github-slugger\uff09
       const slug = fileToSlug(file, problemId);
 
-      if (date) {
+      if (date && Number.isFinite(date.getTime())) {
         map.set(slug, { date, length });
       }
     });
@@ -50,21 +48,36 @@ const postMetaMap = getPostMetadata();
 
 export default defineConfig({
   site: "https://jjjghu.github.io",
+  server: { host: '127.0.0.1' },
 
   markdown: {
-    remarkPlugins: [remarkMath, remarkLink],
-    rehypePlugins: [rehypeKatex],
-    shikiConfig: {
-      themes: {
-        dark: "dark-plus",
-        light: "light-plus",
-      },
-      wrap: false,
-      transformers: [transformerCodeTitle()],
-    },
+    syntaxHighlight: false,
+    processor: unified({
+      remarkPlugins: [remarkMath, remarkLink, remarkCodeMeta],
+      rehypePlugins: [
+        rehypeRaw,
+        [rehypeSanitize, {
+          ...defaultSchema,
+          strip: [...(defaultSchema.strip || []), 'style', 'iframe'],
+          attributes: {
+            ...defaultSchema.attributes,
+            code: [...(defaultSchema.attributes.code || []), 'metastring', ['className', /^language-./, 'math-inline', 'math-display']],
+            span: [['style', /^color:\s*var\(--color-accent-fg\);?$/, /^margin-left:\s*2rem;?$/]],
+            div: [['style', /^text-align:\s*center;?$/]],
+          },
+        }],
+        [rehypeKatex, { trust: false, strict: 'warn', maxExpand: 1000, maxSize: 20 }],
+        [rehypeShiki, {
+          themes: { dark: 'dark-plus', light: 'light-plus' },
+          wrap: false,
+          transformers: [transformerCodeTitle()],
+        }],
+      ],
+    }),
   },
 
   integrations: [
+    securityPolicy(),
     sitemap({
       serialize(item) {
         const url = new URL(item.url);

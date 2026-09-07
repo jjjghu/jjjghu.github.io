@@ -16,6 +16,7 @@ import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
 import { UI_TEXT } from "../i18n/ui";
 import type { Post } from "../types";
 import { generateSlug } from "../utils/slug-generator.mjs";
+import { serializeJson } from "../utils/security";
 
 import "../styles/post-list.css";
 import "../styles/utilities.css";
@@ -35,9 +36,9 @@ const uniqueDifficultiesZerojudge = getAllUniqueDifficulties(zerojudgePosts);
 const posts: Post[] = sortedPosts.map((post) => {
   const category = (post.data.category === "zerojudge" ? "zerojudge" : "leetcode") as "leetcode" | "zerojudge";
   // 如果 problem_id 為空，使用 slug 作為 id
-  const id = post.data.problem_id || post.slug;
+  const id = post.data.problem_id || post.id;
   // 使用 generateSlug 來生成正確的 URL slug（與 [...slug].astro 一致）
-  const finalSlug = generateSlug(post.slug, post.data.problem_id);
+  const finalSlug = generateSlug(post.id, post.data.problem_id);
   return {
     id: id,
     slug: finalSlug,
@@ -53,7 +54,7 @@ const posts: Post[] = sortedPosts.map((post) => {
 });
 
 // < 轉義避免內容出現 </script> 破壞資料島
-const postsJson = JSON.stringify(posts).replace(/</g, "\\u003c");
+const postsJson = serializeJson(posts);
 ---
 
 <Layout title={UI_TEXT.header_title.cn}>
@@ -144,6 +145,7 @@ const postsJson = JSON.stringify(posts).replace(/</g, "\\u003c");
   import { FilterEngine } from "../scripts/filterEngine";
   import { SortEngine } from "../scripts/sortEngine";
   import { STORAGE_KEYS, EVENTS } from "../constants";
+  import { storage } from "../scripts/storage";
   import type { Post, SortConfig } from "../types";
 
   const posts: Post[] = JSON.parse(
@@ -167,25 +169,25 @@ const postsJson = JSON.stringify(posts).replace(/</g, "\\u003c");
     // 初始狀態主動從 localStorage 讀取（不依賴各 dropdown 的初始事件推送，
     // 避免 module script 執行順序造成的競態）。後續變更才走事件。
     const [savedField, savedOrder] = (
-      localStorage.getItem(STORAGE_KEYS.sortPreference) || "id-asc"
+      storage.getItem(STORAGE_KEYS.sortPreference) || "id-asc"
     ).split("-");
-    let currentSortField = savedField as SortConfig["field"];
-    let currentSortOrder = savedOrder as SortConfig["order"];
+    let currentSortField: SortConfig['field'] = savedField === 'date' ? 'date' : 'id';
+    let currentSortOrder: SortConfig['order'] = savedOrder === 'desc' ? 'desc' : 'asc';
     let currentDifficulty =
-      localStorage.getItem(STORAGE_KEYS.difficultyPreference) || "all";
+      storage.getItem(STORAGE_KEYS.difficultyPreference) || "all";
 
     let selectedTags = new Set<string>();
     let filterLogic: "AND" | "OR" = "AND";
     try {
       const tagPref = JSON.parse(
-        localStorage.getItem(STORAGE_KEYS.tagPreference) || "{}"
+        storage.getItem(STORAGE_KEYS.tagPreference) || "{}"
       );
-      if (Array.isArray(tagPref.tags)) selectedTags = new Set(tagPref.tags);
-      if (tagPref.logic === "OR") filterLogic = "OR";
+      if (Array.isArray(tagPref?.tags)) selectedTags = new Set(tagPref.tags.filter((tag: unknown) => typeof tag === 'string'));
+      if (tagPref?.logic === "OR") filterLogic = "OR";
     } catch {}
 
     let currentCategory = categoryParam || "leetcode";
-    let isEnglish = localStorage.getItem(STORAGE_KEYS.isEnglish) === "true";
+    let isEnglish = storage.getItem(STORAGE_KEYS.isEnglish) === "true";
 
     function updateFilter() {
       if (!rows || !postList) return;
@@ -202,14 +204,14 @@ const postsJson = JSON.stringify(posts).replace(/</g, "\\u003c");
         order: currentSortOrder,
       });
 
-      const visibleIds = new Set(sortedPosts.map((p) => p.id));
+      const visibleIds = new Set(sortedPosts.map((p) => p.slug));
 
       rows.forEach((row) => {
-        row.style.display = visibleIds.has(row.dataset.postId!) ? "grid" : "none";
+        row.style.display = visibleIds.has(row.dataset.postSlug!) ? "grid" : "none";
       });
 
       sortedPosts.forEach((post) => {
-        const row = Array.from(rows).find((r) => r.dataset.postId === post.id);
+        const row = Array.from(rows).find((r) => r.dataset.postSlug === post.slug);
         if (row) postList.appendChild(row);
       });
 

@@ -91,6 +91,7 @@ const { tags } = Astro.props;
 <script>
     import { getSettingsManager } from "../scripts/settingsManager";
     import { STORAGE_KEYS, EVENTS } from "../constants";
+    import { storage } from "../scripts/storage";
 
     // Initialize Settings
     const settings = getSettingsManager();
@@ -136,9 +137,9 @@ const { tags } = Astro.props;
             }
 
             const savedTags = Array.isArray(parsedObj?.tags)
-                ? parsedObj.tags
+                ? parsedObj.tags.filter((tag: unknown) => typeof tag === 'string')
                 : [];
-            const savedLogic = parsedObj?.logic || "AND";
+            const savedLogic = parsedObj?.logic === 'OR' ? 'OR' : 'AND';
 
             // 1. Update State
             selectedTags = new Set(savedTags);
@@ -155,7 +156,7 @@ const { tags } = Astro.props;
             updateBadge();
 
             // 4. Update Logic UI
-            const isEnglish = localStorage.getItem(STORAGE_KEYS.isEnglish) === "true";
+            const isEnglish = storage.getItem(STORAGE_KEYS.isEnglish) === "true";
             const cnText =
                 filterLogic === "AND" ? "包含所有 (AND)" : "包含任一 (OR)";
             const enText =

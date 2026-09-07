@@ -7,7 +7,7 @@ import { ARTICLES_COLLECTION } from "../constants.ts";
 export async function getStaticPaths() {
     const allArticles = await getCollection(ARTICLES_COLLECTION);
     return allArticles.map((entry) => ({
-        params: { article: entry.slug },
+        params: { article: entry.id },
         props: { entry },
     }));
 }
@@ -20,7 +20,7 @@ const { Content, headings } = await render(entry);
 <Layout
     title={entry.data.title}
     headings={headings}
-    activeCategory={entry.slug}
+    activeCategory={entry.id}
 >
     <div class="post-card">
         <div class="post-header-row">

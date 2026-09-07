@@ -1,0 +1,1 @@
+var e=new Map,t={getItem(t){if(e.has(t))return e.get(t)??null;try{return localStorage.getItem(t)}catch{return null}},setItem(t,n){try{return localStorage.setItem(t,n),e.delete(t),!0}catch{return e.set(t,n),!1}},removeItem(t){try{localStorage.removeItem(t),e.delete(t)}catch{e.set(t,null)}}};export{t};

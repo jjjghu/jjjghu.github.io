@@ -1,3 +1,5 @@
+import { storage } from './storage';
+
 export type SettingType = 'boolean' | 'color' | 'range' | 'select' | 'text';
 
 export interface SettingConfig {
@@ -36,13 +38,12 @@ export class SettingsManager {
         const config = this.configs.get(key);
         if (!config) return null;
 
-        if (typeof localStorage === 'undefined') return config.defaultValue;
-
-        const stored = localStorage.getItem(key);
+        const stored = storage.getItem(key);
         if (stored === null) return config.defaultValue;
 
         if (config.type === 'boolean') return stored === 'true';
-        if (config.type === 'range') return parseFloat(stored);
+        if (config.type === 'range') return Number.isFinite(Number(stored)) ? Number(stored) : config.defaultValue;
+        if (config.type === 'color' && !/^#[a-fA-F0-9]{6}$/.test(stored)) return config.defaultValue;
 
         return stored;
     }
@@ -54,11 +55,10 @@ export class SettingsManager {
         const config = this.configs.get(key);
         if (!config) return;
 
-        if (typeof localStorage !== 'undefined') {
-            localStorage.setItem(key, String(value));
-        }
+        const persisted = storage.setItem(key, String(value));
 
         this.apply(key, value);
+        return persisted;
     }
 
     /**
@@ -108,7 +108,7 @@ export class SettingsManager {
         const config = this.configs.get(key);
         if (!config) return;
 
-        localStorage.removeItem(key);
+        storage.removeItem(key);
         this.apply(key, config.defaultValue);
     }
 }

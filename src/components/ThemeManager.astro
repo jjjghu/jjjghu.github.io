@@ -60,6 +60,8 @@ import "../styles/component-base.css";
   import { getSettingsManager } from '../scripts/settingsManager';
   import { OFFICIAL_THEMES, DEFAULT_THEME_ID } from '../themes';
   import { STORAGE_KEYS } from '../constants';
+  import { parseCustomThemes, validateThemeCss, MAX_THEMES } from '../utils/theme-validation';
+  import { applyTheme } from '../scripts/themeRuntime';
 
   const settings = getSettingsManager();
 
@@ -78,7 +80,7 @@ import "../styles/component-base.css";
   });
 
   function getCustomThemes() {
-    return JSON.parse(settings.get(STORAGE_KEYS.customThemes) as string || '[]');
+    return parseCustomThemes(settings.get(STORAGE_KEYS.customThemes));
   }
 
   function getActiveId() {
@@ -92,33 +94,49 @@ import "../styles/component-base.css";
 
     const allThemes = [
       ...OFFICIAL_THEMES.map((t) => ({ ...t, source: 'official' })),
-      ...customThemes.map((t: any) => ({ ...t, source: 'custom' })),
+      ...customThemes.map((t) => ({ ...t, source: 'custom' })),
     ];
 
-    container.innerHTML = allThemes.map(theme => {
+    container.replaceChildren(...allThemes.map(theme => {
       const isActive = activeId === theme.id;
-      return `
-        <div
-          class="theme-card ${isActive ? 'is-active' : ''}"
-          data-id="${theme.id}"
-          data-source="${theme.source}"
-          role="radio"
-          aria-checked="${isActive}"
-          tabindex="0"
-        >
-          <div class="radio-dot ${isActive ? 'is-checked' : ''}"></div>
-          <div class="theme-card-info">
-            <div class="theme-card-name">${theme.name}</div>
-            <div class="theme-card-badge">${theme.source === 'official' ? '官方' : '自訂'}</div>
-          </div>
-          ${theme.source === 'custom' ? `
-            <button class="theme-delete-btn" data-id="${theme.id}" title="刪除">
-              <i class="bx bx-trash"></i>
-            </button>
-          ` : ''}
-        </div>
-      `;
-    }).join('');
+      const card = document.createElement('div');
+      card.className = `theme-card ${isActive ? 'is-active' : ''}`;
+      card.dataset.id = theme.id;
+      card.dataset.source = theme.source;
+      card.setAttribute('role', 'radio');
+      card.setAttribute('aria-checked', String(isActive));
+      card.tabIndex = 0;
+      const dot = document.createElement('div');
+      dot.className = `radio-dot ${isActive ? 'is-checked' : ''}`;
+      const info = document.createElement('div');
+      info.className = 'theme-card-info';
+      const name = document.createElement('div');
+      name.className = 'theme-card-name';
+      name.textContent = theme.name;
+      const badge = document.createElement('div');
+      badge.className = 'theme-card-badge';
+      badge.textContent = theme.source === 'official' ? '官方' : '自訂';
+      info.append(name, badge);
+      card.append(dot, info);
+      if (theme.source === 'custom') {
+        const button = document.createElement('button');
+        button.className = 'theme-delete-btn';
+        button.dataset.id = theme.id;
+        button.title = '刪除';
+        button.setAttribute('aria-label', `刪除 ${theme.name}`);
+        const icon = document.createElement('i');
+        icon.className = 'bx bx-trash';
+        button.append(icon);
+        card.append(button);
+      }
+      card.addEventListener('keydown', (event) => {
+        if (event.target === card && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          card.click();
+        }
+      });
+      return card;
+    }));
 
     // 點擊選取
     container.querySelectorAll('.theme-card').forEach(card => {
@@ -136,7 +154,7 @@ import "../styles/component-base.css";
         e.stopPropagation();
         const id = (btn as HTMLElement).dataset.id!;
         if (!confirm('確定要刪除這個主題嗎？')) return;
-        const filtered = getCustomThemes().filter((t: any) => t.id !== id);
+        const filtered = getCustomThemes().filter((t) => t.id !== id);
         settings.set(STORAGE_KEYS.customThemes, JSON.stringify(filtered));
         // 若刪除的是當前主題，回到預設
         if (getActiveId() === id) {
@@ -145,42 +163,6 @@ import "../styles/component-base.css";
         }
       });
     });
-  }
-
-  function applyTheme(id: string) {
-    // 移除舊的注入樣式
-    document.querySelectorAll('style[data-theme-id]').forEach(el => el.remove());
-
-    // 移除 html.light class
-    document.documentElement.classList.remove('light');
-
-    if (id === DEFAULT_THEME_ID) return; // 預設主題不需注入
-
-    // 官方主題：fetch 後注入
-    const official = OFFICIAL_THEMES.find(t => t.id === id);
-    if (official) {
-      if (!official.path) return;
-      fetch(official.path)
-        .then(r => r.text())
-        .then(css => injectCSS(id, css, !!official.isLight));
-      return;
-    }
-
-    // 自訂主題：從 localStorage 取 CSS
-    const custom = getCustomThemes().find((t: any) => t.id === id);
-    if (custom) {
-      injectCSS(id, custom.css, false);
-    }
-  }
-
-  function injectCSS(id: string, css: string, isLight: boolean) {
-    const styleEl = document.createElement('style');
-    styleEl.textContent = css;
-    styleEl.dataset.themeId = id;
-    document.head.appendChild(styleEl);
-    if (isLight) {
-      document.documentElement.classList.add('light');
-    }
   }
 
   // 套入變數模板：完整列出所有可覆寫的變數，方便直接編輯或交給 AI 填色。
@@ -249,14 +231,24 @@ import "../styles/component-base.css";
 
     const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
     const themes = getCustomThemes();
+    if (name.length > 100 || tags.length > 20 || tags.some(tag => tag.length > 50) || themes.length >= MAX_THEMES) {
+      alert('主題最多 20 個；名稱限 100 字，標籤最多 20 個且每個限 50 字。');
+      return;
+    }
+    if (!validateThemeCss(css)) {
+      alert('CSS 格式無效或超過 100 KB；主題不能包含外部資源、@import、url() 或跳脫字元。');
+      return;
+    }
     themes.push({
-      id: `custom-${Date.now()}`,
+      id: `custom-${crypto.randomUUID()}`,
       name,
       tags,
       css,
-      source: 'custom',
     });
-    settings.set(STORAGE_KEYS.customThemes, JSON.stringify(themes));
+    if (!settings.set(STORAGE_KEYS.customThemes, JSON.stringify(themes))) {
+      alert('瀏覽器無法儲存主題，目前僅在本頁生效。');
+      return;
+    }
 
     (document.getElementById('theme-name') as HTMLInputElement).value = '';
     (document.getElementById('theme-tags') as HTMLInputElement).value = '';
