@@ -21,7 +21,7 @@
     "boxicons": "^2.1.4",
     "css-tree": "^3.2.1",
     "github-slugger": "^2.0.0",
-    "katex": "^0.16.0",
+    "katex": "^0.18.5",
     "parse5": "^8.0.1",
     "rehype-katex": "^7.0.1",
     "rehype-raw": "^7.0.0",
