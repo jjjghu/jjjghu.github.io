@@ -5,53 +5,21 @@ import TagFilter from "../components/TagFilter.astro";
 import SortDropDown from "../components/SortDropDown.astro";
 import DifficultyDropDown from "../components/DifficultyDropDown.astro";
 import {
-  sortPostsById,
+  getPublicPosts,
   getAllUniqueTags,
-  isPublicPost,
   getAllUniqueDifficulties,
-  getTagCN,
+  toPost,
 } from "../utils/postHelper.ts";
-import { getCollection } from "astro:content";
-import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
-import { UI_TEXT } from "../i18n/ui";
-import type { Post } from "../types";
-import { generateSlug } from "../utils/slug-generator.mjs";
+import { UI_TEXT, t, tPlaceholder } from "../i18n/ui";
 import { serializeJson } from "../utils/security";
 
 import "../styles/post-list.css";
 import "../styles/utilities.css";
 
-// data
-const leetcodePosts = await getCollection(LEETCODE_COLLECTION, isPublicPost);
-const zerojudgePosts = await getCollection(ZEROJUDGE_COLLECTION, isPublicPost);
-const sortedPosts = sortPostsById([...leetcodePosts, ...zerojudgePosts]);
-
-const allTagsCN = getAllUniqueTags(sortedPosts);
-const uniqueTags = Array.from(allTagsCN).sort();
-
-const uniqueDifficultiesLeetcode = getAllUniqueDifficulties(leetcodePosts);
-const uniqueDifficultiesZerojudge = getAllUniqueDifficulties(zerojudgePosts);
-
-// 轉換 posts 為 FilterEngine 所需的數據格式
-const posts: Post[] = sortedPosts.map((post) => {
-  const category = (post.data.category === "zerojudge" ? "zerojudge" : "leetcode") as "leetcode" | "zerojudge";
-  // 如果 problem_id 為空，使用 slug 作為 id
-  const id = post.data.problem_id || post.id;
-  // 使用 generateSlug 來生成正確的 URL slug（與 [...slug].astro 一致）
-  const finalSlug = generateSlug(post.id, post.data.problem_id);
-  return {
-    id: id,
-    slug: finalSlug,
-    category: category,
-    title: post.data.title,
-    enTitle: post.data.en_title ?? "",
-    tagsCN: post.data.tags.map(tag => getTagCN(tag)),
-    tagEN: post.data.tags,
-    difficulty: post.data.difficulty ?? "",
-    date: new Date(post.data.date).getTime(),
-    searchContent: `${post.data.problem_id} ${post.data.title} ${post.data.en_title} ${post.data.tags.join(' ')}`.toLowerCase(),
-  };
-});
+const entries = await getPublicPosts();
+const uniqueTags = Array.from(getAllUniqueTags(entries)).sort();
+const uniqueDifficulties = getAllUniqueDifficulties(entries);
+const posts = entries.map(toPost);
 
 // < 轉義避免內容出現 </script> 破壞資料島
 const postsJson = serializeJson(posts);
@@ -65,10 +33,8 @@ const postsJson = serializeJson(posts);
         <input
           type="text"
           id="text-search"
-          placeholder={UI_TEXT.search_keywords_placeholder.cn}
           autocomplete="off"
-          data-cn-placeholder={UI_TEXT.search_keywords_placeholder.cn}
-          data-en-placeholder={UI_TEXT.search_keywords_placeholder.en}
+          {...tPlaceholder("search_keywords_placeholder")}
         />
       </div>
 
@@ -77,16 +43,11 @@ const postsJson = serializeJson(posts);
       <div class="filter-controls-group">
         <SortDropDown />
         <div class="difficulty-filter-wrapper">
-          <div class="difficulty-filter-wrapper">
-            <DifficultyDropDown
-              difficultiesLeetcode={uniqueDifficultiesLeetcode}
-              difficultiesZerojudge={uniqueDifficultiesZerojudge}
-            />
-          </div>
+          <DifficultyDropDown difficulties={uniqueDifficulties} />
         </div>
         <div class="result-count" id="result-count">
           {UI_TEXT.result_count_prefix.cn}
-          {sortedPosts.length}
+          {posts.length}
           {UI_TEXT.result_count_suffix.cn}
         </div>
       </div>
@@ -95,34 +56,10 @@ const postsJson = serializeJson(posts);
     <!-- The list container: header + rows share the SAME grid -->
     <div class="file-list-container">
       <div class="file-list-header post-list-grid">
-        <div
-          class="col-title"
-          data-cn={UI_TEXT.col_title.cn}
-          data-en={UI_TEXT.col_title.en}
-        >
-          {UI_TEXT.col_title.cn}
-        </div>
-        <div
-          class="col-difficulty"
-          data-cn={UI_TEXT.col_difficulty.cn}
-          data-en={UI_TEXT.col_difficulty.en}
-        >
-          {UI_TEXT.col_difficulty.cn}
-        </div>
-        <div
-          class="col-tags"
-          data-cn={UI_TEXT.col_tags.cn}
-          data-en={UI_TEXT.col_tags.en}
-        >
-          {UI_TEXT.col_tags.cn}
-        </div>
-        <div
-          class="col-date"
-          data-cn={UI_TEXT.col_date.cn}
-          data-en={UI_TEXT.col_date.en}
-        >
-          {UI_TEXT.col_date.cn}
-        </div>
+        <div class="col-title" {...t("col_title")}>{UI_TEXT.col_title.cn}</div>
+        <div class="col-difficulty" {...t("col_difficulty")}>{UI_TEXT.col_difficulty.cn}</div>
+        <div class="col-tags" {...t("col_tags")}>{UI_TEXT.col_tags.cn}</div>
+        <div class="col-date" {...t("col_date")}>{UI_TEXT.col_date.cn}</div>
       </div>
 
       <div id="post-list" class="fouc-loading">
@@ -133,8 +70,9 @@ const postsJson = serializeJson(posts);
     <div
       id="no-results"
       style="display: none; padding: 2rem; text-align: center; color: var(--color-fg-muted);"
+      {...t("no_results")}
     >
-      沒有找到符合的題目。
+      {UI_TEXT.no_results.cn}
     </div>
   </div>
 </Layout>
@@ -142,124 +80,45 @@ const postsJson = serializeJson(posts);
 <script is:inline type="application/json" id="posts-data" set:html={postsJson} />
 
 <script>
-  import { FilterEngine } from "../scripts/filterEngine";
-  import { SortEngine } from "../scripts/sortEngine";
-  import { STORAGE_KEYS, EVENTS } from "../constants";
-  import { storage } from "../scripts/storage";
-  import type { Post, SortConfig } from "../types";
+  import "../scripts/dropdown";
+  import { listState } from "../scripts/listState";
+  import { text, onLanguageChange } from "../scripts/language";
 
-  const posts: Post[] = JSON.parse(
-    document.getElementById("posts-data")!.textContent!
+  const textSearch = document.getElementById("text-search") as HTMLInputElement | null;
+  const postList = document.getElementById("post-list")!;
+  const noResults = document.getElementById("no-results");
+  const resultCount = document.getElementById("result-count");
+
+  const rowBySlug = new Map(
+    [...postList.querySelectorAll<HTMLElement>(".file-row")].map((row) => [row.dataset.postSlug!, row]),
   );
 
-  const filterEngine = new FilterEngine();
-  const sortEngine = new SortEngine();
-
-  function initFilterSystem() {
-    const textSearch = document.getElementById("text-search") as HTMLInputElement | null;
-    const postList = document.getElementById("post-list");
-    const rows = postList?.querySelectorAll<HTMLElement>(".file-row");
-    const noResults = document.getElementById("no-results");
-    const resultCount = document.getElementById("result-count");
-
-    // 從 URL 參數讀取分類，默認為 "leetcode"
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryParam = urlParams.get("category");
-
-    // 初始狀態主動從 localStorage 讀取（不依賴各 dropdown 的初始事件推送，
-    // 避免 module script 執行順序造成的競態）。後續變更才走事件。
-    const [savedField, savedOrder] = (
-      storage.getItem(STORAGE_KEYS.sortPreference) || "id-asc"
-    ).split("-");
-    let currentSortField: SortConfig['field'] = savedField === 'date' ? 'date' : 'id';
-    let currentSortOrder: SortConfig['order'] = savedOrder === 'desc' ? 'desc' : 'asc';
-    let currentDifficulty =
-      storage.getItem(STORAGE_KEYS.difficultyPreference) || "all";
-
-    let selectedTags = new Set<string>();
-    let filterLogic: "AND" | "OR" = "AND";
-    try {
-      const tagPref = JSON.parse(
-        storage.getItem(STORAGE_KEYS.tagPreference) || "{}"
-      );
-      if (Array.isArray(tagPref?.tags)) selectedTags = new Set(tagPref.tags.filter((tag: unknown) => typeof tag === 'string'));
-      if (tagPref?.logic === "OR") filterLogic = "OR";
-    } catch {}
-
-    let currentCategory = categoryParam || "leetcode";
-    let isEnglish = storage.getItem(STORAGE_KEYS.isEnglish) === "true";
-
-    function updateFilter() {
-      if (!rows || !postList) return;
-
-      const filterResult = filterEngine.filter(posts, {
-        tags: selectedTags,
-        tagFilterLogic: filterLogic,
-        difficulty: currentDifficulty,
-        category: currentCategory,
-        searchTerm: textSearch?.value.toLowerCase() || "",
-      });
-      const sortedPosts = sortEngine.sort(filterResult.posts, {
-        field: currentSortField,
-        order: currentSortOrder,
-      });
-
-      const visibleIds = new Set(sortedPosts.map((p) => p.slug));
-
-      rows.forEach((row) => {
-        row.style.display = visibleIds.has(row.dataset.postSlug!) ? "grid" : "none";
-      });
-
-      sortedPosts.forEach((post) => {
-        const row = Array.from(rows).find((r) => r.dataset.postSlug === post.slug);
-        if (row) postList.appendChild(row);
-      });
-
-      if (noResults && resultCount) {
-        noResults.style.display = filterResult.count === 0 ? "block" : "none";
-        resultCount.textContent = isEnglish
-          ? `Total ${filterResult.count} posts`
-          : `共 ${filterResult.count} 篇`;
-      }
+  function renderCount(count: number) {
+    if (resultCount) {
+      resultCount.textContent = `${text("result_count_prefix")} ${count} ${text("result_count_suffix")}`;
     }
-
-    // 事件監聽器
-    textSearch?.addEventListener("input", updateFilter);
-
-    document.addEventListener(EVENTS.tagFilterChange, (e) => {
-      const detail = (e as CustomEvent).detail;
-      selectedTags = new Set(detail.selectedTags);
-      if (detail.logic) filterLogic = detail.logic;
-      updateFilter();
-    });
-
-    document.addEventListener(EVENTS.difficultyChange, (e) => {
-      currentDifficulty = (e as CustomEvent).detail.value;
-      updateFilter();
-    });
-
-    document.addEventListener(EVENTS.sortChange, (e) => {
-      const detail = (e as CustomEvent).detail;
-      currentSortField = detail.field;
-      currentSortOrder = detail.order;
-      updateFilter();
-    });
-
-    document.addEventListener(EVENTS.languageChange, (e) => {
-      isEnglish = (e as CustomEvent).detail.isEnglish;
-      updateFilter();
-    });
-
-    // 初始運行
-    updateFilter();
-
-    // 移除 FOUC 隱藏類，顯示內容
-    postList?.classList.remove("fouc-loading");
-    document.querySelector(".filter-bar")?.classList.remove("fouc-loading");
   }
 
-  // Astro 打包的 script 為 module（deferred），DOM 已就緒
-  initFilterSystem();
+  // 狀態 -> 清單：先全部隱藏，再把要顯示的列依序接到尾端
+  listState.subscribe(() => {
+    const visible = listState.visible();
+    rowBySlug.forEach((row) => (row.style.display = "none"));
+    visible.forEach((post) => {
+      const row = rowBySlug.get(post.slug);
+      if (!row) return;
+      row.style.display = "grid";
+      postList.appendChild(row);
+    });
+    if (noResults) noResults.style.display = visible.length === 0 ? "block" : "none";
+    renderCount(visible.length);
+  });
+
+  textSearch?.addEventListener("input", () => listState.update({ searchTerm: textSearch.value }));
+  onLanguageChange(() => renderCount(listState.visible().length));
+
+  // 移除 FOUC 隱藏類，顯示內容
+  postList.classList.remove("fouc-loading");
+  document.querySelector(".filter-bar")?.classList.remove("fouc-loading");
 </script>
 
 <style>

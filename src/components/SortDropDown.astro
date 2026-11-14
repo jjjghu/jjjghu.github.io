@@ -1,131 +1,52 @@
 ---
 import "../styles/dropdown.css";
-import { UI_TEXT } from "../i18n/ui";
+import { UI_TEXT, t, type UiKey } from "../i18n/ui";
+
+const options: { field: string; order: string; label: UiKey }[] = [
+    { field: "id", order: "asc", label: "sort_id_asc" },
+    { field: "id", order: "desc", label: "sort_id_desc" },
+    { field: "date", order: "desc", label: "sort_date_newest" },
+    { field: "date", order: "asc", label: "sort_date_oldest" },
+];
 ---
 
 <div class="dropdown-container sort-dropdown-container">
-    <button id="sort-btn" class="interactive-container md dropdown-btn sort-btn" data-dropdown="sort">
+    <button id="sort-btn" class="interactive-container md dropdown-btn sort-btn" data-dropdown="sort-menu">
         <i class="bx bx-sort-alt-2"></i>
-        <span
-            class="sort-label"
-            data-cn={UI_TEXT.sort_id_asc.cn}
-            data-en={UI_TEXT.sort_id_asc.en}>{UI_TEXT.sort_id_asc.cn}</span
-        >
+        <span class="sort-label" {...t("sort_id_asc")}>{UI_TEXT.sort_id_asc.cn}</span>
     </button>
     <div id="sort-menu" class="dropdown-menu sort-menu">
-        <div
-            class="dropdown-option sort-option active"
-            data-field="id"
-            data-order="asc"
-            data-cn={UI_TEXT.sort_id_asc.cn}
-            data-en={UI_TEXT.sort_id_asc.en}
-        >
-            {UI_TEXT.sort_id_asc.cn}
-        </div>
-        <div
-            class="dropdown-option sort-option"
-            data-field="id"
-            data-order="desc"
-            data-cn={UI_TEXT.sort_id_desc.cn}
-            data-en={UI_TEXT.sort_id_desc.en}
-        >
-            {UI_TEXT.sort_id_desc.cn}
-        </div>
-        <div
-            class="dropdown-option sort-option"
-            data-field="date"
-            data-order="desc"
-            data-cn={UI_TEXT.sort_date_newest.cn}
-            data-en={UI_TEXT.sort_date_newest.en}
-        >
-            {UI_TEXT.sort_date_newest.cn}
-        </div>
-        <div
-            class="dropdown-option sort-option"
-            data-field="date"
-            data-order="asc"
-            data-cn={UI_TEXT.sort_date_oldest.cn}
-            data-en={UI_TEXT.sort_date_oldest.en}
-        >
-            {UI_TEXT.sort_date_oldest.cn}
-        </div>
+        {
+            options.map(({ field, order, label }) => (
+                <div class="dropdown-option sort-option" data-field={field} data-order={order} {...t(label)}>
+                    {UI_TEXT[label].cn}
+                </div>
+            ))
+        }
     </div>
 </div>
 
 <script>
-    import { getSettingsManager } from "../scripts/settingsManager";
-    import { STORAGE_KEYS, EVENTS } from "../constants";
+    import { listState } from "../scripts/listState";
+    import { closeDropdown } from "../scripts/dropdown";
+    import { setLocalized } from "../scripts/language";
+    import type { SortConfig } from "../types";
 
-    const sortBtn = document.getElementById("sort-btn");
-    const sortMenu = document.getElementById("sort-menu");
-    const sortOptions = document.querySelectorAll(".sort-option");
-    const sortLabel = sortBtn?.querySelector(".sort-label");
+    const sortOptions = document.querySelectorAll<HTMLElement>(".sort-option");
+    const sortLabel = document.querySelector<HTMLElement>("#sort-btn .sort-label");
 
-    // Initialize Settings Manager
-    const settings = getSettingsManager();
-
-    settings.register({
-        key: STORAGE_KEYS.sortPreference,
-        type: "select", // effectively string
-        defaultValue: "id-asc",
-        onApply: (value) => {
-            const [field, order] = value.split("-");
-
-            // 1. Update Active Option UI
-            sortOptions.forEach((o) => {
-                // @ts-ignore
-                const oField = o.dataset.field;
-                // @ts-ignore
-                const oOrder = o.dataset.order;
-
-                if (oField === field && oOrder === order) {
-                    o.classList.add("active");
-
-                    // 2. Update Label UI
-                    if (sortLabel) {
-                        // @ts-ignore
-                        sortLabel.textContent = o.textContent.trim();
-                        // @ts-ignore
-                        sortLabel.dataset.cn = o.dataset.cn;
-                        // @ts-ignore
-                        sortLabel.dataset.en = o.dataset.en;
-                    }
-                } else {
-                    o.classList.remove("active");
-                }
-            });
-
-            // 3. Dispatch Event
-            const event = new CustomEvent(EVENTS.sortChange, {
-                detail: {
-                    field,
-                    order,
-                },
-            });
-            document.dispatchEvent(event);
-        },
+    listState.subscribe(({ sort }) => {
+        sortOptions.forEach((option) => {
+            const active = option.dataset.field === sort.field && option.dataset.order === sort.order;
+            option.classList.toggle("active", active);
+            if (active) setLocalized(sortLabel, option.dataset.cn, option.dataset.en);
+        });
     });
 
-    // Toggle Menu
-    sortBtn?.addEventListener("click", (e) => {
-        e.stopPropagation();
-        sortMenu?.classList.toggle("show");
-    });
-
-    // Handle Option Click
     sortOptions.forEach((option) => {
-        option.addEventListener("click", (e) => {
-            e.stopPropagation();
-            // @ts-ignore
-            const field = e.target.dataset.field;
-            // @ts-ignore
-            const order = e.target.dataset.order;
-
-            const value = `${field}-${order}`;
-            settings.set(STORAGE_KEYS.sortPreference, value);
-
-            // Close menu
-            sortMenu?.classList.remove("show");
+        option.addEventListener("click", () => {
+            listState.update({ sort: { field: option.dataset.field, order: option.dataset.order } as SortConfig });
+            closeDropdown("sort-menu");
         });
     });
 </script>

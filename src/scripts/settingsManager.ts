@@ -1,15 +1,25 @@
 import { storage } from './storage';
+import { STORAGE_KEYS } from '../constants';
 
-export type SettingType = 'boolean' | 'color' | 'range' | 'select' | 'text';
+export type SettingType = 'boolean' | 'color' | 'range' | 'text';
+export type SettingValue = string | number | boolean | null;
 
 export interface SettingConfig {
     key: string;            // localStorage key
     type: SettingType;      // Type of setting
-    defaultValue: any;      // Default value
+    defaultValue: SettingValue; // Default value
     cssClass?: string;      // Class to toggle on <html> (for booleans)
     cssVar?: string;        // CSS variable to set (for colors/ranges)
-    onApply?: (value: any) => void; // Custom apply logic
+    onApply?: (value: SettingValue) => void; // Custom apply logic
 }
+
+// 外觀設定的唯一定義：SettingIcon 用它註冊，Layout 的防閃爍 inline script 也讀同一份
+// （經 define:vars 傳入），預設值與 class 名稱不會再各寫一份。
+export const APPEARANCE_SETTINGS: SettingConfig[] = [
+    { key: STORAGE_KEYS.hoverGlowEnabled, type: 'boolean', defaultValue: true, cssClass: 'hover-glow-enabled' },
+    { key: STORAGE_KEYS.spotlightEnabled, type: 'boolean', defaultValue: false, cssClass: 'spotlight-enabled' },
+    { key: STORAGE_KEYS.customAccentColor, type: 'color', defaultValue: null, cssVar: '--color-accent-fg' },
+];
 
 export class SettingsManager {
     private configs: Map<string, SettingConfig>;
@@ -34,7 +44,7 @@ export class SettingsManager {
     /**
      * Get value from localStorage or default
      */
-    get(key: string): any {
+    get(key: string): SettingValue {
         const config = this.configs.get(key);
         if (!config) return null;
 
@@ -51,7 +61,7 @@ export class SettingsManager {
     /**
      * Set value, save to localStorage, and apply effects
      */
-    set(key: string, value: any) {
+    set(key: string, value: SettingValue) {
         const config = this.configs.get(key);
         if (!config) return;
 
@@ -73,7 +83,7 @@ export class SettingsManager {
     /**
      * Apply the setting's effect to the DOM
      */
-    private apply(key: string, value: any) {
+    private apply(key: string, value: SettingValue) {
         const config = this.configs.get(key);
         if (!config || !this.root) return;
 

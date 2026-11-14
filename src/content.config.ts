@@ -5,6 +5,7 @@ import { glob } from 'astro/loaders';
 import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION, ARTICLES_COLLECTION } from './constants';
 import { isHttpUrl } from './utils/security';
 import { fileToSlug } from './utils/slug-generator.mjs';
+import { isKnownDifficulty } from './utils/difficulty';
 
 const httpUrl = z.string().refine(isHttpUrl, 'Expected an absolute HTTP(S) URL without credentials');
 const optionalHttpUrl = z.preprocess(value => value === '' ? undefined : value, httpUrl.optional());
@@ -14,7 +15,7 @@ const postsSchema = z.object({
         date: z.string().refine(value => Number.isFinite(Date.parse(value)), 'Invalid date'),
         category: z.string(), // 來源網站
         problem_id: z.string(), // 題目ID
-        difficulty: z.string().optional(), // 難度 (LeetCode: easy/medium/hard, CodeForce: number, ZeroJudge: null)
+        difficulty: z.string().refine(isKnownDifficulty, '難度不在 utils/difficulty.ts 的難度表內').optional(),
         link: optionalHttpUrl,
         en_title: z.string().optional(),
         en_link: optionalHttpUrl

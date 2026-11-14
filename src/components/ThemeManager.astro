@@ -80,7 +80,7 @@ import "../styles/component-base.css";
   });
 
   function getCustomThemes() {
-    return parseCustomThemes(settings.get(STORAGE_KEYS.customThemes));
+    return parseCustomThemes(settings.get(STORAGE_KEYS.customThemes) as string | null);
   }
 
   function getActiveId() {

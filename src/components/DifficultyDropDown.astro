@@ -1,201 +1,73 @@
 ---
 import "../styles/dropdown.css";
 import "../styles/badges.css";
-import { UI_TEXT } from "../i18n/ui";
-import { getDifficultyClass, getDifficultyLabel } from "../utils/difficulty";
+import { UI_TEXT, t } from "../i18n/ui";
+import { getDifficultyClass, getDifficultyLabel, difficultyKey } from "../utils/difficulty";
 
 interface Props {
-    difficultiesLeetcode?: string[];
-    difficultiesZerojudge?: string[];
+    // 所有分類的難度；目前分類沒有的選項由 script 隱藏
+    difficulties?: string[];
 }
 
-const { difficultiesLeetcode = [], difficultiesZerojudge = [] } = Astro.props;
+const { difficulties = [] } = Astro.props;
 ---
 
 <div
     id="difficulty-dropdown-container"
     class="dropdown-container difficulty-dropdown-container"
 >
-    <!-- Button -->
-    <button id="diff-btn" class="interactive-container md dropdown-btn diff-btn" data-dropdown="diff">
-        <span
-            class="diff-label"
-            data-cn={UI_TEXT.diff_all.cn}
-            data-en={UI_TEXT.diff_all.en}>{UI_TEXT.diff_all.cn}</span
-        >
+    <button id="diff-btn" class="interactive-container md dropdown-btn diff-btn" data-dropdown="diff-menu">
+        <span class="diff-label" {...t("diff_all")}>{UI_TEXT.diff_all.cn}</span>
         <i class="bx bx-chevron-down"></i>
     </button>
 
-    <!-- Menu -->
     <div id="diff-menu" class="dropdown-menu diff-menu">
-        <!-- Default "All" Option -->
-        <div
-            class="dropdown-option diff-option active"
-            data-value="all"
-            data-cn={UI_TEXT.diff_all.cn}
-            data-en={UI_TEXT.diff_all.en}
-        >
+        <div class="dropdown-option diff-option active" data-value="all" {...t("diff_all")}>
             {UI_TEXT.diff_all.cn}
         </div>
-
-        {/* Dynamic Options for Leetcode (Class: diff-group-leetcode) */}
         {
-            difficultiesLeetcode.map((diff) => {
-                const diffClass = getDifficultyClass(diff);
-                const labelCN = getDifficultyLabel(diff, false);
-                const labelEN = getDifficultyLabel(diff, true);
-
-                return (
-                    <div
-                        class={`dropdown-option diff-option diff-group-leetcode ${diffClass}`}
-                        data-value={diff.toLowerCase()}
-                        data-cn={labelCN}
-                        data-en={labelEN}
-                    >
-                        {labelCN}
-                    </div>
-                );
-            })
-        }
-
-        {/* Dynamic Options for Zerojudge (Class: diff-group-zerojudge) */}
-        {
-            difficultiesZerojudge.map((diff) => {
-                const diffClass = getDifficultyClass(diff);
-                const labelCN = getDifficultyLabel(diff, false);
-                const labelEN = getDifficultyLabel(diff, true);
-
-                return (
-                    <div
-                        class={`dropdown-option diff-option diff-group-zerojudge ${diffClass}`}
-                        data-value={diff.toLowerCase()}
-                        data-cn={labelCN}
-                        data-en={labelEN}
-                        style="display: none;"
-                    >
-                        {labelCN}
-                    </div>
-                );
-            })
+            difficulties.map((diff) => (
+                <div
+                    class={`dropdown-option diff-option ${getDifficultyClass(diff)}`}
+                    data-value={difficultyKey(diff)}
+                    data-cn={getDifficultyLabel(diff, false)}
+                    data-en={getDifficultyLabel(diff, true)}
+                >
+                    {getDifficultyLabel(diff, false)}
+                </div>
+            ))
         }
     </div>
 </div>
 
 <script>
-    import { storage } from "../scripts/storage";
-    import { getSettingsManager } from "../scripts/settingsManager";
-    import { STORAGE_KEYS, EVENTS } from "../constants";
+    import { listState } from "../scripts/listState";
+    import { closeDropdown } from "../scripts/dropdown";
+    import { setLocalized } from "../scripts/language";
 
-    const diffBtn = document.getElementById("diff-btn");
-    const diffMenu = document.getElementById("diff-menu");
-    const diffOptions = document.querySelectorAll(".diff-option");
-    const diffLabel = diffBtn?.querySelector(".diff-label");
+    const diffOptions = document.querySelectorAll<HTMLElement>(".diff-option");
+    const diffLabel = document.querySelector<HTMLElement>("#diff-btn .diff-label");
 
-    // Groups
-    const leetcodeOptions = document.querySelectorAll(".diff-group-leetcode");
-    const zerojudgeOptions = document.querySelectorAll(".diff-group-zerojudge");
-
-    // Initialize Settings Manager
-    const settings = getSettingsManager();
-
-    // Helper to update label text based on current language
-    function updateLabelText(element: HTMLElement | null, isEnglish: boolean) {
-        if (!element) return;
-        // @ts-ignore
-        const text = isEnglish ? element.dataset.en : element.dataset.cn;
-        if (text) {
-            element.textContent = text;
-        }
-    }
-
-    // Helper: Switch Visibility based on category
-    function updateDropdownVisibility(category: string | null) {
-        const target = category || "leetcode";
-
-        if (target === "leetcode") {
-            leetcodeOptions.forEach(
-                (el) => ((el as HTMLElement).style.display = "block"),
-            );
-            zerojudgeOptions.forEach(
-                (el) => ((el as HTMLElement).style.display = "none"),
-            );
-        } else {
-            leetcodeOptions.forEach(
-                (el) => ((el as HTMLElement).style.display = "none"),
-            );
-            zerojudgeOptions.forEach(
-                (el) => ((el as HTMLElement).style.display = "block"),
-            );
-        }
-    }
-
-    // Initial check from URL
-    const params = new URLSearchParams(window.location.search);
-    updateDropdownVisibility(params.get("category"));
-
-    settings.register({
-        key: STORAGE_KEYS.difficultyPreference,
-        type: "select",
-        defaultValue: "all",
-        onApply: (value) => {
-            // 1. Update Active Option UI
-            let matched = false;
-            diffOptions.forEach((o) => {
-                // @ts-ignore
-                const oValue = o.dataset.value;
-
-                // Compare loose equality (string vs string)
-                if (oValue === value) {
-                    matched = true;
-                    o.classList.add("active");
-                    // 2. Update Label UI
-                    if (diffLabel) {
-                        // @ts-ignore
-                        diffLabel.dataset.cn = o.dataset.cn;
-                        // @ts-ignore
-                        diffLabel.dataset.en = o.dataset.en;
-
-                        // Force update text now
-                        const isEnglish =
-                            storage.getItem(STORAGE_KEYS.isEnglish) === "true";
-                        updateLabelText(diffLabel as HTMLElement, isEnglish);
-                    }
-                } else {
-                    o.classList.remove("active");
-                }
-            });
-
-            // 3. Dispatch Event
-            const event = new CustomEvent(EVENTS.difficultyChange, {
-                detail: {
-                    value,
-                },
-            });
-            document.dispatchEvent(event);
-        },
-    });
-
-    // Toggle Menu
-    diffBtn?.addEventListener("click", (e) => {
-        e.stopPropagation();
-        diffMenu?.classList.toggle("show");
-    });
-
-    // Handle Option Click
+    // 只顯示目前分類實際有的難度
     diffOptions.forEach((option) => {
-        option.addEventListener("click", (e) => {
-            e.stopPropagation();
-            // @ts-ignore
-            const value = e.target.dataset.value;
-            settings.set(STORAGE_KEYS.difficultyPreference, value);
+        const value = option.dataset.value!;
+        option.style.display = value === "all" || listState.difficulties.has(value) ? "" : "none";
+    });
 
-            // Close menu
-            diffMenu?.classList.remove("show");
+    listState.subscribe(({ difficulty }) => {
+        diffOptions.forEach((option) => {
+            const active = option.dataset.value === difficulty;
+            option.classList.toggle("active", active);
+            if (active) setLocalized(diffLabel, option.dataset.cn, option.dataset.en);
         });
     });
 
-    // 語言切換與初始同步由 LanguageToggle 的泛用 [data-cn]/[data-en] 機制處理，
-    // 此處不需重複監聽 language-change。
+    diffOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+            listState.update({ difficulty: option.dataset.value });
+            closeDropdown("diff-menu");
+        });
+    });
 </script>
 
 <style>

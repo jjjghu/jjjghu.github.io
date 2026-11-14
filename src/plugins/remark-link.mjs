@@ -1,40 +1,8 @@
-import fs from "fs";
-import path from "path";
-import { fileToSlug } from "../utils/slug-generator.mjs";
-import { readFrontmatter } from "../utils/frontmatter.mjs";
-
-// 建立題目映射表: problem_id -> { slug, title }
-function createProblemMap() {
-    const map = new Map();
-    const contentDirs = ["leetcode", "zerojudge"];
-
-    contentDirs.forEach((dir) => {
-        const fullDir = path.join(process.cwd(), `src/content/${dir}`);
-
-        if (!fs.existsSync(fullDir)) return;
-
-        const files = fs.readdirSync(fullDir);
-
-        for (const file of files) {
-            if (!file.endsWith(".md") || file.startsWith('.')) continue;
-
-            const content = fs.readFileSync(path.join(fullDir, file), "utf-8");
-
-            const metadata = readFrontmatter(content);
-            if (!metadata.problem_id) continue;
-            const id = String(metadata.problem_id).trim();
-            const title = String(metadata.title || id);
-
-            // 用與 Astro 相同的 slug 邏輯，避免 [[ ]] 連結與實際路由不一致
-            map.set(id, { slug: fileToSlug(file, id), title });
-        }
-    });
-
-    return map;
-}
+import { scanPosts } from "../utils/post-catalog.mjs";
 
 export default function remarkLink() {
-    const problemMap = createProblemMap();
+    // 題目映射表: problem_id -> { slug, title }
+    const problemMap = new Map(scanPosts().filter((post) => post.problemId).map((post) => [post.problemId, post]));
 
     return (tree) => {
         function traverseAndReplace(node) {

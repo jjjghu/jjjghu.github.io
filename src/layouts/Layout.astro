@@ -18,6 +18,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { OFFICIAL_THEMES, DEFAULT_THEME_ID } from "../themes";
 import { STORAGE_KEYS } from "../constants";
+import { APPEARANCE_SETTINGS } from "../scripts/settingsManager";
 
 // 在 build time 讀取官方主題 CSS，嵌入 head 腳本避免 FOUC
 const themeCSS = Object.fromEntries(
@@ -77,7 +78,7 @@ const showTOC = headings && headings.length > 0;
     <meta name="twitter:url" content={canonicalURL} />
 
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <script is:inline define:vars={{ themeCSS, lightThemeIds, defaultThemeId, K: STORAGE_KEYS }}>
+    <script is:inline define:vars={{ themeCSS, lightThemeIds, defaultThemeId, K: STORAGE_KEYS, appearance: APPEARANCE_SETTINGS }}>
       // 同步執行，在任何內容渲染前套用主題與設定，避免 FOUC
       (function () {
         try {
@@ -105,17 +106,14 @@ const showTOC = headings && headings.length > 0;
           if (lightThemeIds.includes(activeId)) root.classList.add("light");
         }
 
-        // 2. Accent Color
-        const savedColor = localStorage.getItem(K.customAccentColor);
-        if (savedColor && /^#[a-fA-F0-9]{6}$/.test(savedColor)) {
-          root.style.setProperty("--color-accent-fg", savedColor);
-        }
-
-        // 3. Global Toggles
-        [K.hoverGlowEnabled, K.spotlightEnabled].forEach((key) => {
-          const className = key.replace(/([A-Z])/g, "-$1").toLowerCase();
-          if (localStorage.getItem(key) === "true") {
-            root.classList.add(className);
+        // 2. 外觀設定（定義來自 settingsManager.ts 的 APPEARANCE_SETTINGS，規則與 SettingsManager 一致）
+        appearance.forEach((setting) => {
+          const stored = localStorage.getItem(setting.key);
+          if (setting.type === "boolean") {
+            const enabled = stored === null ? setting.defaultValue : stored === "true";
+            if (enabled) root.classList.add(setting.cssClass);
+          } else if (setting.type === "color" && stored && /^#[a-fA-F0-9]{6}$/.test(stored)) {
+            root.style.setProperty(setting.cssVar, stored);
           }
         });
         } catch { /* Storage can be unavailable in privacy modes. */ }

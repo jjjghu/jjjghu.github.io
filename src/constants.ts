@@ -18,9 +18,7 @@ export const STORAGE_KEYS = {
 } as const;
 
 // 跨元件自訂事件名（producer/consumer 共用契約）。
+// 清單頁的篩選/排序不走事件，見 scripts/listState.ts。
 export const EVENTS = {
     languageChange: "language-change",
-    tagFilterChange: "tag-filter-change",
-    sortChange: "sort-change",
-    difficultyChange: "difficulty-change",
 } as const;

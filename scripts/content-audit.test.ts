@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { readFrontmatter } from '../src/utils/frontmatter.mjs';
 import { fileToSlug } from '../src/utils/slug-generator.mjs';
 import { isHttpUrl } from '../src/utils/security';
+import { isKnownDifficulty } from '../src/utils/difficulty';
 
 it('keeps all published content routes unique and external links safe', () => {
   const routes = new Set(['themes']);
@@ -14,6 +15,7 @@ it('keeps all published content routes unique and external links safe', () => {
       for (const key of ['link', 'en_link']) {
         if (data[key] && !isHttpUrl(data[key])) errors.push(`${file}: invalid ${key}`);
       }
+      if (data.difficulty && !isKnownDifficulty(data.difficulty)) errors.push(`${file}: unknown difficulty ${data.difficulty}`);
       const route = fileToSlug(file, collection === 'articles' ? null : data.problem_id);
       if (!route || routes.has(route)) errors.push(`${file}: duplicate or empty route ${route}`);
       routes.add(route);

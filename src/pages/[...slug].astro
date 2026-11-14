@@ -1,39 +1,19 @@
 ---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { LEETCODE_COLLECTION, ZEROJUDGE_COLLECTION } from "../constants";
 import type { PostEntry } from "../types";
 
 import TagBadge from "../components/TagBadge.astro";
 import DifficultyBadge from "../components/DifficultyBadge.astro";
 
-// 1. 生成靜態路徑
-import { generateSlug } from "../utils/slug-generator.mjs";
-import { isPublicPost } from "../utils/postHelper.ts";
+import { getPublicPosts, postSlug } from "../utils/postHelper.ts";
 import { serializeJson } from "../utils/security";
 
 export async function getStaticPaths() {
-    const leetcodePosts = await getCollection(
-        LEETCODE_COLLECTION,
-        isPublicPost,
-    );
-    const zerojudgePosts = await getCollection(
-        ZEROJUDGE_COLLECTION,
-        isPublicPost,
-    );
-
-    // Merge all posts
-    const allPosts = [...leetcodePosts, ...zerojudgePosts];
-
-    return allPosts.map((post) => {
-        // Use the centralized slug generation logic
-        const finalSlug = generateSlug(post.id, post.data.problem_id);
-
-        return {
-            params: { slug: finalSlug },
-            props: { post },
-        };
-    });
+    return (await getPublicPosts()).map((post) => ({
+        params: { slug: postSlug(post) },
+        props: { post },
+    }));
 }
 interface Props {
     post: PostEntry;
@@ -76,39 +56,22 @@ const tags = post.data.tags || [];
     </div>
 
     <script>
-        import { STORAGE_KEYS, EVENTS } from "../constants";
-        import { storage } from "../scripts/storage";
+        import { isEnglish, onLanguageChange } from "../scripts/language";
         import { isHttpUrl } from "../utils/security";
 
         const postLink = document.querySelector<HTMLAnchorElement>("#post-link");
-        let isEnglish = false;
 
-        // @ts-ignore
-        function updatePostLink(english) {
-            isEnglish = english;
-
-            if (postLink) {
-                // @ts-ignore
-                postLink.textContent = isEnglish
-                    ? postLink.dataset.enTitle
-                    : postLink.dataset.cnTitle;
-                // @ts-ignore
-                const url = isEnglish
-                    ? postLink.dataset.enLink
-                    : postLink.dataset.cnLink;
-                if (url && isHttpUrl(url)) postLink.href = url;
-                else postLink.removeAttribute('href');
-            }
+        function updatePostLink(english: boolean) {
+            if (!postLink) return;
+            const { enTitle, cnTitle, enLink, cnLink } = postLink.dataset;
+            postLink.textContent = (english ? enTitle : cnTitle) ?? "";
+            const url = english ? enLink : cnLink;
+            if (url && isHttpUrl(url)) postLink.href = url;
+            else postLink.removeAttribute("href");
         }
 
-        // Init
-        updatePostLink(storage.getItem(STORAGE_KEYS.isEnglish) === "true");
-
-        // Listen for global change
-        document.addEventListener(EVENTS.languageChange, (e) => {
-            // @ts-ignore
-            updatePostLink(e.detail.isEnglish);
-        });
+        updatePostLink(isEnglish());
+        onLanguageChange(updatePostLink);
     </script>
 
     <script

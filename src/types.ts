@@ -30,9 +30,14 @@ export interface FilterCriteria {
   searchTerm: string;
 }
 
-export interface FilterResult {
-  posts: Post[];
-  count: number;
+// 清單頁的完整狀態（單一來源，見 scripts/listState.ts）
+export interface ListState {
+  category: string;
+  sort: SortConfig;
+  difficulty: string;                  // 小寫難度或 "all"
+  tags: string[];                      // 選中的標籤（中文）
+  tagLogic: "AND" | "OR";
+  searchTerm: string;
 }
 
 export interface SortConfig {

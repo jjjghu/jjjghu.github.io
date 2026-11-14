@@ -15,7 +15,10 @@ export const UI_TEXT = {
     search_keywords_placeholder: { cn: '搜尋題目關鍵字...', en: 'Search keywords...' },
     filter_tags: { cn: '篩選標籤', en: 'Filter Tags' },
     reset: { cn: '重置', en: 'Reset' },
-    logic_match: { cn: '配對', en: 'Match' },
+    tag_search_placeholder: { cn: '搜尋標籤...', en: 'Search tags...' },
+    logic_label: { cn: '配對:', en: 'Logic:' },
+    logic_and: { cn: '包含所有 (AND)', en: 'Match All (AND)' },
+    logic_or: { cn: '包含任一 (OR)', en: 'Match Any (OR)' },
 
     // Dropdowns
     sort_btn: { cn: '排序', en: 'Sort' },
@@ -49,4 +52,16 @@ export const UI_TEXT = {
     settings_theme_color: { cn: '主題顏色', en: 'Theme Color' },
     settings_theme_color_desc: { cn: '自訂主要顏色', en: 'Customize primary color' },
     settings_reset_color: { cn: '重置', en: 'Reset' },
-};
+} satisfies Record<string, { cn: string; en: string }>;
+
+export type UiKey = keyof typeof UI_TEXT;
+
+/** 標記端：`<span {...t("reset")}>{UI_TEXT.reset.cn}</span>`，LanguageToggle 依這組屬性切換文字。 */
+export const t = (key: UiKey) => ({ "data-cn": UI_TEXT[key].cn, "data-en": UI_TEXT[key].en });
+
+/** placeholder 版本。 */
+export const tPlaceholder = (key: UiKey) => ({
+    placeholder: UI_TEXT[key].cn,
+    "data-cn-placeholder": UI_TEXT[key].cn,
+    "data-en-placeholder": UI_TEXT[key].en,
+});

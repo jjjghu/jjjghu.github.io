@@ -25,7 +25,8 @@ export function secureHtml(html) {
         // Custom themes, syntax highlighting and layout controls require inline CSS.
         "style-src 'self' 'unsafe-inline'",
         "img-src 'self' data:",
-        "font-src 'self'",
+        // KaTeX embeds a small subset of its fonts as data URLs in generated CSS.
+        "font-src 'self' data:",
         "connect-src 'self'",
         "object-src 'none'",
         "base-uri 'none'",

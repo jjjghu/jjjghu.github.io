@@ -44,15 +44,12 @@
 
 <script>
   import { storage } from '../scripts/storage';
+  import { isEnglish as getStoredLanguage } from '../scripts/language';
   import { STORAGE_KEYS, EVENTS } from '../constants';
   // 使用 IIFE 避免全域變數污染
   (function () {
     const langBtn = document.getElementById("lang-toggle");
     const langText = langBtn?.querySelector(".lang-text");
-
-    function getStoredLanguage() {
-      return storage.getItem(STORAGE_KEYS.isEnglish) === "true";
-    }
 
     function setLanguage(isEnglish: boolean) {
       // 1. Update localStorage
