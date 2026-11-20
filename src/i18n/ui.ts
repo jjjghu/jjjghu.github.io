@@ -5,10 +5,12 @@ export const UI_TEXT = {
     header_title_accent: { cn: '筆記', en: 'Notes' },
     nav_all: { cn: '所有文章', en: 'All Posts' },
     nav_leetcode: { cn: 'LeetCode', en: 'LeetCode' },
-    nav_zerojudge: { cn: '其他', en: 'Other' },
+    nav_zerojudge: { cn: '其他題庫', en: 'Other Judges' },
     nav_roadmap: { cn: '題單', en: 'Roadmap' },
     nav_guide: { cn: '腳本安裝', en: 'Script Guide' },
     nav_note: { cn: '演算法筆記', en: 'Notes' },
+    beyond_title: { cn: '解題之外', en: 'Beyond Solving' },
+    beyond_subtitle: { cn: '解題以外的文字：日記、評論與其他。', en: 'Writing outside of problem solving.' },
     search_placeholder: { cn: '搜尋文章...', en: 'Search posts...' },
 
     // Filter Bar

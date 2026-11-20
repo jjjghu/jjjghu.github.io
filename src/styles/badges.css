@@ -20,10 +20,10 @@
   gap: 6px;
   white-space: nowrap;
   user-select: none;
-  line-height: 1.5;
+  line-height: var(--lh-normal);
   padding: var(--badge-py, 2px) var(--badge-px, 10px);
-  font-size: var(--badge-fs, 12px);
-  border-radius: var(--badge-radius, 999px);
+  font-size: var(--badge-fs, var(--fs-xs));
+  border-radius: var(--badge-radius, var(--radius-full));
 
   background-color: var(--badge-bg, transparent);
   border: 1px solid var(--badge-border, transparent);
@@ -51,7 +51,7 @@
   transition: all 0.2s ease;
 
   /* Badge 特有的 font */
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: var(--font-mono);
   font-weight: 500;
 }
 

@@ -13,9 +13,6 @@ import {
 import { UI_TEXT, t, tPlaceholder } from "../i18n/ui";
 import { serializeJson } from "../utils/security";
 
-import "../styles/post-list.css";
-import "../styles/utilities.css";
-
 const entries = await getPublicPosts();
 const uniqueTags = Array.from(getAllUniqueTags(entries)).sort();
 const uniqueDifficulties = getAllUniqueDifficulties(entries);
@@ -131,7 +128,7 @@ const postsJson = serializeJson(posts);
     display: flex;
     gap: 12px;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
     flex-wrap: wrap;
   }
 
@@ -152,10 +149,12 @@ const postsJson = serializeJson(posts);
 
   #text-search {
     width: 100%;
+    height: var(--control-height);
     padding: 8px 12px 8px 36px;
+    font-size: var(--fs-sm);
     background-color: var(--color-canvas-subtle);
     border: 1px solid var(--color-border-default);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     color: var(--color-fg-default);
     outline: none;
   }
@@ -167,17 +166,10 @@ const postsJson = serializeJson(posts);
   }
 
   .result-count {
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     color: var(--color-fg-muted);
     margin-left: auto;
-  }
-
-  .visitor-count {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.85rem;
-    color: var(--color-fg-muted);
+    white-space: nowrap;
   }
 
   .filter-controls-group {
@@ -224,24 +216,17 @@ const postsJson = serializeJson(posts);
       order: 5;
       grid-column: span 2;
       text-align: right;
-      font-size: 0.8rem;
+      font-size: var(--fs-xs);
       margin-top: -4px;
     }
 
-    :global(.drop-btn),
     :global(.dropdown-btn) {
       width: 100%;
-      height: 42px;
       justify-content: center;
     }
 
     :global(.tag-filter-container .dropdown-btn) {
       justify-content: flex-start;
-    }
-
-    :global(.diff-btn) {
-      justify-content: space-between;
-      padding: 0 16px;
     }
   }
 </style>

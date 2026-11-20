@@ -1,6 +1,4 @@
 ---
-import "../styles/dropdown.css";
-import "../styles/badges.css";
 import { UI_TEXT, t } from "../i18n/ui";
 import { getDifficultyClass, getDifficultyLabel, difficultyKey } from "../utils/difficulty";
 
@@ -17,8 +15,8 @@ const { difficulties = [] } = Astro.props;
     class="dropdown-container difficulty-dropdown-container"
 >
     <button id="diff-btn" class="interactive-container md dropdown-btn diff-btn" data-dropdown="diff-menu">
+        <i class="bx bx-bar-chart-alt-2"></i>
         <span class="diff-label" {...t("diff_all")}>{UI_TEXT.diff_all.cn}</span>
-        <i class="bx bx-chevron-down"></i>
     </button>
 
     <div id="diff-menu" class="dropdown-menu diff-menu">
@@ -71,14 +69,6 @@ const { difficulties = [] } = Astro.props;
 </script>
 
 <style>
-    /* Custom Override */
-    .diff-btn {
-        min-width: 110px;
-        justify-content: space-between; /* 預設左右分開 */
-        display: flex;
-        align-items: center;
-    }
-
     /* 手機版樣式調整 */
     @media (max-width: 768px) {
         .difficulty-dropdown-container {

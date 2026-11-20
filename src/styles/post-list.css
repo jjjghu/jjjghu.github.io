@@ -12,7 +12,7 @@
 */
 
 :root {
-  --post-list-pad-y: 10px;
+  --post-list-pad-y: 10px; /* 清單要緊密，刻意不用 4 的倍數 */
   --post-list-pad-x: 16px;
   --post-list-gap-x: 12px;
   --post-list-gap-y: 8px;
@@ -21,11 +21,9 @@
 /* --- Post List Container --- */
 .file-list-container {
   border: 1px solid var(--color-border-default);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  background-color: color-mix(in srgb,
-      var(--color-card-bg) var(--bg-overlay-alpha),
-      transparent);
+  background-color: var(--surface-card);
 }
 
 /* --- Grid (Header + Rows 共用) --- */
@@ -44,19 +42,16 @@
 
 /* --- Header --- */
 .file-list-header {
-  padding: 14px var(--post-list-pad-x);
-  background-color: color-mix(in srgb,
-      var(--color-canvas-subtle) var(--bg-overlay-alpha),
-      transparent);
+  padding: 16px var(--post-list-pad-x);
+  background-color: var(--surface-subtle);
   border-bottom: 1px solid var(--color-border-default);
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--color-fg-default);
 }
 
 /* --- Row --- */
 .file-row {
-  /* 組合 utilities: transition-fast */
   transition: all 0.2s ease;
 
   padding: var(--post-list-pad-y) var(--post-list-pad-x);
@@ -79,7 +74,7 @@
 }
 
 .title-container {
-  /* 組合 utilities: flex-center + gap-sm - 由 HTML 負責 */
+  /* flex-center + gap-sm 由 HTML 的 class 提供 */
   min-width: 0;
 }
 
@@ -95,7 +90,6 @@
   flex: 1 1 auto;
   color: var(--color-fg-default);
   text-decoration: none;
-  /* 組合 utilities: transition-colors */
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
@@ -104,19 +98,17 @@
 }
 
 .title-text {
-  /* 組合 utilities: text-truncate */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
   display: block;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   font-weight: 500;
 }
 
 /* --- Column: Difficulty --- */
 .col-difficulty {
-  /* 組合 utilities: flex-center - 定義在 HTML 中 */
   display: flex;
   align-items: center;
 
@@ -130,7 +122,7 @@
 }
 
 .tags-wrapper {
-  /* 組合 utilities: flex-center + gap-xs - 由 HTML 負責 */
+  /* flex-center + gap-xs 由 HTML 的 class 提供 */
   flex-wrap: wrap;
   min-width: 0;
 }
@@ -141,14 +133,14 @@
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   color: var(--color-fg-muted);
-  font-size: 0.75rem;
+  font-size: var(--fs-xs);
   font-family: ui-monospace, monospace;
 }
 
 .file-list-header .col-date {
   color: var(--color-fg-default);
   font-family: inherit;
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
 }
 
 /* --- Hover Glow Effect --- */
@@ -204,7 +196,7 @@ html.hover-glow-enabled .file-row:hover .title-text {
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
-    font-size: 1rem;
+    font-size: var(--fs-md);
   }
 
   .col-date {

@@ -1,0 +1,284 @@
+---
+// 「解題之外」列表：最上方是長期紀錄（沒有日期的文章），下面是依年份分組的日記時間軸。
+// 左側的月曆跟著列表捲動翻頁；每個有文章的月份各有一張，全部在建置時產生，腳本只負責切換。
+import { getCollection } from "astro:content";
+import BeyondLayout from "../../layouts/BeyondLayout.astro";
+import { BEYOND_COLLECTION } from "../../constants";
+import { UI_TEXT } from "../../i18n/ui";
+import { calendarMonths, describeEntry, newestFirst, type BeyondEntry } from "../../utils/beyond";
+
+const entries = (await getCollection(BEYOND_COLLECTION)).map(describeEntry).sort(newestFirst);
+const diary = entries.filter((entry) => entry.dated);
+const records = entries.filter((entry) => !entry.dated);
+const months = calendarMonths(diary);
+
+const years = new Map<string, BeyondEntry[]>();
+for (const entry of diary) {
+    years.set(entry.year, [...(years.get(entry.year) ?? []), entry]);
+}
+
+const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
+
+// 長期紀錄的小圖示，在文章 frontmatter 寫 icon: gamepad 指定。圖形來自 Lucide（ISC 授權）。
+const ICONS: Record<string, string> = {
+    gamepad:
+        "M6 11h4M8 9v4M15 12h.01M18 10h.01M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z",
+    play: "M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z",
+};
+---
+
+<BeyondLayout title={UI_TEXT.beyond_title.cn} description={UI_TEXT.beyond_subtitle.cn} wide>
+    <header class="title">
+        <h1>{UI_TEXT.beyond_title.cn}</h1>
+        <div class="title-note">{UI_TEXT.beyond_subtitle.cn}共 {entries.length} 篇。</div>
+    </header>
+
+    {
+        records.length > 0 && (
+            <section class="records">
+                <h2 class="section-head">
+                    長期紀錄
+                    <span class="section-count">{records.length} 篇</span>
+                </h2>
+                <ul class="record-list">
+                    {records.map((entry) => (
+                        <li>
+                            <a href={entry.href}>
+                                {entry.icon && ICONS[entry.icon] && (
+                                    <svg class="record-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d={ICONS[entry.icon]} />
+                                    </svg>
+                                )}
+                                {entry.title}
+                                {entry.draft && <span class="draft-tag">草稿</span>}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+        )
+    }
+
+    {
+        months.length > 0 && (
+            <div class="timeline">
+                <aside class="cal" id="cal" aria-label="月曆">
+                    <div class="cal-sheets" id="cal-sheets">
+                        {months.map((sheet, index) => (
+                            <div
+                                class:list={["cal-sheet", { "is-current": index === 0 }]}
+                                data-month={sheet.key}
+                                data-label={`${sheet.year} 年 ${sheet.month} 月`}
+                            >
+                                <div class="cal-head">
+                                    <span class="cal-month">
+                                        {sheet.month}
+                                        <small>月</small>
+                                    </span>
+                                    <span class="cal-year">{sheet.year}</span>
+                                </div>
+                                <div class="cal-grid">
+                                    {WEEKDAYS.map((name) => (
+                                        <span class="cal-weekday">{name}</span>
+                                    ))}
+                                    {sheet.cells.map((cell) =>
+                                        cell?.entry ? (
+                                            <a
+                                                href={cell.entry.href}
+                                                aria-label={`${sheet.month} 月 ${cell.day} 日：${cell.entry.title}`}
+                                            >
+                                                {cell.day}
+                                            </a>
+                                        ) : (
+                                            <span>{cell?.day}</span>
+                                        ),
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div class="cal-bar">
+                        <button class="cal-arrow" type="button" data-step="-1" aria-label="較新的月份" disabled>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M15 5l-7 7 7 7" />
+                            </svg>
+                            <span>較新</span>
+                        </button>
+                        <button class="cal-label" type="button" aria-expanded="false" aria-controls="cal-sheets">
+                            <span class="cal-label-text">
+                                {months[0].year} 年 {months[0].month} 月
+                            </span>
+                        </button>
+                        <button
+                            class="cal-arrow"
+                            type="button"
+                            data-step="1"
+                            aria-label="較早的月份"
+                            disabled={months.length < 2}
+                        >
+                            <span>較早</span>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                        <a class="cal-top" href="#top" aria-label="回到頂部">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M5 15l7-7 7 7" />
+                            </svg>
+                            <span>回到頂部</span>
+                        </a>
+                    </div>
+                </aside>
+
+                <div>
+                    {[...years].map(([year, group]) => (
+                        <section class="year" id={`y-${year}`}>
+                            <div class="year-mark" aria-hidden="true">
+                                <span>{year}</span>
+                            </div>
+                            <div class="year-body">
+                            <h2 class="section-head">
+                                {year}
+                                <span class="section-count">{group.length} 篇</span>
+                            </h2>
+                            <ul class="list beyond-list">
+                                {group.map((entry) => (
+                                    <li data-month={entry.month}>
+                                        <a href={entry.href}>
+                                            <span class="row-date">
+                                                {entry.monthDay}
+                                                <span class="row-weekday">{entry.weekday}</span>
+                                                {entry.draft && <span class="draft-tag">草稿</span>}
+                                            </span>
+                                            <span>
+                                                {entry.hasTitle && <span class="list-title">{entry.title}</span>}
+                                                <span class="row-excerpt">{entry.excerpt}</span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                            </div>
+                        </section>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+</BeyondLayout>
+
+<script>
+    // 月曆只做三件事：跟著列表捲動翻到對應月份、箭頭把列表捲到相鄰的有文章月份、手機上展開收合。
+    const cal = document.getElementById("cal");
+    if (cal) {
+        const sheets = [...cal.querySelectorAll<HTMLElement>(".cal-sheet")];
+        const months = sheets.map((sheet) => sheet.dataset.month!); // 由新到舊
+        const rows = [...document.querySelectorAll<HTMLElement>(".beyond-list li[data-month]")];
+        const label = cal.querySelector<HTMLElement>(".cal-label-text")!;
+        const toggle = cal.querySelector<HTMLButtonElement>(".cal-label")!;
+        const arrows = [...cal.querySelectorAll<HTMLButtonElement>(".cal-arrow")];
+        const calm = matchMedia("(prefers-reduced-motion: reduce)");
+        const wide = matchMedia("(min-width: 900px)");
+        const FLIP_MS = 350; // 和 BeyondLayout 的 --cal-flip 一致
+        const STATES = ["is-current", "is-leaving", "is-entering", "is-under"];
+
+        // 月份列的文字改成逐位數的捲軸（像計數器）：年 4 位、月 2 位，每一位是一條「空白 + 0–9」的直條
+        const REEL = " 0123456789";
+        const strips: HTMLElement[] = [];
+        const reel = () => {
+            const slot = document.createElement("span");
+            const strip = document.createElement("span");
+            slot.className = "cal-reel";
+            strip.className = "cal-reel-strip";
+            strip.append(...[...REEL].map((char) => Object.assign(document.createElement("span"), { textContent: char })));
+            slot.append(strip);
+            strips.push(strip);
+            return slot;
+        };
+        const reels = Object.assign(document.createElement("span"), { ariaHidden: "true" });
+        reels.append(reel(), reel(), reel(), reel(), " 年 ", reel(), reel(), " 月");
+        const spoken = Object.assign(document.createElement("span"), { className: "sr-only" });
+        label.replaceChildren(reels, spoken);
+
+        const setLabel = (month: string) => {
+            const [year, monthNumber] = month.split("-").map(Number);
+            const digits = `${year}${String(monthNumber).padStart(2, " ")}`;
+            strips.forEach((strip, index) => {
+                const position = REEL.indexOf(digits[index]);
+                strip.style.transform = `translateY(${(-100 * position) / REEL.length}%)`;
+                strip.parentElement!.classList.toggle("is-blank", position === 0);
+            });
+            spoken.textContent = `${year} 年 ${monthNumber} 月`;
+        };
+
+        let current = months[0];
+        let flipping = false;
+        setLabel(current);
+        let jumpTarget = ""; // 箭頭要去的月份；只在頁面已捲到底、列捲不到定位時用來補正
+
+        // 列被箭頭捲到定位時，上緣離視窗頂端的距離。窄螢幕要讓開固定在頂端的月份列（展開時更高）。
+        const rowOffset = () => (wide.matches ? 96 : cal.offsetHeight + 8);
+        const atBottom = () => scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+        // 「現在讀到哪個月」：第一個還沒完全捲過定位線的列。定位線比 rowOffset 低一點，
+        // 這樣被捲到定位的那一列一定算數，上一列一定不算。
+        const monthInView = () =>
+            (atBottom() && jumpTarget) ||
+            (rows.find((row) => row.getBoundingClientRect().bottom > rowOffset() + 8)?.dataset.month ??
+                months[months.length - 1]);
+
+        const show = (month: string) => {
+            const from = sheets[months.indexOf(current)];
+            const to = sheets[months.indexOf(month)];
+            for (const sheet of sheets) sheet.classList.remove(...STATES);
+            to.classList.add("is-current");
+            if (!calm.matches) {
+                // 往更早的月份：目前這張向上掀走；往較新的月份：新的一張從上方蓋下來
+                if (month < current) from.classList.add("is-leaving");
+                else {
+                    from.classList.add("is-under");
+                    to.classList.add("is-entering");
+                }
+            }
+            current = month;
+            setLabel(month);
+            for (const arrow of arrows) {
+                arrow.disabled = !months[months.indexOf(current) + Number(arrow.dataset.step)];
+            }
+        };
+
+        // 翻頁期間不再啟動新的翻頁；結束後直接翻到最新的位置，所以快速捲過多個月也只翻一次
+        const sync = () => {
+            const month = monthInView();
+            if (flipping || month === current) return;
+            flipping = true;
+            show(month);
+            setTimeout(
+                () => {
+                    flipping = false;
+                    for (const sheet of sheets) sheet.classList.remove("is-leaving", "is-entering", "is-under");
+                    sync();
+                },
+                calm.matches ? 0 : FLIP_MS + 20,
+            );
+        };
+
+        addEventListener("scroll", () => requestAnimationFrame(sync), { passive: true });
+
+        for (const arrow of arrows) {
+            arrow.addEventListener("click", () => {
+                jumpTarget = months[months.indexOf(current) + Number(arrow.dataset.step)];
+                const row = rows.find((candidate) => candidate.dataset.month === jumpTarget);
+                if (row) scrollTo({ top: scrollY + row.getBoundingClientRect().top - rowOffset() });
+                sync();
+            });
+        }
+
+        toggle.addEventListener("click", () => {
+            toggle.setAttribute("aria-expanded", String(cal.classList.toggle("is-open")));
+        });
+
+        sync();
+        cal.dataset.ready = "";
+    }
+</script>

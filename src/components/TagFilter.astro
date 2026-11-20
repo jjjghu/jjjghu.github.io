@@ -1,7 +1,5 @@
 ---
 import { getTagCN, getTagEN } from "../utils/postHelper.ts";
-import "../styles/dropdown.css";
-import "../styles/badges.css";
 import { UI_TEXT, t, tPlaceholder } from "../i18n/ui";
 
 interface Props {
@@ -141,41 +139,17 @@ const { tags } = Astro.props;
 </script>
 
 <style>
-    /* --- Main Button --- */
-    .filter-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 7px 12px;
-        background-color: var(--color-canvas-subtle);
-        border: 1px solid var(--color-border-default);
-        border-radius: 6px;
-        color: var(--color-fg-default);
-        cursor: pointer;
-        font-size: 0.9rem;
-        height: 38px;
-        transition: all 0.2s;
-    }
-    .filter-btn:hover {
-        background-color: var(--color-border-default);
-    }
-    .filter-btn.active {
-        background-color: rgba(56, 139, 253, 0.15);
-        color: #58a6ff;
-        border-color: rgba(56, 139, 253, 0.4);
-    }
-
     /* --- Badge Variants --- */
 
     /* 1. Count Badge */
     .badge[data-variant="count"] {
         --badge-bg: var(--color-accent-fg);
         --badge-fg: white;
-        --badge-radius: 10px;
-        --badge-px: 6px;
+        --badge-radius: var(--radius-full);
+        --badge-px: 8px;
         --badge-py: 0;
-        --badge-fs: 0.75rem;
-        line-height: 1.4;
+        --badge-fs: var(--fs-xs);
+        line-height: var(--lh-normal);
     }
 
     /* 2. Filter Chip Badge */
@@ -183,10 +157,10 @@ const { tags } = Astro.props;
         --badge-bg: var(--color-canvas-subtle);
         --badge-border: var(--color-border-muted);
         --badge-fg: var(--color-fg-default);
-        --badge-radius: 20px;
-        --badge-fs: 0.85rem;
+        --badge-radius: var(--radius-full);
+        --badge-fs: var(--fs-sm);
         --badge-py: 4px;
-        --badge-px: 10px;
+        --badge-px: 12px;
         cursor: pointer;
     }
 
@@ -198,24 +172,6 @@ const { tags } = Astro.props;
     /* Selected State for Filter Chip */
     .tag-chip input:checked + .badge[data-variant="filter-chip"] {
         --badge-bg: color-mix(in srgb, var(--color-accent-fg), transparent 60%);
-        --badge-fg: var(
-            --color-page-bg
-        ); /* Ensuring readable contrast against the dim accent, or stick to white/accent-fg?? 
-           Original was: color: var(--color-accent-bg); 
-           If accent-bg is undefined, it defaults to inherit.
-           Let's use a safe color like pure white or a specific variable if we knew content.
-           Since accent-fg is usually blue. Blue + 60% transparent is darkish blue on dark theme.
-           Wait, `transparent 60%` means 40% opaque color? No, mix(color, transparent 60%) usually means 40% color, 60% transparent.
-           If theme is dark, this is a dim background.
-           Let's just use `var(--color-fg-default)` or `white` to be safe, or just `var(--color-accent-fg)` for text if background is very dim.
-           
-           Actually, checking old code:
-           background-color: color-mix(..., transparent 60%);
-           color: var(--color-accent-bg);
-           
-           I will use a high contrast color for text. white is usually safe for chips.
-           Or maybe `var(--color-fg-default)`.
-        */
         --badge-fg: #ffffff;
 
         --badge-border: color-mix(
@@ -225,43 +181,15 @@ const { tags } = Astro.props;
         );
     }
 
-    /* Light Mode Tweak for selected state visibility */
-    :global(.light)
-        .tag-chip
-        input:checked
-        + .badge[data-variant="filter-chip"] {
-        --badge-fg: #ffffff; /* Make sure text is white on the blueish chip */
-    }
-
-    .tag-filter-container {
-        position: relative;
-    }
-
-    /* --- Dropdown --- */
+    /* --- Dropdown（其餘外觀來自 dropdown.css 的 .dropdown-menu）--- */
     .tag-dropdown {
-        position: absolute;
-        top: 110%;
-        left: 0;
         width: 320px;
-        background-color: var(--color-canvas-overlay);
-        border: 1px solid var(--color-border-default);
-        border-radius: 8px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        z-index: 100;
-        display: none;
-        flex-direction: column;
         overflow: hidden;
-    }
-    .tag-dropdown.show {
-        display: flex;
     }
 
     /* --- Search Area --- */
     .dropdown-search-container {
-        padding: 10px;
-        border-bottom: 1px solid var(--color-border-muted);
         background-color: var(--color-canvas-default);
-        position: relative;
     }
     .search-icon {
         position: absolute;
@@ -271,18 +199,7 @@ const { tags } = Astro.props;
         color: var(--color-fg-muted);
         pointer-events: none;
     }
-    .dropdown-search-input {
-        width: 100%;
-        padding: 6px 10px 6px 32px;
-        background-color: var(--color-canvas-subtle);
-        border: 1px solid var(--color-border-default);
-        border-radius: 6px;
-        color: var(--color-fg-default);
-        font-size: 0.9rem;
-        outline: none;
-    }
     .dropdown-search-input:focus {
-        border-color: var(--color-accent-fg);
         background-color: var(--color-canvas-default);
     }
 
@@ -320,9 +237,9 @@ const { tags } = Astro.props;
     .footer-btn {
         border: none;
         cursor: pointer;
-        font-size: 0.85rem;
-        border-radius: 4px;
-        padding: 5px 10px;
+        font-size: var(--fs-sm);
+        border-radius: var(--radius-sm);
+        padding: 4px 12px;
         display: inline-flex;
         align-items: center;
         gap: 4px;
@@ -347,10 +264,10 @@ const { tags } = Astro.props;
         background: none;
         border: 1px solid transparent;
         cursor: pointer;
-        font-size: 0.8rem;
+        font-size: var(--fs-xs);
         color: var(--color-fg-muted);
         padding: 4px 8px;
-        border-radius: 4px;
+        border-radius: var(--radius-sm);
     }
     .logic-btn:hover {
         background-color: var(--color-border-muted);

@@ -9,12 +9,14 @@ export function applyTheme(id: string): void {
   if (id === DEFAULT_THEME_ID) return;
 
   const official = OFFICIAL_THEMES.find((theme) => theme.id === id);
-  if (official?.path) {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = official.path;
-    link.dataset.themeId = id;
-    document.head.appendChild(link);
+  if (official) {
+    if (official.path) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = official.path;
+      link.dataset.themeId = id;
+      document.head.appendChild(link);
+    }
     document.documentElement.classList.toggle("light", !!official.isLight);
     return;
   }

@@ -1,6 +1,6 @@
 ---
 const currentYear = new Date().getFullYear();
-import { UI_TEXT } from "../i18n/ui";
+import { UI_TEXT, t } from "../i18n/ui";
 ---
 
 <footer class="site-footer">
@@ -14,33 +14,31 @@ import { UI_TEXT } from "../i18n/ui";
         > All rights reserved.</span
       >
     </div>
+    <div class="footer-section">
+      <a class="footer-link" href="/beyond/" {...t("beyond_title")}>{UI_TEXT.beyond_title.cn}</a>
+    </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
     border-top: 1px solid var(--color-border-muted);
-    padding: 2rem 0;
-    margin-top: 4rem;
+    padding: 32px 0;
+    margin-top: 64px;
 
-    background-color: color-mix(
-      in srgb,
-      var(--color-canvas-subtle) var(--bg-overlay-alpha),
-      transparent
-    );
+    background-color: var(--surface-subtle);
     /* 稍微深一點的背景 */
   }
 
   .footer-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 16px;
     display: flex;
-    justify-content: space-between;
-    /* 左右分散對齊 */
+    /* 靠左排列：右下角有浮動按鈕，連結放右邊會被蓋住 */
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 24px;
   }
 
   .footer-section {
@@ -48,10 +46,15 @@ import { UI_TEXT } from "../i18n/ui";
     align-items: center;
   }
 
-  /* 版權文字 */
-  .copyright {
+  /* 版權文字與頁尾連結 */
+  .copyright,
+  .footer-link {
     color: var(--color-fg-muted);
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
+  }
+
+  .footer-link:hover {
+    color: var(--color-accent-fg);
   }
 
   /* 手機版直排 */

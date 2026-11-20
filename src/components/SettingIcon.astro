@@ -3,7 +3,7 @@ import { UI_TEXT } from "../i18n/ui";
 ---
 
 <!-- 觸發按鈕 -->
-<button id="setting-toggle" class="setting-btn" aria-label="開啟設定面板">
+<button id="setting-toggle" class="floating-btn setting-btn" aria-label="開啟設定面板">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -130,30 +130,8 @@ import { UI_TEXT } from "../i18n/ui";
 </div>
 
 <style>
-  /* 按鈕樣式 (參考 ThemeIcon / LanguageToggle) */
   .setting-btn {
-    position: fixed;
-    bottom: 20px;
     right: 140px; /* 20 + 40 + 20 + 40 + 20 */
-    z-index: 1000;
-    background-color: var(--color-canvas-default);
-    border: 1px solid var(--color-border-default);
-    cursor: pointer;
-    color: var(--color-fg-default);
-    padding: 0;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .setting-btn:hover {
-    background-color: var(--color-canvas-subtle);
-    transform: scale(1.1);
   }
 
   /* 面板樣式 */
@@ -164,7 +142,7 @@ import { UI_TEXT } from "../i18n/ui";
     width: 280px;
     background-color: var(--color-card-bg); /* 使用卡片背景色 */
     border: 1px solid var(--color-border-default);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     z-index: 1001;
@@ -206,7 +184,7 @@ import { UI_TEXT } from "../i18n/ui";
   }
 
   .panel-title {
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     font-weight: 700;
     color: var(--color-fg-default);
     letter-spacing: 0.05em;
@@ -220,7 +198,7 @@ import { UI_TEXT } from "../i18n/ui";
     color: var(--color-fg-muted);
     cursor: pointer;
     padding: 4px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -245,13 +223,13 @@ import { UI_TEXT } from "../i18n/ui";
   }
 
   .toggle-label {
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
     color: var(--color-fg-default);
     font-weight: 500;
   }
 
   .toggle-desc {
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
     color: var(--color-fg-muted);
     display: block;
     margin-top: 2px;
@@ -282,7 +260,7 @@ import { UI_TEXT } from "../i18n/ui";
     bottom: 0;
     background-color: var(--color-canvas-subtle);
     transition: 0.3s;
-    border-radius: 34px;
+    border-radius: var(--radius-full);
     border: 1px solid var(--color-border-default);
   }
 
@@ -308,12 +286,6 @@ import { UI_TEXT } from "../i18n/ui";
   input:checked + .slider:before {
     transform: translateX(18px);
     background-color: #ffffff; /* 圓鈕變白 */
-  }
-
-  /* Disabled state styling just in case */
-  input:disabled + .slider {
-    opacity: 0.6;
-    cursor: not-allowed;
   }
 
   /* Color Picker Control */

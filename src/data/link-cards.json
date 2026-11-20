@@ -1,0 +1,168 @@
+{
+  "genshin": {
+    "url": "https://genshin.hoyoverse.com/zh-tw",
+    "title": "原神",
+    "label": "原神官網",
+    "description": "開放世界冒險遊戲，在提瓦特大陸上旅行，尋找失散的血親，揭開七國與神明的故事。"
+  },
+  "hsr": {
+    "url": "https://hsr.hoyoverse.com/zh-tw/home",
+    "title": "崩壞：星穹鐵道",
+    "label": "崩壞：星穹鐵道官網",
+    "description": "回合制策略角色扮演遊戲，搭乘星穹列車在銀河間開拓，經歷各個星球的冒險。"
+  },
+  "minecraft": {
+    "url": "https://www.minecraft.net/zh-hant",
+    "title": "Minecraft",
+    "label": "Minecraft 官網",
+    "description": "由方塊組成的沙盒遊戲，可以探索、採集、建造與生存，沒有固定的目標，玩法完全由玩家決定。"
+  },
+  "steam-1030300": {
+    "title": "Hollow Knight: Silksong",
+    "description": "前往《空洞騎士：絲之歌》中被詛咒籠罩的廣袤王國！在這個由靈絲與歌謠統治的土地上，探索、戰鬥、生存，朝著王國頂端攀登。"
+  },
+  "steam-105600": {
+    "title": "Terraria",
+    "description": "Dig, fight, explore, build! Nothing is impossible in this action-packed adventure game. Four Pack also available!"
+  },
+  "steam-1222140": {
+    "title": "底特律：化身为人",
+    "description": "《Detroit:Become Human》將人類與仿生人命運交到你的手中，將你帶進一個機器變得比人類還有智慧的近未來世界中。你的每一個選擇都會對遊戲結果帶來影響，本作有著史上最複雜的分支故事。"
+  },
+  "steam-1245620": {
+    "title": "艾爾登法環",
+    "description": "艾爾登法環是以正統黑暗奇幻世界為舞台的動作RPG遊戲。 走進遼闊的場景與地下迷宮探索未知，挑戰困難重重的險境，享受克服困境時的成就感吧。 不僅如此，登場角色之間的利害關係譜成的群像劇，更是不容錯過。"
+  },
+  "steam-1292940": {
+    "title": "Cube Escape Collection",
+    "description": "在這款經典點擊冒險遊戲的選集內，你將隨著Dale、Laura及Mr. Crow and Mr. Owl等知名的Rusty lake角色，一同探索謎團。將Cube Escape系列作品以全新組合包推出，希望能在Flash遊戲時代的尾聲繼續發展"
+  },
+  "steam-1326470": {
+    "title": "Sons Of The Forest",
+    "description": "你被派到了一座孤島上尋找走失的富翁，卻發現那是座由食人生物佔領的煉獄之島。你需要鍛造武器、建築棲身之所，努力生存下去。無論有沒有朋友相伴，都得想方設法在這款開放式恐怖生存模擬遊戲中活下去。"
+  },
+  "steam-1426210": {
+    "title": "雙人成行",
+    "description": "在《雙人成行》中踏上人生中最瘋狂的旅程。利用好友通行證*邀請好友免費遊玩。"
+  },
+  "steam-1451940": {
+    "title": "主播女孩重度依賴",
+    "description": "NEEDY STREAMER OVERLOAD is a “multi-ending ADV” depicting daily life with “OMGkawaiiAngel”, a young girl with a rather extreme need for approval attempting to become the #1 “Internet Angel” (streamer)."
+  },
+  "steam-1456880": {
+    "title": "ElecHead",
+    "description": "⚡＋🤖＋🧩"
+  },
+  "steam-1676840": {
+    "title": "為了吾王 II / For the King II",
+    "description": "《為了吾王》是結合桌遊與 Roguelike 元素的熱門回合制角色扮演遊戲。在這款續作中，你將獨自對抗專橫的法汝女王，或是組成四人小隊展開冒險。對於曾經備受愛戴的女王，你能夠揭開她的可怕秘密嗎？"
+  },
+  "steam-1746030": {
+    "title": "山河旅探 Murders on the Yangtze River",
+    "description": "《山河旅探》是由奧秘之家所開發的一款中國主題特色的橫向本格推理遊戲。玩家將化身為國民偵探沈仲平，通過調查推理一樁樁令人匪夷所思的離奇案件，從而挖掘出終極案件背後所隱藏的驚人真相，同時也將發現那些關於自己的身世之謎。"
+  },
+  "steam-1809540": {
+    "title": "九日",
+    "description": "《九日》是一款結合道教科幻與上古神話的 2D 平台動作冒險遊戲。強調格擋機制和節奏明快的戰鬥、配合獨特的道龐克背景，刻畫出別具特色的手繪世界。面對統御新崑崙的九位太陽，玩家扮演羿，隻身踏上一條復仇血路。"
+  },
+  "steam-1859910": {
+    "title": "活俠傳",
+    "description": "《活俠傳》是一款PC角色扮演類單機遊戲。江湖動盪，不可一世的唐門已然式微，從前得罪的仇家卻前仆後繼攻打過來，身為一名嘍囉，是該獨善其身，還是獻身為門派存亡奉獻一己之力？你的旅途是未知的。"
+  },
+  "steam-1903340": {
+    "title": "光與影：33號遠征隊",
+    "description": "率領33號遠征隊踏上征途，擊敗繪母，阻止她再次揮動死亡的筆刷。這款回合制RPG遊戲融合即時機制，法國「美好年代」風格的奇幻異境待你探索，各具特色的獨特敵人等你迎戰。"
+  },
+  "steam-1943950": {
+    "title": "Escape the Backrooms",
+    "description": "《Escape the Backrooms》是一款1-4人的多人合作驚悚探索遊戲。玩家們要一邊躲避靈體的追逐和其他危險，一邊穿越超過30間令人毛骨悚然的後室。警告：你們儘管逃，但不保證活得下來。"
+  },
+  "steam-2220360": {
+    "title": "Paper Lily - Chapter 1",
+    "description": "Paper Lily is an RPG horror game in which you can solve puzzles in different ways. Explore a hidden world, meet strange characters, and guide Lacie as she attempts to find answers about her unusual condition."
+  },
+  "steam-2358720": {
+    "title": "黑神話：悟空",
+    "description": "《黑神話：悟空》是一款以中國神話為背景的動作角色扮演遊戲。在游戲中你將扮演一位“天命人”，爲了探尋昔日傳奇的真相，踏上一條充滿危險與驚奇的西游之路。"
+  },
+  "steam-2379780": {
+    "title": "Balatro",
+    "description": "撲克牌版的極致Roguelike遊戲！Balatro是一場循環不息的撲克之旅。在這款令人陶醉的卡牌策略遊戲中，你將參與非法牌局，發掘能夠改變局勢的小丑牌，引爆一系列令人血脈噴張、驚嘆連連的連鎖效應。"
+  },
+  "steam-2527500": {
+    "title": "MiSide",
+    "description": "Let's imagine that you have a game in which you care for a character. But could you imagine one day getting into that game yourself?"
+  },
+  "steam-2721890": {
+    "title": "Öoo",
+    "description": "炸彈毛毛蟲的大冒險！ 《Öoo》是一款探索解謎平台遊戲，在可愛但又帶點神秘感的世界裡，找出各式各樣使用炸彈的方法吧！"
+  },
+  "steam-2951770": {
+    "title": "Leap Year",
+    "description": "Leap Year is a clumsy platformer about knowledge and discovery. Explore a compact, hand drawn world filled with hidden paths. Understand the game’s secrets to reach new areas and collect all the pages of your calendar."
+  },
+  "steam-304430": {
+    "title": "INSIDE",
+    "description": "孤身只影且遭到追擊，一個男孩發現自己深陷一個黑暗計畫之中。"
+  },
+  "steam-3241660": {
+    "title": "R.E.P.O.",
+    "description": "An online co-op horror game with up to 6 players. Locate valuable, fully physics-based objects and handle them with care as you retrieve and extract to satisfy your creator's desires."
+  },
+  "steam-367520": {
+    "title": "Hollow Knight",
+    "description": "Forge your own path in Hollow Knight! An epic action adventure through a vast ruined kingdom of insects and heroes. Explore twisting caverns, battle tainted creatures and befriend bizarre bugs, all in a classic, hand-drawn 2D style."
+  },
+  "steam-391540": {
+    "title": "Undertale",
+    "description": "UNDERTALE! The RPG game where you don't have to destroy anyone."
+  },
+  "steam-4001890": {
+    "title": "How to Fish",
+    "description": "《How to Fish》是一款支援1–4人遊玩的物理模擬釣魚遊戲。你喝完酒後決定開船出遊，沒想到撞上了一座小島。為了要回家，你必須學會如何釣魚。"
+  },
+  "steam-413410": {
+    "title": "Danganronpa: Trigger Happy Havoc",
+    "description": "Investigate murders, search for clues and talk to your classmates to prepare for trial. There, you'll engage in deadly wordplay, going back and forth with suspects. Dissect their statements and fire their words back at them to expose their lies! There's only one way to survive—pull the trigger."
+  },
+  "steam-413420": {
+    "title": "超級槍彈辯駁2 再會了絕望學園",
+    "description": "Jabberwock Island—You and your classmates were ready for fun in the sun until Monokuma returned to restart his murderous game! Trapped in a kill-or-be-killed situation, your only hope rests in solving the island’s mysteries."
+  },
+  "steam-4656000": {
+    "title": "BOMBANANA!",
+    "description": "和好友化身猴子，來場手忙腳亂的拆彈大考驗！3 名玩家將分別扮演盲猴、聾猴和啞猴。每個人手上都只有一部分的線索，所以你們必須在有限的時間內，透過好好溝通來解開謎題。在炸彈把大家炸飛之前，你和你的猴朋友有辦法成功化解危機嗎？"
+  },
+  "steam-48000": {
+    "title": "LIMBO",
+    "description": "Uncertain of his sister's fate, a boy enters LIMBO"
+  },
+  "steam-504230": {
+    "title": "Celeste",
+    "description": "本遊戲為《TowerFall》創作者的又一力作，在這款劇情緊湊的平台遊戲中，玩家將扮演瑪德琳戰勝心中的惡魔，登上塞萊斯特山頂。勇敢面對數百個手工精心製作的挑戰、揭開深埋的秘密，並拼湊出這座山的奧秘。"
+  },
+  "steam-668210": {
+    "title": "Super Fancy Pants Adventure",
+    "description": "Super Fancy Pants Adventure is a wild free-running adventure with buttery smooth platforming and a slick fountain pen!"
+  },
+  "steam-70300": {
+    "title": "VVVVVV",
+    "description": "出事啦！大家都被隨機傳送去了不同地方！維青迪安，作為英勇的艦長，只有你，才能找到你的朋友，將他們帶回安全的地方，並最終拯救整個宇宙！"
+  },
+  "steam-751780": {
+    "title": "Forager",
+    "description": "The highly popular and quirky &quot;idle game that you want to actively keep playing&quot;. Explore, craft, gather &amp; manage resources, find secrets and build your base out of nothing! Buy land to explore and expand!"
+  },
+  "steam-787480": {
+    "title": "Phoenix Wright: Ace Attorney Trilogy",
+    "description": "本作是以法庭為舞台的冒險遊戲。玩家將扮演律師「成步堂龍一」，為證明委託人的清白而踏上法庭。此精選集收錄了作為系列原點的《逆轉裁判 復甦的逆轉》、《逆轉裁判2》和《逆轉裁判3》共14話。 ※繁簡中文字幕將於發售後以更新包形式追加。"
+  },
+  "steam-813230": {
+    "title": "ANIMAL WELL",
+    "description": "Explore a dense, interconnected labyrinth, and unravel its many secrets. Collect items to manipulate your environment in surprising and meaningful ways. Encounter beautiful and unsettling creatures, as you attempt to survive what lurks in the dark. There is more than what you see."
+  },
+  "steam-814380": {
+    "title": "Sekiro™: Shadows Die Twice - GOTY Edition",
+    "description": "在由開發商FromSoftware（Dark Souls系列的製作單位）的全新歷險中開拓你的復仇之路。 勇猛復仇，挽回榮譽，巧妙殺敵。"
+  }
+}

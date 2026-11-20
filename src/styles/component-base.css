@@ -18,14 +18,14 @@
   /* Layout */
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 
   /* Padding */
-  padding: var(--interactive-py, 6px) var(--interactive-px, 12px);
+  padding: var(--interactive-py, 8px) var(--interactive-px, 12px);
 
   /* Border & Radius */
   border: 1px solid var(--color-border-default);
-  border-radius: var(--interactive-radius, 8px);
+  border-radius: var(--interactive-radius, var(--radius-md));
 
   /* Color */
   background-color: var(--interactive-bg, var(--color-canvas-subtle));
@@ -40,26 +40,51 @@
 
 /* --- 圓形容器變體 (Badge 用) --- */
 .interactive-container.rounded {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
 }
 
 /* --- 小型容器 --- */
 .interactive-container.sm {
   --interactive-py: 2px;
   --interactive-px: 8px;
-  font-size: 0.75rem;
+  font-size: var(--fs-xs);
 }
 
 /* --- 中型容器 --- */
 .interactive-container.md {
-  --interactive-py: 6px;
+  --interactive-py: 8px;
   --interactive-px: 12px;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
 }
 
 /* --- 大型容器 --- */
 .interactive-container.lg {
-  --interactive-py: 10px;
+  --interactive-py: 12px;
   --interactive-px: 16px;
-  font-size: 1rem;
+  font-size: var(--fs-md);
+}
+
+/* --- 右下角的圓形浮動按鈕（語言、設定）；各元件只定義自己的位置 --- */
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background-color: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 50%;
+  color: var(--color-fg-default);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.floating-btn:hover {
+  background-color: var(--color-canvas-subtle);
+  transform: scale(1.1);
 }

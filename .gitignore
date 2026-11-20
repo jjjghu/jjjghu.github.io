@@ -1,3 +1,6 @@
+# 「解題之外」的草稿：未經篩選的日記，不可進版本庫
+src/content/beyond/drafts/
+
 # build output
 dist/
 dist-security/

@@ -215,7 +215,7 @@ const showTOC = headings && headings.length > 0;
     max-width: 1200px;
     /* 首頁寬度 */
     margin: 0 auto;
-    padding: 0 1rem 4rem 1rem;
+    padding: 0 16px 64px 16px;
   }
 
   /* --- 當有目錄時的特殊佈局 (CSS Grid) --- */
@@ -223,7 +223,7 @@ const showTOC = headings && headings.length > 0;
     display: grid;
     /* 左邊文章(自適應) | 右邊目錄(固定 240px) */
     grid-template-columns: 1fr 240px;
-    gap: 3rem;
+    gap: 48px;
     /* 中間間距 */
     align-items: start;
     /* 讓目錄對齊頂部 */
@@ -236,30 +236,6 @@ const showTOC = headings && headings.length > 0;
     height: 100%;
   }
 
-  .toc-container {
-    position: sticky;
-    /* 讓目錄黏在視窗上方，不會捲走 */
-    top: 2rem;
-    /* 距離頂部的距離 */
-    max-height: 80vh;
-    /* 避免目錄太長超出畫面 */
-    overflow-y: auto;
-    /* 目錄太長時可以捲動 */
-    padding-left: 1rem;
-    border-left: 1px solid var(--color-border-muted);
-    /* 左側分隔線 */
-  }
-
-  /* .toc-title {
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: var(--color-fg-muted);
-    letter-spacing: 1px;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-  } */
-
   .toc-list {
     list-style: none;
     padding: 0;
@@ -267,13 +243,13 @@ const showTOC = headings && headings.length > 0;
   }
 
   .toc-item {
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
+    margin-bottom: 8px;
+    line-height: var(--lh-normal);
   }
 
   .toc-item a {
     color: var(--color-fg-muted);
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
     text-decoration: none;
     transition: color 0.2s;
     display: block;
@@ -287,7 +263,7 @@ const showTOC = headings && headings.length > 0;
   /* --- 縮排設定 (處理 h2, h3, h4...) --- */
   .depth-1 {
     font-weight: bold;
-    margin-top: 1rem;
+    margin-top: 16px;
   }
 
   /* h1 通常不顯示，若有則加粗 */
@@ -297,14 +273,14 @@ const showTOC = headings && headings.length > 0;
 
   /* h2 不縮排 */
   .depth-3 {
-    padding-left: 1rem;
-    font-size: 0.85rem;
+    padding-left: 16px;
+    font-size: var(--fs-sm);
   }
 
   /* h3 縮排 */
   .depth-4 {
-    padding-left: 2rem;
-    font-size: 0.85rem;
+    padding-left: 32px;
+    font-size: var(--fs-sm);
   }
 
   /* h4 縮排更多 */
@@ -322,25 +298,16 @@ const showTOC = headings && headings.length > 0;
     }
   }
 
-  /* 1. 強制把文章內容的第一個標題往上拉，消除預設間距 */
-  .article-body > h1:first-child,
-  .article-body > h2:first-child {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    line-height: 1.2;
-    /* 確保行高不會造成誤差 */
-  }
-
-  /* 2. 微調目錄的位置，讓 "ON THIS PAGE" 跟左邊的標題對齊 */
+  /* 目錄黏在視窗上方；太長時自己捲動 */
   .toc-container {
     position: sticky;
     top: 2rem;
     /* 如果覺得還是有點誤差，可以微調這個 margin-top */
-    margin-top: 0.2rem;
+    margin-top: 4px;
 
     max-height: 80vh;
     overflow-y: auto;
-    padding-left: 1rem;
+    padding-left: 16px;
     border-left: 1px solid var(--color-border-muted);
   }
 </style>

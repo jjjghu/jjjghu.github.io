@@ -18,8 +18,9 @@
 
 /* --- Dropdown Button 特有樣式 --- */
 .dropdown-btn {
+  height: var(--control-height);
   min-width: 140px;
-  gap: 6px;
+  gap: 8px;
 
   /* Dropdown button 自己的 hover 效果 */
   transition: all 0.2s;
@@ -40,9 +41,10 @@
      把它誤設成 relative/static，導致展開時把周邊頁面內容推開。 */
   position: absolute !important;
   top: 110%;
+  left: 0; /* 所有選單都對齊按鈕左緣、往右展開 */
   background-color: var(--color-canvas-overlay);
   border: 1px solid var(--color-border-default);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   z-index: 100;
   display: none;
@@ -63,7 +65,7 @@
   align-items: center;
 
   padding: 8px 12px;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   color: var(--color-fg-default);
   background-color: var(--color-canvas-default);
   cursor: pointer;
@@ -89,7 +91,7 @@
 
 /* --- Search Container --- */
 .dropdown-search-container {
-  padding: 10px;
+  padding: 12px;
   border-bottom: 1px solid var(--color-border-muted);
   position: relative;
   background-color: inherit;
@@ -97,12 +99,12 @@
 
 .dropdown-search-input {
   width: 100%;
-  padding: 6px 10px 6px 32px;
+  padding: 8px 12px 8px 32px;
   background-color: var(--color-canvas-subtle);
   border: 1px solid var(--color-border-default);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   color: var(--color-fg-default);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   outline: none;
   transition: border-color 0.2s;
 }
@@ -117,7 +119,7 @@
   justify-content: space-between;
   align-items: center;
 
-  padding: 10px 12px;
+  padding: 12px 12px;
   border-top: 1px solid var(--color-border-muted);
   background-color: var(--color-canvas-subtle);
 }

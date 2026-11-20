@@ -1,0 +1,152 @@
+---
+// 「解題之外」單篇：標題旁是一張靜態的日曆頁，文末是帶小日曆頁的前後篇。
+// 沒有日期的文章是長期紀錄：日曆頁顯示 ∞，也不參與前後篇。
+import { getCollection, render } from "astro:content";
+import BeyondLayout from "../../layouts/BeyondLayout.astro";
+import { BEYOND_COLLECTION } from "../../constants";
+import { UI_TEXT } from "../../i18n/ui";
+import { describeEntry, newestFirst } from "../../utils/beyond";
+
+export async function getStaticPaths() {
+    const entries = await getCollection(BEYOND_COLLECTION);
+    const infos = entries.map(describeEntry).sort(newestFirst);
+    const diary = infos.filter((info) => info.dated);
+    return infos.map((info) => {
+        const index = diary.indexOf(info);
+        return {
+            params: { slug: info.id },
+            props: {
+                entry: entries.find((entry) => entry.id === info.id)!,
+                info,
+                newer: index > 0 ? diary[index - 1] : undefined,
+                older: index >= 0 ? diary[index + 1] : undefined,
+            },
+        };
+    });
+}
+
+const { entry, info, newer, older } = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(entry);
+// 長期紀錄的跳轉清單：文中每張連結卡片一項（由 plugins/remark-link-card.mjs 收集）
+const toc: { title: string; href: string }[] = info.dated ? [] : (remarkPluginFrontmatter.cards ?? []);
+const [year, month] = info.month.split("-").map(Number);
+---
+
+<BeyondLayout title={info.title} description={`${UI_TEXT.beyond_title.cn}：${info.title}`}>
+    {
+        info.draft && (
+            <p class="draft-note">
+                草稿，只有本機的開發模式看得到。要發布就把檔案從 <code>drafts/</code> 搬到上一層資料夾。
+            </p>
+        )
+    }
+
+    {
+        info.dated && (
+            <div class="page-mark" aria-hidden="true">
+                {info.year}
+            </div>
+        )
+    }
+
+    <header class="title title-with-leaf">
+        {
+            info.dated ? (
+                <time class="leaf" datetime={info.iso}>
+                    <span class="leaf-day">{info.day}</span>
+                    <span class="leaf-sub">
+                        {year} 年 {month} 月
+                    </span>
+                    <span class="leaf-sub">{info.weekday}</span>
+                </time>
+            ) : (
+                <div class="leaf">
+                    <span class="leaf-day">∞</span>
+                    <span class="leaf-sub">持續更新</span>
+                </div>
+            )
+        }
+        <div>
+            <h1>{info.title}</h1>
+            <div class="title-note">約 {info.chars.toLocaleString("en-US")} 字</div>
+        </div>
+    </header>
+
+    <div class="with-toc">
+        {
+            toc.length > 1 && (
+                <nav class="toc" aria-label="目錄">
+                    <details class="toc-box">
+                        <summary>目錄 {toc.length} 項</summary>
+                        <ol>
+                            {toc.map((item) => (
+                                <li>
+                                    <a href={item.href} title={item.title}>
+                                        {item.title}
+                                    </a>
+                                </li>
+                            ))}
+                        </ol>
+                    </details>
+                </nav>
+            )
+        }
+        <article class:list={["body", { "record-body": !info.dated }]}>
+            <Content />
+        </article>
+    </div>
+
+    {
+        (newer || older) && (
+            <nav class="pager" aria-label="前後篇">
+                {[
+                    { target: older, label: "上一篇", next: false },
+                    { target: newer, label: "下一篇", next: true },
+                ].map(
+                    ({ target, label, next }) =>
+                        target && (
+                            <a class:list={{ "pager-next": next }} href={target.href}>
+                                <span class="leaf leaf-small">
+                                    <span class="leaf-day">{target.day}</span>
+                                    <span class="leaf-sub">{target.dateText.slice(0, 7)}</span>
+                                </span>
+                                <span>
+                                    <span class="pager-label">{label}</span>
+                                    <span class="pager-title">{target.hasTitle ? target.title : target.excerpt}</span>
+                                </span>
+                            </a>
+                        ),
+                )}
+            </nav>
+        )
+    }
+</BeyondLayout>
+
+<script>
+    // 跳轉清單：寬螢幕一直展開；捲動時把目前讀到的那項標成 aria-current（樣式在 BeyondLayout）
+    const box = document.querySelector<HTMLDetailsElement>(".toc-box");
+    if (box) {
+        const wide = matchMedia("(min-width: 1200px)");
+        const fit = () => (box.open = wide.matches);
+        fit();
+        wide.addEventListener("change", fit);
+
+        const links = [...box.querySelectorAll<HTMLAnchorElement>("a")];
+        const targets = links.map((link) => document.getElementById(link.hash.slice(1)));
+        const mark = () => {
+            const atBottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+            const passed = targets.filter((target) => target && target.getBoundingClientRect().top <= 120).length;
+            const current = atBottom ? links.length - 1 : Math.max(passed - 1, 0);
+            links.forEach((link, index) =>
+                index === current ? link.setAttribute("aria-current", "true") : link.removeAttribute("aria-current"),
+            );
+            // 清單比畫面高時，捲動清單本身，讓目前這項保持在看得到的範圍（不動到整頁）
+            const frame = box.getBoundingClientRect();
+            const item = links[current].getBoundingClientRect();
+            if (item.top < frame.top) box.scrollTop -= frame.top - item.top + 8;
+            else if (item.bottom > frame.bottom) box.scrollTop += item.bottom - frame.bottom + 8;
+        };
+        addEventListener("scroll", () => requestAnimationFrame(mark), { passive: true });
+        mark();
+    }
+</script>

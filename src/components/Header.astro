@@ -130,21 +130,17 @@ const { activeCategory } = Astro.props;
 
 <style>
   .site-header {
-    background-color: color-mix(
-      in srgb,
-      var(--color-canvas-default) var(--bg-overlay-alpha),
-      transparent
-    );
+    background-color: var(--surface-default);
     border-bottom: 1px solid var(--color-border-muted);
     /* 這裡控制 Header 的總高度，上下 padding 一樣就會置中 */
-    padding: 1.5rem 0;
-    margin-bottom: 1rem;
+    padding: 24px 0;
+    margin-bottom: 16px;
   }
 
   .header-inner {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 16px;
     height: 100%; /* 確保高度充滿 */
   }
 
@@ -161,7 +157,7 @@ const { activeCategory } = Astro.props;
   }
 
   .site-title {
-    font-size: 1.8rem;
+    font-size: var(--fs-2xl);
     font-weight: 800;
     color: var(--color-fg-default);
     text-decoration: none;
@@ -187,14 +183,14 @@ const { activeCategory } = Astro.props;
     padding: 0;
     margin: 0;
     display: flex;
-    gap: 1.5rem;
+    gap: 24px;
     align-items: center; /* 確保 li 垂直置中 */
   }
 
   .nav-links a {
     color: var(--color-fg-default);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: var(--fs-md);
     text-transform: uppercase;
     transition: color 0.2s;
     /* 確保連結文字垂直置中 */
@@ -211,12 +207,12 @@ const { activeCategory } = Astro.props;
   /* RWD 手機版調整 */
   @media (max-width: 768px) {
     .site-header {
-      padding: 1.25rem 0;
+      padding: 20px 0;
     }
 
     .header-title-row {
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 12px;
       align-items: center;
     }
 
@@ -228,12 +224,12 @@ const { activeCategory } = Astro.props;
 
     .nav-links {
       justify-content: center;
-      gap: 1.5rem;
-      font-size: 0.85rem;
+      gap: 24px;
+      font-size: var(--fs-sm);
     }
 
     .site-title {
-      font-size: 1.5rem;
+      font-size: var(--fs-xl);
       text-align: center;
       white-space: nowrap;
     }

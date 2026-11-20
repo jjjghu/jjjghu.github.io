@@ -1,6 +1,8 @@
 export const LEETCODE_COLLECTION = 'leetcode' as const;
 export const ZEROJUDGE_COLLECTION = 'zerojudge' as const;
 export const ARTICLES_COLLECTION = 'articles' as const;
+// 「解題之外」：日記、評論等非解題內容。不進 sitemap、不被索引、不混進題目清單。
+export const BEYOND_COLLECTION = 'beyond' as const;
 
 // localStorage 鍵名的唯一宣告處。
 // 例外：is:inline script 無法 import —— Layout.astro 經 define:vars 傳入；
