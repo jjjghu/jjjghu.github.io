@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 
 // 「解題之外」發布哪些文章由作者決定（可能一篇都沒有），所以這裡只驗證不依賴內容的部分；
 // 有已發布的日記時，再多驗證月曆與單篇頁。
-test('the beyond section is reachable from the footer but hidden from search engines and the problem list', async ({ page, request }) => {
+test('the beyond section is reachable from the header but hidden from search engines and the problem list', async ({ page, request }) => {
   await page.goto('/');
-  await page.click('footer a[href="/beyond/"]');
+  await page.click('header a[href="/beyond/"]');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
 
   // drafts/ 底下未篩選的日記絕不能出現在建置結果裡

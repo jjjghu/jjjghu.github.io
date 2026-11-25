@@ -78,6 +78,14 @@ const { activeCategory } = Astro.props;
               data-en={UI_TEXT.nav_note.en}>{UI_TEXT.nav_note.cn}</a
             >
           </li>
+          <li>
+            <a
+              href="/beyond/"
+              class="nav-link"
+              data-cn={UI_TEXT.beyond_title.cn}
+              data-en={UI_TEXT.beyond_title.en}>{UI_TEXT.beyond_title.cn}</a
+            >
+          </li>
         </ul>
         <script is:inline>
           (function () {
@@ -222,10 +230,15 @@ const { activeCategory } = Astro.props;
       margin-top: 0;
     }
 
+    /* 項目多時換成兩列，每個項目本身不拆行（不做摺疊選單，所有入口一眼看得到） */
     .nav-links {
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 24px;
+      gap: 8px 20px;
       font-size: var(--fs-sm);
+    }
+    .nav-links a {
+      white-space: nowrap;
     }
 
     .site-title {

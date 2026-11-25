@@ -3,17 +3,15 @@ title: 覺得好看的書
 icon: book
 ---
 
-- [借書相關影片](https://www.youtube.com/watch?v=SI3azY4dg40)
 
 以下內容按照時間順序排序，有些用買的，有些用借的。
 只會把看完的，覺得算不錯的放上來（標準很寬鬆的）。
 很久以前看過，比如國高中看過的就算了，都快忘記了。
 主要用手機看電子書，不然我根本不會看。軟體用的是 HyRead 跟微信讀書。
-<span style="color:yellow"> Something </span>
-<p style="text-align:center;">Center Text</p>
+> [電子書借閱的介紹影片](https://www.youtube.com/watch?v=SI3azY4dg40)
 <p style="text-align:right;">2026 / 11 / 25</p>
 
-- 《我的未來，自己寫500 Days: Coding My Dreams……》（你的名字太長了）
+- 《我的未來，自己寫……》（你的名字太長了）
 - 《小學問：告別知識焦慮時代的聰明思考》
 - 《只能用 4H 鉛筆》
 - 《四維街一號》

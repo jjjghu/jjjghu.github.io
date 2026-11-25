@@ -35,7 +35,8 @@ export default defineConfig({
             ...defaultSchema.attributes,
             code: [...(defaultSchema.attributes.code || []), 'metastring', ['className', /^language-./, 'math-inline', 'math-display']],
             span: [
-              ['style', /^color:\s*var\(--color-accent-fg\);?$/, /^margin-left:\s*2rem;?$/],
+              // 文字顏色只能用站內的變數（/color 強調色、/gray 灰色），兩區各自定義實際顏色
+              ['style', /^color:\s*var\(--color-(?:accent-fg|fg-muted)\);?$/, /^margin-left:\s*2rem;?$/],
               ['className', 'card-body', 'card-title', 'card-meta', 'card-desc'],
             ],
             // 「解題之外」的連結卡片（plugins/remark-link-card.mjs）

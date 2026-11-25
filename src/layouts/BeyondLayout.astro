@@ -71,8 +71,9 @@ const { title, description = "解題以外的文字", wide = false, source } = A
         --bz-mark: #e7e7e7; /* 年份浮水印，只比底色深一點 */
         --bz-rule: #d9d9d9;
         --bz-accent: #0969da; /* 解題站淺色主題的強調色，維持一點關聯 */
-        /* 解題站的強調色變數；/color 片段寫的 <span style="color:var(--color-accent-fg)"> 在這裡也有顏色 */
+        /* 解題站的文字顏色變數；/color、/gray 片段寫的 <span style="color:var(…)"> 在這裡也有顏色 */
         --color-accent-fg: var(--bz-accent);
+        --color-fg-muted: var(--bz-muted);
         --bz-paper-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
         /* 和解題站（styles/global.css 的 body）同一組字體 */
         --bz-sans:
@@ -299,14 +300,15 @@ const { title, description = "解題以外的文字", wide = false, source } = A
         margin-bottom: 0;
     }
 
-    /* 連結不變色，用深色底線表示；滑過時底線加粗 */
+    /* 連結不變色，用淺灰底線表示（整頁都是連結時也不壓迫）；滑過時底線變深、加粗 */
     .body a {
         color: inherit;
-        text-decoration: underline var(--bz-strong) 1px;
+        text-decoration: underline var(--bz-faint) 1px;
         text-underline-offset: 4px;
     }
 
     .body a:hover {
+        text-decoration-color: var(--bz-strong);
         text-decoration-thickness: 2px;
     }
 
@@ -465,41 +467,10 @@ const { title, description = "解題以外的文字", wide = false, source } = A
         margin-top: calc(16px - var(--bz-para));
     }
 
-    /* 長期紀錄的跳轉清單：窄螢幕在文章開頭、預設收合；寬螢幕固定在內文右側，目前讀到的那項加深 */
+    /* 長期紀錄的跳轉清單，仿解題筆記的文章目錄：寬螢幕固定在內文右側，整列左邊一條細線；
+       放不下的窄螢幕不顯示 */
     .toc {
-        margin: 0 0 40px;
-        font-size: 15px;
-    }
-
-    .toc summary {
-        padding: 8px 0; /* 手機上的展開列至少 44px 高 */
-        cursor: pointer;
-        color: var(--bz-muted);
-    }
-
-    .toc ol {
-        margin: 12px 0 0;
-        padding: 0;
-        list-style: none;
-        line-height: 1.6;
-    }
-
-    .toc a {
-        display: block;
-        padding: 4px 0 4px 12px;
-        border-left: 2px solid var(--bz-rule);
-        color: var(--bz-muted);
-        text-decoration: none;
-    }
-
-    .toc a:hover {
-        color: var(--bz-strong);
-    }
-
-    .toc a[aria-current] {
-        border-left-color: var(--bz-strong);
-        color: var(--bz-strong);
-        font-weight: 700;
+        display: none;
     }
 
     @media (min-width: 1200px) {
@@ -508,6 +479,7 @@ const { title, description = "解題以外的文字", wide = false, source } = A
         }
 
         .toc {
+            display: block;
             position: absolute;
             top: 0;
             bottom: 0;
@@ -515,14 +487,7 @@ const { title, description = "解題以外的文字", wide = false, source } = A
             /* 盡量用滿內文右側的空白：(100vw - 100%) / 2 是內文右邊的寬度，扣掉左邊 32px 間距與右邊留白；
                最窄 176px（1200px 寬的螢幕剛好放得下），最寬 320px。還是放不下的名稱單行省略（見下方 .toc a） */
             width: clamp(176px, calc((100vw - 100%) / 2 - 48px), 320px);
-            margin: 0;
-        }
-
-        /* 每項一行，太長的名稱以「…」省略，完整名稱在 title 提示裡 */
-        .toc a {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            font-size: 15px;
         }
 
         .toc-box {
@@ -530,17 +495,36 @@ const { title, description = "解題以外的文字", wide = false, source } = A
             top: 96px;
             max-height: calc(100vh - 128px);
             overflow-y: auto;
+            margin: 0;
+            padding: 0 0 0 16px;
+            border-left: 1px solid var(--bz-rule);
+            line-height: 1.6;
         }
 
-        /* 寬螢幕上清單一直展開，「目錄」只是標籤 */
-        .toc summary {
+        .toc-title {
+            margin: 0 0 8px;
+            color: var(--bz-strong);
+        }
+
+        .toc ol {
+            margin: 0;
             padding: 0;
-            pointer-events: none;
             list-style: none;
         }
 
-        .toc summary::-webkit-details-marker {
-            display: none;
+        /* 每項一行，太長的名稱以「…」省略，完整名稱在 title 提示裡 */
+        .toc a {
+            display: block;
+            padding: 4px 0;
+            overflow: hidden;
+            color: var(--bz-muted);
+            text-decoration: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .toc a:hover {
+            color: var(--bz-strong);
         }
     }
 

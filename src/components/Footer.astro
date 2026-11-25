@@ -1,6 +1,6 @@
 ---
 const currentYear = new Date().getFullYear();
-import { UI_TEXT, t } from "../i18n/ui";
+import { UI_TEXT } from "../i18n/ui";
 ---
 
 <footer class="site-footer">
@@ -13,9 +13,6 @@ import { UI_TEXT, t } from "../i18n/ui";
           data-en={UI_TEXT.header_title.en}>{UI_TEXT.header_title.cn}</span
         > All rights reserved.</span
       >
-    </div>
-    <div class="footer-section">
-      <a class="footer-link" href="/beyond/" {...t("beyond_title")}>{UI_TEXT.beyond_title.cn}</a>
     </div>
   </div>
 </footer>
@@ -46,15 +43,9 @@ import { UI_TEXT, t } from "../i18n/ui";
     align-items: center;
   }
 
-  /* 版權文字與頁尾連結 */
-  .copyright,
-  .footer-link {
+  .copyright {
     color: var(--color-fg-muted);
     font-size: var(--fs-sm);
-  }
-
-  .footer-link:hover {
-    color: var(--color-accent-fg);
   }
 
   /* 手機版直排 */

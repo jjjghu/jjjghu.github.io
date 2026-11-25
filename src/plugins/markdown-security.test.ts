@@ -39,6 +39,12 @@ it('keeps centre and right alignment on paragraphs and divs, but no other inline
   expect(code).not.toContain('color:red');
 });
 
+it('keeps the site colour variables on spans, and markdown inside them still works', async () => {
+  const { code } = await renderer.render('前言 <span style="color:var(--color-fg-muted)">*~~灰色斜體刪除線~~*</span>，<span style="color:gray">x</span>');
+  expect(code).toContain('<span style="color:var(--color-fg-muted)"><em><del>灰色斜體刪除線</del></em></span>');
+  expect(code).not.toContain('color:gray');
+});
+
 it('places CSP before resources and hashes exactly the emitted script content', () => {
   const source = 'window.example = "safe";';
   const html = secureHtml(`<html><head><script>${source}</script></head><body></body></html>`);

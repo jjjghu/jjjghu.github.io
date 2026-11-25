@@ -23,6 +23,16 @@ const get = async (url) => {
     return response;
 };
 
+// Steam 的簡介是 HTML：去掉標籤、還原 &quot; &amp; &#39; 之類的符號，存成純文字（輸出時網站會再安全地轉義）
+const ENTITIES = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>', nbsp: ' ' };
+const plainText = (html = '') =>
+    html
+        .replace(/<[^>]*>/g, '')
+        .replace(/&(?:#(\d+)|#x([\da-f]+)|(\w+));/gi, (match, dec, hex, name) =>
+            dec ? String.fromCodePoint(dec) : hex ? String.fromCodePoint(parseInt(hex, 16)) : (ENTITIES[name.toLowerCase()] ?? match),
+        )
+        .trim();
+
 const FETCHERS = {
     async youtube(id) {
         const url = `https://www.youtube.com/watch?v=${id}`;
@@ -38,7 +48,7 @@ const FETCHERS = {
         const json = await (await get(`https://store.steampowered.com/api/appdetails?appids=${id}&l=tchinese&filters=basic`)).json();
         const data = json[id]?.data;
         if (!data) throw new Error('Steam 查無此遊戲');
-        return { title: data.name, description: data.short_description, image: data.header_image };
+        return { title: plainText(data.name), description: plainText(data.short_description), image: data.header_image };
     },
 };
 

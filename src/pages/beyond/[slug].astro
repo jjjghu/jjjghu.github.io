@@ -80,8 +80,8 @@ const [year, month] = info.month.split("-").map(Number);
         {
             toc.length > 1 && (
                 <nav class="toc" aria-label="目錄">
-                    <details class="toc-box">
-                        <summary>目錄 {toc.length} 項</summary>
+                    <div class="toc-box">
+                        <p class="toc-title">目錄 {toc.length} 項</p>
                         <ol>
                             {toc.map((item) => (
                                 <li>
@@ -91,7 +91,7 @@ const [year, month] = info.month.split("-").map(Number);
                                 </li>
                             ))}
                         </ol>
-                    </details>
+                    </div>
                 </nav>
             )
         }
@@ -125,32 +125,3 @@ const [year, month] = info.month.split("-").map(Number);
         )
     }
 </BeyondLayout>
-
-<script>
-    // 跳轉清單：寬螢幕一直展開；捲動時把目前讀到的那項標成 aria-current（樣式在 BeyondLayout）
-    const box = document.querySelector<HTMLDetailsElement>(".toc-box");
-    if (box) {
-        const wide = matchMedia("(min-width: 1200px)");
-        const fit = () => (box.open = wide.matches);
-        fit();
-        wide.addEventListener("change", fit);
-
-        const links = [...box.querySelectorAll<HTMLAnchorElement>("a")];
-        const targets = links.map((link) => document.getElementById(link.hash.slice(1)));
-        const mark = () => {
-            const atBottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
-            const passed = targets.filter((target) => target && target.getBoundingClientRect().top <= 120).length;
-            const current = atBottom ? links.length - 1 : Math.max(passed - 1, 0);
-            links.forEach((link, index) =>
-                index === current ? link.setAttribute("aria-current", "true") : link.removeAttribute("aria-current"),
-            );
-            // 清單比畫面高時，捲動清單本身，讓目前這項保持在看得到的範圍（不動到整頁）
-            const frame = box.getBoundingClientRect();
-            const item = links[current].getBoundingClientRect();
-            if (item.top < frame.top) box.scrollTop -= frame.top - item.top + 8;
-            else if (item.bottom > frame.bottom) box.scrollTop += item.bottom - frame.bottom + 8;
-        };
-        addEventListener("scroll", () => requestAnimationFrame(mark), { passive: true });
-        mark();
-    }
-</script>
