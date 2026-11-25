@@ -1,0 +1,11 @@
+{
+  "name": "beyond-preview",
+  "displayName": "解題之外：預覽跟著切換",
+  "description": "在 VS Code 切換到「解題之外」的文章時，npm run dev 開著的預覽網頁跳到那一篇。",
+  "version": "0.0.3",
+  "publisher": "local",
+  "private": true,
+  "engines": { "vscode": "^1.80.0" },
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js"
+}

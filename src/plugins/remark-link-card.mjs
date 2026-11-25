@@ -65,12 +65,11 @@ function cardLinks(node, cards) {
 
 /**
  * 在區塊上加 card-follow：長期紀錄頁用它把緊接在卡片後面的東西貼近卡片（留 16px，白色卡片才不會黏住文字）。
- * 拿掉 remark-strict-quote 加的 tight，兩種間距規則不疊加。
+ * 帶 card-follow 的區塊 rehype-tight.mjs 不會再加 tight，兩種間距規則不疊加。
  */
 function follow(node) {
     const properties = node.data?.hProperties ?? {};
-    const className = (properties.className ?? []).filter((name) => name !== 'tight');
-    node.data = { ...node.data, hProperties: { ...properties, className: [...className, 'card-follow'] } };
+    node.data = { ...node.data, hProperties: { ...properties, className: [...(properties.className ?? []), 'card-follow'] } };
 }
 
 const isComment = (node) => node?.type === 'html' && /^<!--[\s\S]*-->$/.test(node.value.trim());

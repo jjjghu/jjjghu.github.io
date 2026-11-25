@@ -30,6 +30,15 @@ it('strips executable Markdown HTML but preserves formulas, highlighting and cod
   expect(code).toContain('id="heading"');
 });
 
+it('keeps centre and right alignment on paragraphs and divs, but no other inline style', async () => {
+  const { code } = await renderer.render(
+    '<p style="text-align:center;">圖說</p>\n\n<div style="text-align:right">2026 / 11 / 25</div>\n\n<p style="color:red">x</p>',
+  );
+  expect(code).toContain('<p style="text-align:center;">圖說</p>');
+  expect(code).toContain('<div style="text-align:right">2026 / 11 / 25</div>');
+  expect(code).not.toContain('color:red');
+});
+
 it('places CSP before resources and hashes exactly the emitted script content', () => {
   const source = 'window.example = "safe";';
   const html = secureHtml(`<html><head><script>${source}</script></head><body></body></html>`);
@@ -68,6 +77,34 @@ it('in the beyond section, any block written right under another sticks to it, l
   );
   // 空一行就是一般間距；只有註解的行看不見，不算空行，也不會把空行吃掉
   expect(await render('甲\n\n<!-- 註 -->\n乙\n<!-- 註 -->\n丙')).toBe('<p>甲</p> <p>乙</p> <p class="tight">丙</p>');
+
+  // Books.md：直接寫的 <div> 一樣貼著上一行，空一行再接清單就有間距
+  expect(await render('說明\n<div style="text-align:right">日期</div>\n\n- 書')).toBe(
+    '<p>說明</p> <div style="text-align:right" class="tight">日期</div> <ul> <li>書</li> </ul>',
+  );
+});
+
+it('applies the no-blank-line rule to every kind of block, not a fixed list of tags', async () => {
+  // 以後新增的區塊種類也要加進這裡；任何一種沒貼上去，這個測試就會失敗
+  const blocks = {
+    清單: '- 一',
+    編號清單: '1. 一',
+    標題: '## 標',
+    引言: '> 引',
+    程式碼: '```\ncode\n```',
+    公式: '$$\nx\n$$',
+    HTML: '<div style="text-align:center">置中</div>',
+    表格: '| a |\n| - |\n| 1 |',
+    段落: '<!-- 註 -->\n下一段',
+  };
+  for (const [name, block] of Object.entries(blocks)) {
+    const { code } = await renderer.render(`前文\n\n上一段\n${block}`, {
+      fileURL: new URL('file:///D:/site/src/content/beyond/a.md'),
+    });
+    // 「上一段」本身前面空了一行，不貼；緊接在它後面的區塊（第一個開頭標籤）要貼
+    expect(code, name).toMatch(/<p>上一段<\/p>/);
+    expect(code.split('上一段</p>')[1].match(/<\w+[^>]*>/)?.[0], name).toContain('tight');
+  }
 });
 
 it('turns a link that stands alone into a card, but only supported sites in the beyond section', async () => {

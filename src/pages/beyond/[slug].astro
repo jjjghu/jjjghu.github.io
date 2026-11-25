@@ -32,7 +32,11 @@ const toc: { title: string; href: string }[] = info.dated ? [] : (remarkPluginFr
 const [year, month] = info.month.split("-").map(Number);
 ---
 
-<BeyondLayout title={info.title} description={`${UI_TEXT.beyond_title.cn}：${info.title}`}>
+<BeyondLayout
+    title={info.title}
+    description={`${UI_TEXT.beyond_title.cn}：${info.title}`}
+    source={import.meta.env.DEV ? entry.filePath : undefined}
+>
     {
         info.draft && (
             <p class="draft-note">

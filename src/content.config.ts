@@ -55,7 +55,7 @@ const beyondCollection = defineCollection({
         title: z.string().optional(),
         date: validDate.optional(),
         // 長期紀錄在列表上的小圖示（圖形定義在 pages/beyond/index.astro）
-        icon: z.enum(['gamepad', 'play']).optional(),
+        icon: z.enum(['gamepad', 'play', 'book']).optional(),
     }),
 });
 

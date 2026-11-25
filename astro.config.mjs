@@ -4,6 +4,8 @@ import rehypeKatex from "rehype-katex";
 import remarkLink from "./src/plugins/remark-link.mjs";
 import remarkStrictQuote from "./src/plugins/remark-strict-quote.mjs";
 import remarkLinkCard from "./src/plugins/remark-link-card.mjs";
+import rehypeTight, { keepPosition } from "./src/plugins/rehype-tight.mjs";
+import beyondPreviewSync from "./src/plugins/beyond-preview-sync.mjs";
 import transformerCodeTitle, { remarkCodeMeta } from "./src/plugins/shiki-code-title.mjs";
 import sitemap from "@astrojs/sitemap";
 import { scanPosts, sitemapEntry } from "./src/utils/post-catalog.mjs";
@@ -13,6 +15,8 @@ import securityPolicy from './src/plugins/security-policy.mjs';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 
 const posts = scanPosts();
+// <p> 或 <div> 加 style="text-align:center" / "text-align:right" 可以置中、靠右
+const ALIGN = ['style', /^text-align:\s*(?:center|right);?$/];
 
 export default defineConfig({
   site: "https://jjjghu.github.io",
@@ -40,28 +44,28 @@ export default defineConfig({
               ['className', 'data-footnote-backref', 'link-card', 'card-follow'],
             ],
             img: [...defaultSchema.attributes.img, ['loading', 'lazy']],
-            // tight：「解題之外」的引言外掛用來標記「和前文之間沒有空行」（plugins/remark-strict-quote.mjs）
             // card-follow：緊接在連結卡片下一行的區塊（plugins/remark-link-card.mjs）
-            p: [['className', 'tight', 'card-follow']],
-            blockquote: [['className', 'tight', 'card-follow']],
-            ul: [...defaultSchema.attributes.ul.filter((attribute) => !Array.isArray(attribute)), ['className', 'contains-task-list', 'tight', 'card-follow']],
-            ol: [...defaultSchema.attributes.ol.filter((attribute) => !Array.isArray(attribute)), ['className', 'contains-task-list', 'tight', 'card-follow']],
-            h1: [['className', 'tight']],
-            h2: [['className', 'tight']],
-            h3: [['className', 'tight']],
-            h4: [['className', 'tight']],
-            div: [['style', /^text-align:\s*center;?$/]],
+            // （tight 由最後的 rehype-tight 加上，不經過這裡）
+            p: [['className', 'card-follow'], ALIGN],
+            blockquote: [...defaultSchema.attributes.blockquote, ['className', 'card-follow']],
+            ul: [...defaultSchema.attributes.ul.filter((attribute) => !Array.isArray(attribute)), ['className', 'contains-task-list', 'card-follow']],
+            ol: [...defaultSchema.attributes.ol.filter((attribute) => !Array.isArray(attribute)), ['className', 'contains-task-list', 'card-follow']],
+            div: [ALIGN],
           },
         }],
-        [rehypeKatex, { trust: false, strict: 'warn', maxExpand: 1000, maxSize: 20 }],
-        [rehypeShiki, {
+        [keepPosition(rehypeKatex), { trust: false, strict: 'warn', maxExpand: 1000, maxSize: 20 }],
+        [keepPosition(rehypeShiki), {
           themes: { dark: 'dark-plus', light: 'light-plus' },
           wrap: false,
           transformers: [transformerCodeTitle()],
         }],
+        rehypeTight,
       ],
     }),
   },
+
+  // 開發時存檔「解題之外」的文章，預覽網頁自動跳到那一篇
+  vite: { plugins: [beyondPreviewSync()] },
 
   integrations: [
     securityPolicy(),

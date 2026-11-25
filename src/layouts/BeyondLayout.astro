@@ -10,9 +10,11 @@ interface Props {
     description?: string;
     /** 列表頁用較寬的欄位，左側放月曆 */
     wide?: boolean;
+    /** 這一頁的原稿路徑，只在開發模式傳入，讓預覽換頁時編輯器跟著打開它 */
+    source?: string;
 }
 
-const { title, description = "解題以外的文字", wide = false } = Astro.props;
+const { title, description = "解題以外的文字", wide = false, source } = Astro.props;
 ---
 
 <html lang="zh-TW">
@@ -28,7 +30,7 @@ const { title, description = "解題以外的文字", wide = false } = Astro.pro
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     </head>
 
-    <body>
+    <body data-source={source}>
         <header class="bar">
             <a href="/beyond/">解題之外</a>
             <a href="/">解題筆記</a>
@@ -40,6 +42,24 @@ const { title, description = "解題以外的文字", wide = false } = Astro.pro
     </body>
 </html>
 
+<script>
+    // 編輯時的預覽同步，只在 npm run dev 有作用（正式網站沒有 import.meta.hot，這段整個不會出現）
+    if (import.meta.hot) {
+        // 存檔某篇文章：網頁跳到那一篇（通知來自 plugins/beyond-preview-sync.mjs）
+        import.meta.hot.on("beyond:edit", ({ slug }: { slug: string }) => {
+            const target = `/beyond/${slug}/`;
+            if (decodeURI(location.pathname) !== target) location.assign(encodeURI(target));
+        });
+        // 預覽換頁：通知擴充功能打開這一篇的原稿（tools/beyond-preview/，打開時游標留在網頁上）。
+        // 存檔造成的重新整理不算換頁。
+        const source = document.body.dataset.source;
+        const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+        if (source && navigation?.type !== "reload") {
+            fetch(`/__beyond-page?file=${encodeURIComponent(source)}`);
+        }
+    }
+</script>
+
 <style is:global>
     :root {
         --bz-white: #ffffff;
@@ -50,7 +70,9 @@ const { title, description = "解題以外的文字", wide = false } = Astro.pro
         --bz-faint: #b3b3b3; /* 月曆上沒有文章的日子 */
         --bz-mark: #e7e7e7; /* 年份浮水印，只比底色深一點 */
         --bz-rule: #d9d9d9;
-                --bz-accent: #0969da; /* 解題站淺色主題的強調色，維持一點關聯 */
+        --bz-accent: #0969da; /* 解題站淺色主題的強調色，維持一點關聯 */
+        /* 解題站的強調色變數；/color 片段寫的 <span style="color:var(--color-accent-fg)"> 在這裡也有顏色 */
+        --color-accent-fg: var(--bz-accent);
         --bz-paper-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
         /* 和解題站（styles/global.css 的 body）同一組字體 */
         --bz-sans:
@@ -327,9 +349,14 @@ const { title, description = "解題以外的文字", wide = false } = Astro.pro
     }
 
     /* 排版照原稿的空行（像 Lark）：原稿空一行 = 版面空一行（--bz-para，一個行高）；
-       沒有空行的區塊帶 class="tight"（plugins/remark-strict-quote.mjs 加上），和上一個區塊之間不留間距。 */
+       沒有空行的區塊帶 class="tight"（plugins/rehype-tight.mjs 加上），和上一個區塊之間不留間距。
+       任何區塊預設下方都留一行，直接寫 <div> 之類沒有專屬樣式的區塊也一樣；下面各種區塊的規則比這條優先。 */
     .body {
         --bz-para: 2em;
+    }
+
+    .body > * {
+        margin: 0 0 var(--bz-para);
     }
 
     .body .tight {
